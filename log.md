@@ -1,5 +1,24 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Babur 3D model (8th monster ported)
+- Built `src/models/babur.ts` (winged cloud-piglet) from the in-game sprite. The
+  roster blurb calls Babur "tusked and territorial," but the art is a gentle
+  sky-touched piglet, so I modelled the sprite: plump cream body with soft blue
+  cloud-swirl flank markings (CanvasTexture), pink snout disc + two nostrils,
+  rosy cheek blush, big heterochromia eyes (left amber, right blue) + catch-
+  light, floppy pink ears, four little hooves, a curly tail, and a pair of
+  feathered slate-blue wings. Idle: breathing + gentle wing-flap + tail wiggle.
+  Registered `babur`. 8/12 roster now true 3D.
+- Wings were the tricky bit: first pass the feathers were narrow flattened cones
+  and read as a tiny spiky crest. Broadened each feather (scale 1.4,1,0.55),
+  widened the specs, and splayed the fan outward (per-feather rotation.z) so the
+  wing reads as a plume fan from the front + 3/4, not just the side.
+- Verified: tsc clean; QA front-3/4 + side in model-viewer (console clean),
+  restored the viewer import after; Babur renders in-world at spawn index 7
+  (wild-babur-7) with the proximity prompt; full begin→tame→party loop intact
+  (party 0→1 in 2 tries, mode→explore, tamed flagged, nearby cleared); console
+  clean. Screenshots /tmp/babur-v3-34.png, /tmp/babur-world.png.
+
 ## 2026-06-13 — Kepiting 3D model (7th monster ported)
 - Built `src/models/kepiting.ts` (armoured reef crab) from the in-game sprite
   (no ref sheet): a wide domed carapace with a mottled crusty CanvasTexture +
