@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
+import { BattleScreen } from './BattleScreen';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
   const [showParty, setShowParty] = useState(false);
+  const hasParty = party.length > 0;
 
   // Auto-clear the flash message.
   useEffect(() => {
@@ -69,6 +71,11 @@ export function HUD() {
               <span>{'★'.repeat(tamingSpecies.rarity)}</span>
             </div>
             <div style={styles.modalBtns}>
+              {hasParty && (
+                <button style={styles.battleBtn} onClick={() => useGame.getState().beginBattle(tamingTargetId)}>
+                  Battle to weaken
+                </button>
+              )}
               <button style={styles.tameBtn} onClick={() => useGame.getState().tame(tamingSpecies.id, tamingTargetId)}>
                 Offer Treat & Tame
               </button>
@@ -79,6 +86,8 @@ export function HUD() {
           </div>
         </div>
       )}
+
+      {mode === 'battle' && <BattleScreen />}
     </div>
   );
 }
@@ -103,6 +112,7 @@ const styles: Record<string, React.CSSProperties> = {
   modalBlurb: { fontSize: 12, opacity: 0.85, margin: '6px 10px 10px' },
   modalStats: { display: 'flex', justifyContent: 'center', gap: 12, fontSize: 12, opacity: 0.9, marginBottom: 14 },
   modalBtns: { display: 'flex', flexDirection: 'column', gap: 8 },
+  battleBtn: { background: '#6ab04c', color: '#0d1a08', border: 'none', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   tameBtn: { background: '#d4b06a', color: '#1a1208', border: 'none', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   cancelBtn: { background: 'transparent', color: '#e8e6d8', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 8, padding: '8px', fontSize: 13, cursor: 'pointer', fontFamily: font },
 };

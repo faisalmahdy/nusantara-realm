@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-13
+Last touched: 2026-06-13 (turn-based battle scaffold)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -22,9 +22,13 @@ Last touched: 2026-06-13
 - `CameraRig.tsx` — third-person follow (lerp) + pointer-drag orbit.
 
 ## State (`src/game/`)
-- `store.ts` — zustand: mode, party[], tamedWildIds[], nearbyWildId,
-  tamingTargetId, message; actions beginTaming/cancelTaming/tame/flash.
+- `store.ts` — zustand: mode ('explore'|'taming'|'party'|'battle'), party[],
+  tamedWildIds[], nearbyWildId, tamingTargetId, battle, message; actions
+  beginTaming/cancelTaming/tame, beginBattle/battleAttack/battleTame/battleFlee/
+  endBattle, flash.
 - `monsters.ts` — `SPECIES` roster + stats, element colors, `speciesById`.
+- `battle.ts` — pure battle engine: element pentagon + `effectiveness`,
+  `makeCombatant` (level-scaled stats), `computeDamage`, `tameChance`.
 - `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit`
   (shared refs read every frame, not React state).
 - `useKeyboard.ts` — WASD/arrows/E → a mutable ref (no re-renders).
@@ -32,3 +36,7 @@ Last touched: 2026-06-13
 ## HUD (`src/components/HUD.tsx`)
 DOM overlay: title, controls, taming prompt, flash message, Party button+panel,
 and the taming modal. Inline-styled; `pointerEvents:auto` only on interactive bits.
+The taming modal shows a "Battle to weaken" button when the party is non-empty.
+- `BattleScreen.tsx` — full-screen battle overlay (mounted by HUD when
+  mode==='battle'): enemy + player fighters with HP bars, a battle log, and
+  Attack/Tame/Flee actions; swaps to the 2D attack/hit sprite frames on a hit.

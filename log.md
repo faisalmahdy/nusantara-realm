@@ -1,5 +1,29 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Turn-based battle scaffold (roadmap #1, msg #178)
+- Roster is 12/12 true 3D, so Mahdy green-lit starting the battle system.
+  Shipped the first slice: a real, playable weaken→tame battle loop.
+- `src/game/battle.ts` — pure engine: element pentagon (Forest→Earth→Sky→Sea→
+  Spirit, each ×1.5 vs the next / ×0.67 vs the previous), `makeCombatant` with
+  gentle per-level stat scaling, `computeDamage` (atk*1.6 − def*0.8, ×eff),
+  `tameChance` that ramps with how weakened the enemy is (up to +0.6 at low HP).
+- `store.ts` — new `'battle'` mode + `battle` state; actions beginBattle (lead
+  party monster vs the wild; empty party falls back to direct taming),
+  battleAttack (player hit → enemy counter), battleTame (weaken-scaled odds; on
+  fail the enemy counters), battleFlee, endBattle. Tame success adds to party +
+  marks the wild removed.
+- `BattleScreen.tsx` — full-screen overlay (enemy top-right, player bottom-left,
+  HP bars, 3-line log, Attack/Tame/Flee). Reuses the 2D attack/hit sprite frames
+  for a lunge/flinch on each hit. Reached via a "Battle to weaken" button added
+  to the taming modal (shows only with ≥1 party monster).
+- Verified: tsc clean; in-browser full loop — Forest Kancil vs Earth Bamut read
+  "super effective" (14) / Bamut's "not very effective" counter (10), HP bars
+  drained, weakened Bamut tamed, party 1→2, wild removed, endBattle→explore with
+  message. Direct-tame path non-regressed (party→3). Console clean. Screenshot
+  /tmp/battle-screen.png.
+- Next slices (see docs/design.md): move-sets, staggered per-hit juice, XP +
+  level-up on win, persist party HP, sfx/particles, mobile button sizing.
+
 ## 2026-06-13 — Rabuas 3D model (12th & final monster — roster COMPLETE)
 - Built `src/models/rabuas.ts` (Rafflesia corpse-flower forest beast) from the
   in-game sprite + blurb: a warty green body (sphere + 12 wart bumps) on four

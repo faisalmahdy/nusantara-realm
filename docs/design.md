@@ -1,6 +1,6 @@
 # Design & roadmap
 
-Last touched: 2026-06-13
+Last touched: 2026-06-13 (turn-based battle scaffold)
 
 ## Pillars (from Mahdy, msg #126/#128/#130)
 - **Pokémon-style taming** — roam, find wild monsters, win them over.
@@ -19,8 +19,15 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    reference sheets. See docs/models.md. Refine Kancil, then build out the
    roster (sheets exist for camar/penyu/ubur/karang-raksasa/etc.), add a model
    registry, and render models in the world instead of sprites.
-1. **Turn-based battle** — reuse attack/hit frames; element type matchups
-   (Forest/Sea/Sky/Earth/Spirit already on species). Wild battle → weaken → tame.
+1. **Turn-based battle** — SCAFFOLD SHIPPED (2026-06-13). Engine in
+   `src/game/battle.ts` (element pentagon Forest→Earth→Sky→Sea→Spirit, ×1.5/×0.67
+   matchups, level-scaled stats, weaken-scaled tame odds), store actions
+   (beginBattle/battleAttack/battleTame/battleFlee/endBattle), full-screen
+   `BattleScreen.tsx` reusing the 2D attack/hit frames. Reached from the taming
+   modal's "Battle to weaken" button (needs ≥1 party monster; empty party still
+   direct-tames). STILL TO DO: move-sets (not just one Attack), staggered
+   per-hit animation/juice, XP + level-up on win, persist party HP between
+   battles, sfx/particles, mobile button sizing.
 2. **Ranch / bonding loop** — feed, raise bond, gain XP, level up the party.
 3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
    assets exist); wire level-gated evolution.
