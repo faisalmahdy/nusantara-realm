@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Ranch: bond pays off in battle (roadmap #2, msg #188)
+- Made the bond stat matter: a well-fed lead now fights harder, so the Feed
+  loop has a real combat payoff.
+- `battle.ts` — added `bond` to Combatant + `bondAtkMult(bond)` (1.0→1.2 over
+  0..100 bond); `computeDamage` scales the attacker's hit by it. Wilds have
+  bond 0 (no bonus).
+- `store.ts` — `beginBattle` copies the lead's bond onto the player combatant
+  and logs a "+N% damage" note when bond≥50.
+- `BattleScreen.tsx` — player fighter name row shows a ♥bond badge.
+- QA: tsc clean; in-browser same Kancil(Lv6) vs Bamut Strike hit 32 at bond 0
+  vs 43 at bond 100 (+20% on the attack term, shown in log); ♥88 badge rendered;
+  console clean; direct-tame loop non-regressed (empty party → tamed Watua).
+
 ## 2026-06-13 — Ranch loop, first slice: Feed/bond (roadmap #2)
 - Started the raising loop: tamed monsters can now be fed to deepen the bond.
 - `store.ts` — new `feed(uid)`: +8 bond (capped 100) and +5 XP via `applyXp`

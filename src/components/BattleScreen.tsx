@@ -120,6 +120,7 @@ function Fighter({ c, side, acting, dmg }: { c: Combatant; side: 'player' | 'ene
         <span style={{ fontWeight: 700 }}>{c.name}</span>
         <span style={{ color: ELEMENT_COLOR[c.element], fontSize: 11 }}>{c.element}</span>
         <span style={{ opacity: 0.7, fontSize: 11 }}>Lv {c.level}</span>
+        {c.bond > 0 && <span style={{ color: '#e07ba0', fontSize: 11 }} title={`Bond ${c.bond}/100`}>♥{c.bond}</span>}
       </div>
       <div style={s.barTrack}><div style={{ ...s.barFill, width: `${frac * 100}%`, background: barColor }} /></div>
       <div style={{ fontSize: 10, opacity: 0.7, textAlign: 'right' }}>{c.hp}/{c.maxHp} HP</div>

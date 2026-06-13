@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
-  xpForDefeating, applyXp, pickEnemyMove,
+  xpForDefeating, applyXp, pickEnemyMove, bondAtkMult,
 } from './battle';
 
 export interface TamedMonster {
@@ -110,7 +110,10 @@ export const useGame = create<GameState>((set, get) => ({
     const enemySpeciesId = wildId.split('-')[1];
     const enemyLevel = Math.max(2, lead.level + 1);
     const player = makeCombatant(lead.uid, lead.speciesId, lead.level);
+    player.bond = lead.bond;
     const enemy = makeCombatant(wildId, enemySpeciesId, enemyLevel);
+    const log = [`A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`];
+    if (lead.bond >= 50) log.push(`${player.name}'s bond spurs it on. (+${Math.round((bondAtkMult(lead.bond) - 1) * 100)}% damage)`);
     set({
       mode: 'battle',
       tamingTargetId: null,
@@ -120,7 +123,7 @@ export const useGame = create<GameState>((set, get) => ({
         enemy,
         turn: 'player',
         outcome: null,
-        log: [`A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`],
+        log,
       },
     });
   },

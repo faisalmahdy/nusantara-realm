@@ -53,6 +53,7 @@ export interface Combatant {
   atk: number;
   def: number;
   moves: Move[];
+  bond: number; // 0..100; a bonded lead fights harder (see bondAtkMult). 0 for wilds.
 }
 
 // Per-level stat growth (kept gentle for the scaffold).
@@ -68,13 +69,19 @@ function derive(species: MonsterSpecies, level: number): { maxHp: number; atk: n
 export function makeCombatant(uid: string, speciesId: string, level: number): Combatant {
   const sp = speciesById(speciesId);
   const d = derive(sp, level);
-  return { uid, speciesId, name: sp.name, element: sp.element, level, hp: d.maxHp, maxHp: d.maxHp, atk: d.atk, def: d.def, moves: movesFor(sp.element) };
+  return { uid, speciesId, name: sp.name, element: sp.element, level, hp: d.maxHp, maxHp: d.maxHp, atk: d.atk, def: d.def, moves: movesFor(sp.element), bond: 0 };
+}
+
+// Bond perk: a well-raised lead hits harder, up to +20% damage at max bond.
+// This is what makes ranch feeding pay off in battle.
+export function bondAtkMult(bond: number): number {
+  return 1 + (Math.max(0, Math.min(100, bond)) / 100) * 0.2;
 }
 
 /** Damage `attacker` deals to `defender` with `move`, including element matchup. */
 export function computeDamage(attacker: Combatant, defender: Combatant, move: Move): { damage: number; eff: number } {
   const eff = move.element ? effectiveness(move.element, defender.element) : 1.0;
-  const raw = attacker.atk * move.power - defender.def * 0.8;
+  const raw = attacker.atk * move.power * bondAtkMult(attacker.bond) - defender.def * 0.8;
   const damage = Math.max(1, Math.round(raw * eff));
   return { damage, eff };
 }

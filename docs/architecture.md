@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-13 (ranch: feed/bond)
+Last touched: 2026-06-14 (ranch: bond battle perk)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -28,7 +28,8 @@ Last touched: 2026-06-13 (ranch: feed/bond)
   endBattle, feed (ranch: +bond/+XP, capped), flash.
 - `monsters.ts` — `SPECIES` roster + stats, element colors, `speciesById`.
 - `battle.ts` — pure battle engine: element pentagon + `effectiveness`,
-  `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`,
+  `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`
+  (scales the attacker by `bondAtkMult` — bonded lead hits up to +20% harder),
   `pickEnemyMove` (greedy AI), `tameChance`, XP (`xpForDefeating`/`applyXp`).
 - `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit`
   (shared refs read every frame, not React state).
