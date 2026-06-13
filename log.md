@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Day/night cycle (roadmap #4 world richness)
+- Checked roadmap #3 (Evolution) first: it's asset-blocked — every species
+  folder under public/sprites is just idle/attack/hit/portrait, no evolved-form
+  art (the bamut2/bamut3 chains the design doc mentions don't exist in-repo).
+  Pivoted to a self-contained #4 slice that needs no new assets.
+- New `DayNight.tsx`: a useFrame-driven 120s sun orbit that lerps the sky/fog
+  color, sun position/color/intensity, and hemisphere sky/ground colors +
+  intensity through noon→dusk→night→dawn. Mutates the scene's own background/fog
+  objects in place (no per-frame allocations). Phase-offset so the world loads
+  at midday, matching the prior daytime look. GameScene drops its static
+  color/fog/lights for `<DayNight/>`.
+- tsc clean; console clean; core tame loop verified (party 0→1 via direct tame).
+  Two screenshots 45s apart confirm the cycle moves: bright noon → dark, readable
+  night (foliage dim, element rings still glow). Pushed to main.
+
 ## 2026-06-14 — Persistent battle HP + Rest (roadmap #2)
 - Battles now have lasting stakes: damage carries between fights, and the ranch
   is where you recover.

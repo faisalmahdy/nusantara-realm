@@ -1,6 +1,6 @@
 # Design & roadmap
 
-Last touched: 2026-06-14 (ranch: HP persistence + rest)
+Last touched: 2026-06-14 (world: day/night cycle)
 
 ## Pillars (from Mahdy, msg #126/#128/#130)
 - **Pokémon-style taming** — roam, find wild monsters, win them over.
@@ -48,8 +48,10 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    screen/biome, make Feed/Rest cost something (treats/cooldown) vs free buttons.
 3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
    assets exist); wire level-gated evolution.
-4. **World richness** — biomes (forest vs coast), water plane, day/night, more
-   scenery variety, collision with trees.
+4. **World richness** — Day/night cycle DONE (2026-06-14): `DayNight.tsx` runs a
+   120s sun-orbit, lerping sky/fog/sun/hemisphere color + intensity through
+   noon→dusk→night→dawn (starts at midday). STILL TO DO: biomes (forest vs
+   coast), water plane, more scenery variety, collision with trees.
 5. **Polish** — soft shadows/contact shadows under billboards, particle on tame,
    audio, mobile touch controls (on-screen stick + tame button).
 6. **Persistence** — save party to localStorage.

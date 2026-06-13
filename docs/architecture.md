@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-14 (ranch: HP persistence + rest)
+Last touched: 2026-06-14 (world: day/night cycle)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -8,8 +8,12 @@ Last touched: 2026-06-14 (ranch: HP persistence + rest)
   the DOM `<HUD/>` overlay sibling.
 
 ## 3D scene (`src/components/`)
-- `GameScene.tsx` — lights, fog, background, mounts World/Player/WildMonsters/Camera.
+- `GameScene.tsx` — mounts DayNight/World/Player/WildMonsters/Camera.
   Builds the wild spawn ring from `SPECIES`.
+- `DayNight.tsx` — animates a 120s day/night cycle (useFrame): orbits the sun,
+  lerps sky/fog + sun + hemisphere colors and intensities through
+  noon→dusk→night→dawn. Mutates the scene's own background/fog objects in place.
+  Starts at midday (+0.25 phase offset).
 - `World.tsx` — grass ground plane + path strip (RepeatWrapping) + scattered
   scenery billboards (deterministic mulberry32 RNG, seed 1337). Exports `WORLD=90`.
 - `Sprite3D.tsx` — the HD-2D primitive: a camera-facing `<sprite>` with a

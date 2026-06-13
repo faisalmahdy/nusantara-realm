@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import * as THREE from 'three';
 import { World } from './World';
 import { Player } from './Player';
 import { WildMonster } from './WildMonster';
 import { CameraRig } from './CameraRig';
+import { DayNight } from './DayNight';
 import { SPECIES } from '../game/monsters';
 import { WildSpawn } from '../game/shared';
 
@@ -24,10 +24,7 @@ export function GameScene() {
 
   return (
     <>
-      <color attach="background" args={['#8fb6d6']} />
-      <fog attach="fog" args={['#8fb6d6', 42, 92]} />
-      <hemisphereLight args={[new THREE.Color('#cfe3ff'), new THREE.Color('#4a6038'), 0.95]} />
-      <directionalLight position={[20, 40, 12]} intensity={1.15} color={'#fff2d0'} />
+      <DayNight />
 
       <World />
       <Player />
