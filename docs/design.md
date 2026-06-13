@@ -14,6 +14,11 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
 (species stats + treat/tame), party panel. Taming odds scale with rarity.
 
 ## Roadmap (priority order — pick ONE per loop iteration)
+0. **TRUE 3D MODELS (current focus, Mahdy msg #134)** — replace the 2D
+   billboards with from-scratch Three.js meshes built from our character
+   reference sheets. See docs/models.md. Refine Kancil, then build out the
+   roster (sheets exist for camar/penyu/ubur/karang-raksasa/etc.), add a model
+   registry, and render models in the world instead of sprites.
 1. **Turn-based battle** — reuse attack/hit frames; element type matchups
    (Forest/Sea/Sky/Earth/Spirit already on species). Wild battle → weaken → tame.
 2. **Ranch / bonding loop** — feed, raise bond, gain XP, level up the party.

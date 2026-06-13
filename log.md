@@ -1,5 +1,15 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — pivot to true 3D models (msg #134)
+- Mahdy: make assets real 3D, built from scratch in Three.js, using our
+  character reference sheets (turnaround sheets in nusantara-monster/assets/raw).
+- Built first from-scratch model: `src/models/kancil.ts` (Kancil Emas — gold
+  coat, batik flank, cream-lined ears, amber eyes, black hooves, gold anklet)
+  + a turntable viewer (`model-viewer.html` / `src/model-viewer.ts`).
+- v0 model is recognisable but rough (legs/proportions need refining). tsc clean,
+  rendered + screenshot in browser. Set this as roadmap item #0; loop will refine
+  then build out the roster. See docs/models.md.
+
 ## 2026-06-13 — v0 created & shipped
 - Proved feasibility first with a Three.js HD-2D POC (separate `nusantara-3d/`):
   Nusantara sprites as billboards in a 3D world. Screenshot sent, approved.
