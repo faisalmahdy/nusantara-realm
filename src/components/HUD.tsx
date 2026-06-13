@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
+import { xpToNext } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 
 export function HUD() {
@@ -49,7 +50,7 @@ export function HUD() {
                 <img src={`/sprites/${sp.id}/portrait.png`} style={styles.portrait} alt={sp.name} />
                 <div>
                   <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{sp.element}</span></div>
-                  <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · Bond {m.bond}</div>
+                  <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · XP {m.xp}/{xpToNext(m.level)} · Bond {m.bond}</div>
                 </div>
               </div>
             );

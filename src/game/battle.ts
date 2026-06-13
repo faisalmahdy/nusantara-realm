@@ -68,6 +68,23 @@ export function effectivenessNote(eff: number): string {
   return '';
 }
 
+// XP a monster earns for defeating or taming an enemy of the given level.
+export function xpForDefeating(enemyLevel: number): number {
+  return 8 + enemyLevel * 6;
+}
+
+// XP needed to advance from `level` to the next.
+export function xpToNext(level: number): number {
+  return 12 + level * 8;
+}
+
+// Apply an XP gain, rolling over into as many level-ups as it covers.
+export function applyXp(level: number, xp: number, gain: number): { level: number; xp: number; levelsGained: number } {
+  let l = level, x = xp + gain, gained = 0;
+  while (x >= xpToNext(l)) { x -= xpToNext(l); l++; gained++; }
+  return { level: l, xp: x, levelsGained: gained };
+}
+
 /** Taming odds in battle, scaled by how weakened the enemy is. */
 export function tameChance(enemy: Combatant, rarity: number, partySize: number): number {
   const hpFrac = enemy.hp / enemy.maxHp; // 1 = full, 0 = nearly fainted

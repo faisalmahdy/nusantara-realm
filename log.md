@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Battle XP + level-up (roadmap #1 cont., msg #180)
+- Winning a battle (enemy faints) or taming a weakened enemy now awards the lead
+  party monster XP, which rolls into level-ups that raise its stats next fight.
+- `battle.ts` — added `xpForDefeating(enemyLevel)=8+lvl*6`, `xpToNext(level)=
+  12+level*8`, and `applyXp(level,xp,gain)` (rolls over multiple level-ups).
+- `store.ts` — battleAttack (won branch) + battleTame (success branch) award XP
+  to party[0] and log "gained N XP" / "grew to Lv N!".
+- `HUD.tsx` — party panel row now shows `Lv · XP x/next · Bond`.
+- Verified in-browser: Kancil won vs a Sky Camar (neutral, 16 dmg ×2) → +20 XP →
+  Lv 2; then battled+tamed an Earth Watua (super effective) → +26 XP (Lv2, 26/28,
+  no level yet — correct) and Watua joined (party→2). Party panel shows XP.
+  tsc clean, console clean. Screenshots /tmp/battle-screen.png, /tmp/party-xp.png.
+
 ## 2026-06-13 — Turn-based battle scaffold (roadmap #1, msg #178)
 - Roster is 12/12 true 3D, so Mahdy green-lit starting the battle system.
   Shipped the first slice: a real, playable weaken→tame battle loop.

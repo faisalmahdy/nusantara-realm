@@ -25,9 +25,11 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    (beginBattle/battleAttack/battleTame/battleFlee/endBattle), full-screen
    `BattleScreen.tsx` reusing the 2D attack/hit frames. Reached from the taming
    modal's "Battle to weaken" button (needs ≥1 party monster; empty party still
-   direct-tames). STILL TO DO: move-sets (not just one Attack), staggered
-   per-hit animation/juice, XP + level-up on win, persist party HP between
-   battles, sfx/particles, mobile button sizing.
+   direct-tames). XP + level-up DONE (2026-06-13): winning OR taming awards the
+   lead monster XP (`xpForDefeating`/`xpToNext`/`applyXp` in battle.ts), rolling
+   into stat-raising level-ups; party panel shows XP progress. STILL TO DO:
+   move-sets (not just one Attack), staggered per-hit animation/juice, persist
+   party HP between battles, sfx/particles, mobile button sizing.
 2. **Ranch / bonding loop** — feed, raise bond, gain XP, level up the party.
 3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
    assets exist); wire level-gated evolution.

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
+  xpForDefeating, applyXp,
 } from './battle';
 
 export interface TamedMonster {
@@ -136,7 +137,15 @@ export const useGame = create<GameState>((set, get) => ({
 
     if (enemy.hp <= 0) {
       log.push(`The wild ${enemy.name} fainted and fled.`);
-      set({ battle: { ...b, player, enemy, log, turn: 'over', outcome: 'won' } });
+      const lead = get().party[0];
+      const gain = xpForDefeating(enemy.level);
+      const res = applyXp(lead.level, lead.xp, gain);
+      log.push(`${lead.nickname} gained ${gain} XP.`);
+      if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
+      set((st) => ({
+        party: st.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)),
+        battle: { ...b, player, enemy, log, turn: 'over', outcome: 'won' },
+      }));
       return;
     }
 
@@ -169,9 +178,14 @@ export const useGame = create<GameState>((set, get) => ({
         xp: 0,
         bond: 15,
       };
+      const lead = get().party[0];
+      const gain = xpForDefeating(b.enemy.level);
+      const res = applyXp(lead.level, lead.xp, gain);
       log.push(`${species.name} was tamed!`);
+      log.push(`${lead.nickname} gained ${gain} XP.`);
+      if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
       set((s) => ({
-        party: [...s.party, mon],
+        party: [...s.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
         nearbyWildId: null,
         battle: { ...b, log, turn: 'over', outcome: 'tamed' },
