@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-14 (world: tree collision)
+Last touched: 2026-06-14 (persistence: localStorage save)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -30,7 +30,9 @@ Last touched: 2026-06-14 (world: tree collision)
 - `CameraRig.tsx` — third-person follow (lerp) + pointer-drag orbit.
 
 ## State (`src/game/`)
-- `store.ts` — zustand: mode ('explore'|'taming'|'party'|'battle'), party[],
+- `store.ts` — zustand (wrapped in `persist`: saves party + tamedWildIds to
+  localStorage `nusantara-realm-save`, rehydrate restores uidCounter):
+  mode ('explore'|'taming'|'party'|'battle'), party[],
   tamedWildIds[], nearbyWildId, tamingTargetId, battle, message; actions
   beginTaming/cancelTaming/tame, beginBattle/battleMove/battleTame/battleFlee/
   endBattle, feed (ranch: +bond/+XP, capped), rest (heal to full), flash.

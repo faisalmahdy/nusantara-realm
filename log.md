@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Save persistence (roadmap #6)
+- Refresh used to wipe your whole party — the biggest gap now that taming, XP,
+  bond and HP have real depth. Now progress survives a reload.
+- Wrapped the zustand store in `persist` middleware (key `nusantara-realm-save`).
+  `partialize` persists only `party` + `tamedWildIds`; transient state (mode,
+  battle, nearby/taming targets, message) is excluded so a reload always lands
+  in 'explore' with no stale battle. `onRehydrateStorage` resumes `uidCounter`
+  past the highest restored uid so new tames can't collide.
+- tsc clean; console clean. Verified in browser: tamed a Kancil → save written
+  (party 1) → page reload → party + tamedWildIds restored intact (kancil hp 26,
+  wild-kancil-1 still removed) → a fresh tame got uid m2 (no collision). Core
+  tame loop intact. Pushed to main.
+
 ## 2026-06-14 — Tree collision (roadmap #4 world richness)
 - Player walked through trees, breaking the solid-world feel. Now you can't.
 - Extracted the deterministic scenery layout (mulberry32 seed 1337) out of

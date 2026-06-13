@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
@@ -56,7 +57,9 @@ interface GameState {
 
 let uidCounter = 1;
 
-export const useGame = create<GameState>((set, get) => ({
+export const useGame = create<GameState>()(
+  persist(
+    (set, get) => ({
   mode: 'explore',
   party: [],
   tamedWildIds: [],
@@ -282,4 +285,22 @@ export const useGame = create<GameState>((set, get) => ({
   },
 
   flash: (msg) => set({ message: msg }),
-}));
+    }),
+    {
+      name: 'nusantara-realm-save',
+      // Only the durable progression survives a reload; transient UI/battle
+      // state always starts fresh in 'explore'.
+      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        // Resume uid issuance past any restored monster so new tames don't collide.
+        let max = 0;
+        for (const m of state.party) {
+          const n = parseInt(m.uid.slice(1), 10);
+          if (Number.isFinite(n) && n > max) max = n;
+        }
+        uidCounter = max + 1;
+      },
+    },
+  ),
+);
