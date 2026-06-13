@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Watua 3D model (11th monster ported)
+- Built `src/models/watua.ts` (treant / root-spirit) from the in-game sprite.
+  The roster blurb calls Watua a "stone-spirit," but the art is a wood/root
+  treant, so I modelled the sprite: a stout gnarled bark trunk (wood-grain
+  CanvasTexture, body+head merged) with bark ridges, a heavy brow (half-torus),
+  big amber eyes + catch-light, a bark nose, a hanging beard of root tendrils,
+  stubby gnarled root arms + splayed root feet (tapered cones w/ finger nubs),
+  moss patches, and a bushy low-poly leaf canopy (icosahedron clumps) crowning
+  the head with willow drooping strands. Idle: slow patient sway + canopy
+  rustle + beard drift. Registered `watua`. 11/12 roster now true 3D.
+- Verified: tsc clean; QA front + 3/4 in model-viewer (face/canopy/arms read
+  well; console clean), restored the viewer import after; Watua renders in-world
+  at spawn index 10 (wild-watua-10) with the proximity prompt (it blends into
+  the foliage, fittingly); full begin→tame→party loop intact (party 0→1,
+  mode→explore, tamed flagged, nearby cleared); console clean. Screenshots
+  /tmp/watua-front.png, /tmp/watua-34.png, /tmp/watua-world.png.
+
 ## 2026-06-13 — Naris 3D model (10th monster ported)
 - Built `src/models/naris.ts` (storm-touched coiled naga) from the in-game
   sprite: an olive-green body coiled into two stacked banded toruses (red-brown

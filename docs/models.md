@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Naris added — 10th monster)
+Last touched: 2026-06-13 (Watua added — 11th monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -85,6 +85,14 @@ review a different monster.
   storm-smoke wisp (alternating partial-torus arcs) curling up from the crown,
   two little clawed arms resting on the coil, and a tapering tail curling up at
   the back. Idle: breathing + smoke wisp curl/spin + head sway + tail drift.
+- `watua.ts` — treant / root-spirit (from the sprite; blurb says "stone-spirit"
+  but the art is a wood/root treant): a stout gnarled bark trunk (wood-grain
+  CanvasTexture, body+head merged) with bark ridges, a heavy brow (half-torus),
+  big amber eyes + catch-light, a bark nose, a hanging beard of root tendrils,
+  stubby gnarled root arms + splayed root feet (tapered cones w/ finger nubs),
+  moss patches, and a bushy low-poly leaf canopy (icosahedron clumps) crowning
+  the head with willow drooping strands. Idle: slow sway + canopy rustle + beard
+  drift.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -97,8 +105,8 @@ review a different monster.
   uses this for a slow wing-flap.
 
 ## Next
-- Roster porting (10/12 done: kancil, camar, matong, dugang, bamut, gambang,
-  kepiting, babur, ayaka, naris). Remaining spawn-slot species — watua, rabuas —
-  are modelled from their in-game sprite + blurb (only kancil/camar have ref
-  sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait yet.
+- Roster porting (11/12 done: kancil, camar, matong, dugang, bamut, gambang,
+  kepiting, babur, ayaka, naris, watua). Last remaining spawn-slot species —
+  rabuas — is modelled from its in-game sprite + blurb (only kancil/camar have
+  ref sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait.
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all hand-built.
