@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-14 (persistence: localStorage save)
+Last touched: 2026-06-14 (mobile touch controls)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -43,14 +43,16 @@ Last touched: 2026-06-14 (persistence: localStorage save)
   `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`
   (scales the attacker by `bondAtkMult` — bonded lead hits up to +20% harder),
   `pickEnemyMove` (greedy AI), `tameChance`, XP (`xpForDefeating`/`applyXp`).
-- `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit`
-  (shared refs read every frame, not React state).
+- `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit` +
+  `touchInput` joystick vector (shared refs read every frame, not React state).
 - `useKeyboard.ts` — WASD/arrows/E → a mutable ref (no re-renders).
 
 ## HUD (`src/components/HUD.tsx`)
 DOM overlay: title, controls, taming prompt, flash message, Party button+panel,
 and the taming modal. Inline-styled; `pointerEvents:auto` only on interactive bits.
 The taming modal shows a "Battle to weaken" button when the party is non-empty.
+- `TouchControls.tsx` — on-screen joystick (writes `shared.touchInput`) + E/tame
+  button; mounted by HUD in explore mode for phone play.
 The party panel rows show HP + bond bars and Feed/Rest buttons (store `feed`/`rest`).
 - `BattleScreen.tsx` — full-screen battle overlay (mounted by HUD when
   mode==='battle'): enemy + player fighters with HP bars, a battle log, and

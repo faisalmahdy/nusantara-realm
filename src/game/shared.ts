@@ -8,6 +8,10 @@ export const playerPos = new THREE.Vector3(0, 0, 8);
 // Camera yaw around the player, driven by pointer drag.
 export const cameraState = { orbit: 0.35 };
 
+// On-screen joystick vector (screen plane: x = right, y = down), -1..1.
+// Written by the touch controls overlay, read by <Player> each frame.
+export const touchInput = { x: 0, y: 0 };
+
 export interface WildSpawn {
   wildId: string;
   speciesId: string;

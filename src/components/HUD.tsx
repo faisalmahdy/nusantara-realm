@@ -3,6 +3,7 @@ import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
 import { xpToNext, maxHpFor } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
+import { TouchControls } from './TouchControls';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
@@ -101,6 +102,7 @@ export function HUD() {
         </div>
       )}
 
+      {mode === 'explore' && <TouchControls />}
       {mode === 'battle' && <BattleScreen />}
     </div>
   );

@@ -1,6 +1,6 @@
 # Design & roadmap
 
-Last touched: 2026-06-14 (persistence: localStorage save)
+Last touched: 2026-06-14 (mobile touch controls)
 
 ## Pillars (from Mahdy, msg #126/#128/#130)
 - **Pokémon-style taming** — roam, find wild monsters, win them over.
@@ -55,8 +55,11 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    does circular push-out vs tree trunks (`COLLIDERS`), sliding around them;
    ferns stay walkable. STILL TO DO: biomes (forest vs coast), water plane,
    more scenery variety.
-5. **Polish** — soft shadows/contact shadows under billboards, particle on tame,
-   audio, mobile touch controls (on-screen stick + tame button).
+5. **Polish** — Mobile touch controls DONE (2026-06-14): `TouchControls.tsx`
+   adds an on-screen joystick (writes `shared.touchInput`, folded into Player
+   movement) + an E/tame button; shown in explore mode. Currently always-on (also
+   usable with a mouse) — could hide on non-touch later. STILL TO DO: soft/contact
+   shadows under billboards, particle on tame, audio.
 6. **Persistence** — DONE (2026-06-14): zustand `persist` middleware saves
    `party` + `tamedWildIds` to localStorage (`nusantara-realm-save`); transient
    UI/battle state stays unpersisted (reload always starts in 'explore').

@@ -1,5 +1,19 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Mobile touch controls (roadmap #5)
+- The game was keyboard-only — literally unplayable on a phone, which is Mahdy's
+  primary test device. Closed that gap.
+- New `TouchControls.tsx`: a draggable on-screen joystick (bottom-left) + a round
+  E/tame button (bottom-right), mounted by HUD only in explore mode. The joystick
+  writes a screen-plane vector into new `shared.touchInput`; Player folds it into
+  the camera-relative move vector (up on the stick = forward). The E button calls
+  beginTaming on the nearby wild, dimming when none is in range. Controls are
+  always-on (also mouse-usable) — can hide on non-touch devices later if wanted.
+- tsc clean; console clean. Verified in browser via synthetic pointer events:
+  pushing the stick up walked the player forward (0,8 → world edge); releasing
+  stopped movement; tapping E with a nearby wild opened the taming modal. Core
+  loop intact. Pushed to main.
+
 ## 2026-06-14 — Save persistence (roadmap #6)
 - Refresh used to wipe your whole party — the biggest gap now that taming, XP,
   bond and HP have real depth. Now progress survives a reload.

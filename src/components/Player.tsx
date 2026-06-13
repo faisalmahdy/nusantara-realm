@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { loadPixelTexture } from './Sprite3D';
 import { useKeyboard } from '../game/useKeyboard';
-import { playerPos, cameraState } from '../game/shared';
+import { playerPos, cameraState, touchInput } from '../game/shared';
 import { WORLD, COLLIDERS } from '../game/scenery';
 import { useGame } from '../game/store';
 
@@ -38,6 +38,11 @@ export function Player() {
     if (k.back) move.sub(forward);
     if (k.right) move.add(right);
     if (k.left) move.sub(right);
+    // On-screen joystick (mobile): up on the stick = forward.
+    if (touchInput.x !== 0 || touchInput.y !== 0) {
+      move.addScaledVector(right, touchInput.x);
+      move.addScaledVector(forward, -touchInput.y);
+    }
 
     const moving = move.lengthSq() > 0;
     if (moving) {
