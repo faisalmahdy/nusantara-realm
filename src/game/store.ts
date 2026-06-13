@@ -48,6 +48,7 @@ interface GameState {
   battleTame: () => boolean;
   battleFlee: () => void;
   endBattle: () => void;
+  feed: (uid: string) => void;
   flash: (msg: string) => void;
 }
 
@@ -226,6 +227,26 @@ export const useGame = create<GameState>((set, get) => ({
       : b?.outcome === 'lost' ? `${b.player.name} was defeated…`
       : null;
     set({ mode: 'explore', battle: null, tamingTargetId: null, message: msg });
+  },
+
+  // --- Ranch (roadmap #2): feed a party monster to raise bond + a little XP.
+  // Feeding stops giving rewards once the monster is fully content (bond 100),
+  // so it can't be button-mashed into infinite levels.
+  feed: (uid) => {
+    const m = get().party.find((x) => x.uid === uid);
+    if (!m) return;
+    if (m.bond >= 100) {
+      set({ message: `${m.nickname} is already content.` });
+      return;
+    }
+    const bond = Math.min(100, m.bond + 8);
+    const res = applyXp(m.level, m.xp, 5);
+    set((s) => ({
+      party: s.party.map((x) => (x.uid === uid ? { ...x, bond, level: res.level, xp: res.xp } : x)),
+      message: res.levelsGained > 0
+        ? `${m.nickname} grew to Lv ${res.level}!`
+        : `${m.nickname} enjoyed the treat. (Bond ${bond})`,
+    }));
   },
 
   flash: (msg) => set({ message: msg }),

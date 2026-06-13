@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-13 (battle hit juice)
+Last touched: 2026-06-13 (ranch: feed/bond)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -24,8 +24,8 @@ Last touched: 2026-06-13 (battle hit juice)
 ## State (`src/game/`)
 - `store.ts` — zustand: mode ('explore'|'taming'|'party'|'battle'), party[],
   tamedWildIds[], nearbyWildId, tamingTargetId, battle, message; actions
-  beginTaming/cancelTaming/tame, beginBattle/battleAttack/battleTame/battleFlee/
-  endBattle, flash.
+  beginTaming/cancelTaming/tame, beginBattle/battleMove/battleTame/battleFlee/
+  endBattle, feed (ranch: +bond/+XP, capped), flash.
 - `monsters.ts` — `SPECIES` roster + stats, element colors, `speciesById`.
 - `battle.ts` — pure battle engine: element pentagon + `effectiveness`,
   `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`,
@@ -38,6 +38,7 @@ Last touched: 2026-06-13 (battle hit juice)
 DOM overlay: title, controls, taming prompt, flash message, Party button+panel,
 and the taming modal. Inline-styled; `pointerEvents:auto` only on interactive bits.
 The taming modal shows a "Battle to weaken" button when the party is non-empty.
+The party panel rows show a bond bar + a Feed button (calls store `feed`).
 - `BattleScreen.tsx` — full-screen battle overlay (mounted by HUD when
   mode==='battle'): enemy + player fighters with HP bars, a battle log, and
   per-move/Tame/Flee actions; swaps to the 2D attack/hit sprite frames on a hit.

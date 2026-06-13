@@ -1,5 +1,16 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Ranch loop, first slice: Feed/bond (roadmap #2)
+- Started the raising loop: tamed monsters can now be fed to deepen the bond.
+- `store.ts` — new `feed(uid)`: +8 bond (capped 100) and +5 XP via `applyXp`
+  (rolls into level-ups). Once bond hits 100 the monster is "already content" —
+  no further bond/XP — so the button can't be mashed into infinite levels.
+- `HUD.tsx` — each party row gains a pink bond bar (0..100) + a green Feed
+  button; row reflowed to flex with the button on the right.
+- QA: tsc clean; in-browser fed Kancil 48→56 (others untouched), bond capped at
+  100 with the content message, XP accrued; console clean; direct-tame loop
+  non-regressed (empty party → tamed Watua → party 1).
+
 ## 2026-06-13 — Battle hit juice (roadmap #1 cont.)
 - Made trades read as distinct, weighty hits without touching the engine.
 - `BattleScreen.tsx` (visual-only) — watches player/enemy HP deltas to pop

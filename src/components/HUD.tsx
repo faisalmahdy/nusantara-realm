@@ -48,10 +48,19 @@ export function HUD() {
             return (
               <div key={m.uid} style={styles.partyRow}>
                 <img src={`/sprites/${sp.id}/portrait.png`} style={styles.portrait} alt={sp.name} />
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{sp.element}</span></div>
-                  <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · XP {m.xp}/{xpToNext(m.level)} · Bond {m.bond}</div>
+                  <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · XP {m.xp}/{xpToNext(m.level)}</div>
+                  <div style={styles.bondTrack} title={`Bond ${m.bond}/100`}>
+                    <div style={{ ...styles.bondFill, width: `${m.bond}%` }} />
+                  </div>
                 </div>
+                <button
+                  style={{ ...styles.feedBtn, opacity: m.bond >= 100 ? 0.5 : 1 }}
+                  onClick={() => useGame.getState().feed(m.uid)}
+                >
+                  Feed
+                </button>
               </div>
             );
           })}
@@ -106,6 +115,9 @@ const styles: Record<string, React.CSSProperties> = {
   empty: { fontSize: 12, opacity: 0.7 },
   partyRow: { display: 'flex', gap: 8, alignItems: 'center', padding: '5px 0' },
   portrait: { width: 38, height: 38, imageRendering: 'pixelated', borderRadius: 6, background: 'rgba(0,0,0,0.3)' },
+  bondTrack: { height: 5, marginTop: 3, background: 'rgba(0,0,0,0.5)', borderRadius: 3, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' },
+  bondFill: { height: '100%', background: '#e07ba0', borderRadius: 3, transition: 'width 0.3s ease' },
+  feedBtn: { background: '#6ab04c', color: '#0d1a08', border: 'none', borderRadius: 6, padding: '5px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   modalWrap: { position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.45)', pointerEvents: 'auto' },
   modal: { width: 320, background: 'linear-gradient(180deg,#1d2a1d,#10160f)', border: '1px solid rgba(212,176,106,0.55)', borderRadius: 14, padding: 18, textAlign: 'center', boxShadow: '0 12px 40px rgba(0,0,0,0.6)' },
   modalImg: { width: 120, height: 120, imageRendering: 'pixelated', objectFit: 'contain' },
