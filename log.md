@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Kepiting 3D model (7th monster ported)
+- Built `src/models/kepiting.ts` (armoured reef crab) from the in-game sprite
+  (no ref sheet): a wide domed carapace with a mottled crusty CanvasTexture +
+  cream barnacle freckles, a lighter tan belly-plate with two mask dimples,
+  cream barnacle nodules crusting the rim, a pink-red branching coral crown on
+  top, two black eyes (golden rings + catch-light) on short eyestalks, two big
+  pincer claws (segmented arms + open jaws with pink inner edges, barnacle-
+  crusted palms), and three pairs of segmented walking legs. Idle: gentle
+  breathing + claws slowly open/close. Registered `kepiting`.
+- First pass the coral crown was a tiny bump; enlarged its branches/bulbs +
+  added side nubs so it reads as a proper reef fan like the sprite.
+- Verified: tsc clean; QA front + 3/4 in model-viewer (console clean), restored
+  the viewer import after; Kepiting renders grounded in-world with the proximity
+  prompt; full begin→tame→party loop intact (party 0→1, mode→explore, tamed
+  hidden, nearby cleared). Screenshots /tmp/kepiting-v2.png, /tmp/kepiting-world.png.
+  7/12 roster now true 3D.
+
 ## 2026-06-13 — Gambang 3D model (6th monster ported)
 - Built `src/models/gambang.ts` (flower-spirit bird) from the in-game sprite (no
   ref sheet): a chibi bird whose plump body is a layered bloom of coral/peach

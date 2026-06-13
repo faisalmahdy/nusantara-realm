@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Gambang added — 6th monster)
+Last touched: 2026-06-13 (Kepiting added — 7th monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -56,6 +56,12 @@ review a different monster.
   legs. Idle: breathing + crown-bud sway + soft wing flutter. NB: petals are
   built from `SphereGeometry(0.5)` scaled to real units — sizing off a 0.1 base
   made them tiny nubs first pass.
+- `kepiting.ts` — armoured reef crab (from the sprite): wide domed carapace with
+  a mottled crusty CanvasTexture + cream barnacle freckles, lighter tan belly-
+  plate with two mask dimples, cream barnacle nodules round the rim, a pink-red
+  branching coral crown on top, two black eyes (golden rings + glint) on short
+  eyestalks, two big pincer claws (segmented arms + open jaws, barnacle-crusted),
+  three pairs of segmented walking legs. Idle: breathing + claws open/close.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -68,8 +74,8 @@ review a different monster.
   uses this for a slow wing-flap.
 
 ## Next
-- Roster porting (6/12 done: kancil, camar, matong, dugang, bamut, gambang).
-  Remaining spawn-slot species — ayaka, babur, kepiting, naris, watua, rabuas —
+- Roster porting (7/12 done: kancil, camar, matong, dugang, bamut, gambang,
+  kepiting). Remaining spawn-slot species — ayaka, babur, naris, watua, rabuas —
   are modelled from their in-game sprite + blurb (only kancil/camar have ref
   sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait yet.
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all hand-built.
