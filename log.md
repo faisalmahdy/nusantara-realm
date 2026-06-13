@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Camar model refined to v2 (roadmap #0, msg #206)
+- Continued the model-refinement pass; Camar Badai was next (in the roster AND
+  has a real ref sheet). Studied `camar_refsheet.png`.
+- Rewrote the wings from 4 sparse blades into a 7-feather vertical fan per side
+  (primaries longest through the middle) with two bright lightning-streak feathers
+  layered in — the storm-gull signature now reads clearly.
+- Fiercer face: dark slate brows tilted inward over the golden eyes. Taller
+  5-feather back-swept crest (bolt-tipped centre), a feathered neck ruff, and a
+  new curling storm wisp behind the shoulder (drifts in the idle).
+- Pointed the model-viewer at buildCamar for QA.
+- Verified: `tsc --noEmit` clean; viewer front/side shots match the sheet;
+  in-game render + console clean; core loop (tame a camar → party) intact.
+
 ## 2026-06-14 — Kancil model refined to v2 (roadmap #0, msg #202)
 - Mahdy asked to make a 3D model "a lot better"; picked the flagship Kancil
   (starter, only model with a real ref sheet) for the most impact.

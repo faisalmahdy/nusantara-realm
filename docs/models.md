@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-14 (Kancil refined to v2 — closer ref-sheet match)
+Last touched: 2026-06-14 (Camar refined to v2 — bigger lightning wings + fiercer face)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -36,10 +36,14 @@ review a different monster.
   cowlick, taller dark-rimmed cream-lined ears, and soft brows over the big amber
   eyes (+catch-light). Keeps cream muzzle/belly, black hooves, gold anklet
   front-left. Subtle idle: head bob/sway + periodic ear flick + tail sway.
-- `camar.ts` — Camar Badai storm-gull: slate body + white chest, hooked golden
-  beak, golden eyes, blue-tipped crest, swept blade-wings with electric-blue
-  lightning-streak feathers, turquoise throat gem, pennant tail, talon feet.
-  Idle: slow wing-flap.
+- `camar.ts` — Camar Badai storm-gull v2 (refined to the ref sheet). Big spread
+  wings now: a 7-feather vertical fan per side (primaries longest mid-out) with
+  two bright electric-blue lightning-streak feathers worked into the layering.
+  Fiercer face: dark slate brows tilted inward over the golden eyes (raptor
+  glare). Taller 5-feather back-swept crest (slate/white, bolt-tipped centre),
+  plus a feathered neck ruff and a curling storm wisp behind the shoulder. Keeps
+  white chest, hooked golden beak, turquoise gem, pennant tail, talon feet. Idle:
+  slow wing-beat + crest/wisp drift.
 - `matong.ts` — striped marsupial-tiger (modelled from the in-game sprite, no
   ref sheet): orange fur + black tiger stripes (CanvasTexture), cream belly,
   big ears, amber eyes, banded tail, belly-pouch with a green fern. Idle:
