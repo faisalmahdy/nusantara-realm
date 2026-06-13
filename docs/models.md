@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (per-creature idle hook + Camar wing-flap)
+Last touched: 2026-06-13 (Matong added — 3rd monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -36,6 +36,12 @@ review a different monster.
 - `camar.ts` — Camar Badai storm-gull: slate body + white chest, hooked golden
   beak, golden eyes, blue-tipped crest, swept blade-wings with electric-blue
   lightning-streak feathers, turquoise throat gem, pennant tail, talon feet.
+  Idle: slow wing-flap.
+- `matong.ts` — striped marsupial-tiger (modelled from the in-game sprite, no
+  ref sheet): orange fur + black tiger stripes (CanvasTexture), cream belly,
+  big ears, amber eyes, banded tail, belly-pouch with a green fern. Idle:
+  tail-sway + breathing. NB: mapped meshes use `mat(0xffffff,{map})` so the
+  texture isn't darkened by a base-color multiply.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.

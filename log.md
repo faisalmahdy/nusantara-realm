@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Matong 3D model (3rd monster ported)
+- Built `src/models/matong.ts` (striped marsupial-tiger forest guardian) from
+  the in-game sprite (no ref sheet exists): vibrant orange fur banded with black
+  tiger stripes via a CanvasTexture, cream chest/belly, big triangular ears,
+  large amber eyes + catch-light, dark nose, short arms with cream paws, stubby
+  feet, a banded tapered tail, and a marsupial belly-pouch with a green fern
+  sprig. Idle flourish: gentle tail-sway + slow breathing. Registered `matong`.
+- Gotcha fixed: a mapped material multiplies its base color by the texture, so
+  `mat(FUR, {map})` darkened orange×orange into maroon — set mapped meshes to
+  `mat(0xffffff, {map})` so the stripe texture shows true.
+- Verified: tsc clean; QA 3/4 + side in model-viewer (no errors); Matong renders
+  grounded in-world with the proximity prompt; full begin→tame→party loop intact
+  (party 0→1, mode→explore, tamed hidden, nearby cleared). Screenshots
+  /tmp/matong-v2.png, /tmp/matong-world.png.
+
 ## 2026-06-13 — per-creature idle hook + Camar wing-flap
 - Added a reusable per-creature idle-animation hook: a builder may set
   `group.userData.idle = (t) => {...}` referencing its own sub-meshes;
