@@ -25,6 +25,23 @@ export function effectiveness(atk: Element, def: Element): number {
   return 1.0;
 }
 
+// A battle move. `element: null` means a typeless hit (always ×1.0) — useful
+// when your element would be resisted, trading the matchup bonus for raw power.
+export interface Move {
+  name: string;
+  element: Element | null;
+  power: number; // multiplier on the attacker's atk
+}
+
+// Every monster knows a typed signature Strike (STAB) and a stronger typeless
+// Focus Blow. The choice: Strike when you have the matchup, Focus Blow when not.
+export function movesFor(element: Element): Move[] {
+  return [
+    { name: 'Strike', element, power: 1.6 },
+    { name: 'Focus Blow', element: null, power: 2.2 },
+  ];
+}
+
 export interface Combatant {
   uid: string; // party uid for the player; wildId for the enemy
   speciesId: string;
@@ -35,6 +52,7 @@ export interface Combatant {
   maxHp: number;
   atk: number;
   def: number;
+  moves: Move[];
 }
 
 // Per-level stat growth (kept gentle for the scaffold).
@@ -50,15 +68,22 @@ function derive(species: MonsterSpecies, level: number): { maxHp: number; atk: n
 export function makeCombatant(uid: string, speciesId: string, level: number): Combatant {
   const sp = speciesById(speciesId);
   const d = derive(sp, level);
-  return { uid, speciesId, name: sp.name, element: sp.element, level, hp: d.maxHp, maxHp: d.maxHp, atk: d.atk, def: d.def };
+  return { uid, speciesId, name: sp.name, element: sp.element, level, hp: d.maxHp, maxHp: d.maxHp, atk: d.atk, def: d.def, moves: movesFor(sp.element) };
 }
 
-/** Damage `attacker` deals to `defender` this turn, including element matchup. */
-export function computeDamage(attacker: Combatant, defender: Combatant): { damage: number; eff: number } {
-  const eff = effectiveness(attacker.element, defender.element);
-  const raw = attacker.atk * 1.6 - defender.def * 0.8;
+/** Damage `attacker` deals to `defender` with `move`, including element matchup. */
+export function computeDamage(attacker: Combatant, defender: Combatant, move: Move): { damage: number; eff: number } {
+  const eff = move.element ? effectiveness(move.element, defender.element) : 1.0;
+  const raw = attacker.atk * move.power - defender.def * 0.8;
   const damage = Math.max(1, Math.round(raw * eff));
   return { damage, eff };
+}
+
+/** Greedy enemy AI: pick the move that deals the most damage to the target. */
+export function pickEnemyMove(enemy: Combatant, target: Combatant): Move {
+  return enemy.moves.reduce((best, m) =>
+    computeDamage(enemy, target, m).damage > computeDamage(enemy, target, best).damage ? m : best,
+  enemy.moves[0]);
 }
 
 /** A short human-readable note on the matchup, for the battle log. */

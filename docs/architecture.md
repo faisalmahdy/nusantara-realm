@@ -28,7 +28,8 @@ Last touched: 2026-06-13 (turn-based battle scaffold)
   endBattle, flash.
 - `monsters.ts` — `SPECIES` roster + stats, element colors, `speciesById`.
 - `battle.ts` — pure battle engine: element pentagon + `effectiveness`,
-  `makeCombatant` (level-scaled stats), `computeDamage`, `tameChance`.
+  `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`,
+  `pickEnemyMove` (greedy AI), `tameChance`, XP (`xpForDefeating`/`applyXp`).
 - `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit`
   (shared refs read every frame, not React state).
 - `useKeyboard.ts` — WASD/arrows/E → a mutable ref (no re-renders).

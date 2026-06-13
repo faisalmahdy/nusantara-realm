@@ -1,5 +1,21 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Battle move-sets (roadmap #1 cont., msg #182)
+- Replaced the single "Attack" with a 2-move kit per monster, making each turn
+  a real choice instead of a button-mash.
+- `battle.ts` — `Move {name, element|null, power}`; `movesFor(element)` gives a
+  typed **Strike** (STAB, power 1.6, uses the element pentagon) and a typeless
+  **Focus Blow** (power 2.2, always ×1.0). `computeDamage` now takes a move
+  (typeless = no matchup). `pickEnemyMove` = greedy AI (best-damage move).
+- `store.ts` — `battleAttack`→`battleMove(moveIndex)`; player picks a move,
+  enemy counters with `pickEnemyMove`; tame-fail counter uses it too.
+- `BattleScreen.tsx` — one button per move (name + type label) then Tame/Flee.
+- Verified in-browser: Forest Kancil vs Spirit Gambang — Strike resisted for 9
+  ("not very effective"), typeless Focus Blow hit 21 (2.3× more); Gambang's
+  Spirit Strike was super-effective and KO'd the Lv1 Kancil (matchups bite both
+  ways). Direct-tame path non-regressed. tsc + console clean. Screenshot
+  /tmp/battle-moves.png.
+
 ## 2026-06-13 — Battle XP + level-up (roadmap #1 cont., msg #180)
 - Winning a battle (enemy faints) or taming a weakened enemy now awards the lead
   party monster XP, which rolls into level-ups that raise its stats next fight.

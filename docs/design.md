@@ -27,9 +27,12 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    modal's "Battle to weaken" button (needs ≥1 party monster; empty party still
    direct-tames). XP + level-up DONE (2026-06-13): winning OR taming awards the
    lead monster XP (`xpForDefeating`/`xpToNext`/`applyXp` in battle.ts), rolling
-   into stat-raising level-ups; party panel shows XP progress. STILL TO DO:
-   move-sets (not just one Attack), staggered per-hit animation/juice, persist
-   party HP between battles, sfx/particles, mobile button sizing.
+   into stat-raising level-ups; party panel shows XP progress. Move-sets DONE
+   (2026-06-13): each monster has a typed Strike (STAB, ×matchup) and a typeless
+   Focus Blow (always ×1.0 but higher power) — pick Focus Blow when your element
+   is resisted; enemy AI greedily picks its best move (`movesFor`/`pickEnemyMove`
+   in battle.ts). STILL TO DO: staggered per-hit animation/juice, persist party
+   HP between battles, sfx/particles, mobile button sizing.
 2. **Ranch / bonding loop** — feed, raise bond, gain XP, level up the party.
 3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
    assets exist); wire level-gated evolution.

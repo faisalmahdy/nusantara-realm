@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
-  xpForDefeating, applyXp,
+  xpForDefeating, applyXp, pickEnemyMove,
 } from './battle';
 
 export interface TamedMonster {
@@ -44,7 +44,7 @@ interface GameState {
   cancelTaming: () => void;
   tame: (speciesId: string, wildId: string) => boolean;
   beginBattle: (wildId: string) => void;
-  battleAttack: () => void;
+  battleMove: (moveIndex: number) => void;
   battleTame: () => boolean;
   battleFlee: () => void;
   endBattle: () => void;
@@ -124,16 +124,17 @@ export const useGame = create<GameState>((set, get) => ({
     });
   },
 
-  battleAttack: () => {
+  battleMove: (moveIndex) => {
     const b = get().battle;
     if (!b || b.turn !== 'player') return;
     const player = { ...b.player };
     const enemy = { ...b.enemy };
     const log = [...b.log];
 
-    const hit = computeDamage(player, enemy);
+    const move = player.moves[moveIndex] ?? player.moves[0];
+    const hit = computeDamage(player, enemy, move);
     enemy.hp = Math.max(0, enemy.hp - hit.damage);
-    log.push(`${player.name} attacks for ${hit.damage}.${effectivenessNote(hit.eff)}`);
+    log.push(`${player.name} used ${move.name} for ${hit.damage}.${effectivenessNote(hit.eff)}`);
 
     if (enemy.hp <= 0) {
       log.push(`The wild ${enemy.name} fainted and fled.`);
@@ -149,9 +150,10 @@ export const useGame = create<GameState>((set, get) => ({
       return;
     }
 
-    const back = computeDamage(enemy, player);
+    const eMove = pickEnemyMove(enemy, player);
+    const back = computeDamage(enemy, player, eMove);
     player.hp = Math.max(0, player.hp - back.damage);
-    log.push(`Wild ${enemy.name} hits back for ${back.damage}.${effectivenessNote(back.eff)}`);
+    log.push(`Wild ${enemy.name} used ${eMove.name} for ${back.damage}.${effectivenessNote(back.eff)}`);
 
     if (player.hp <= 0) {
       log.push(`${player.name} fainted!`);
@@ -197,9 +199,10 @@ export const useGame = create<GameState>((set, get) => ({
     const enemy = { ...b.enemy };
     const player = { ...b.player };
     log.push(`${species.name} broke free!`);
-    const back = computeDamage(enemy, player);
+    const eMove = pickEnemyMove(enemy, player);
+    const back = computeDamage(enemy, player, eMove);
     player.hp = Math.max(0, player.hp - back.damage);
-    log.push(`Wild ${enemy.name} hits back for ${back.damage}.${effectivenessNote(back.eff)}`);
+    log.push(`Wild ${enemy.name} used ${eMove.name} for ${back.damage}.${effectivenessNote(back.eff)}`);
     if (player.hp <= 0) {
       log.push(`${player.name} fainted!`);
       set({ battle: { ...b, player, enemy, log, turn: 'over', outcome: 'lost' } });

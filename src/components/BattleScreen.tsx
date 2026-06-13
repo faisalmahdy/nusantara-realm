@@ -40,7 +40,12 @@ export function BattleScreen() {
 
         {!over ? (
           <div style={s.actions}>
-            <button style={{ ...s.btn, ...s.attack }} disabled={acting} onClick={() => withFx(() => useGame.getState().battleAttack())}>Attack</button>
+            {player.moves.map((m, i) => (
+              <button key={m.name} style={{ ...s.btn, ...s.attack }} disabled={acting} onClick={() => withFx(() => useGame.getState().battleMove(i))}>
+                {m.name}
+                <span style={s.moveType}>{m.element ?? 'Typeless'}</span>
+              </button>
+            ))}
             <button style={{ ...s.btn, ...s.tame }} disabled={acting} onClick={() => withFx(() => useGame.getState().battleTame())}>Tame</button>
             <button style={{ ...s.btn, ...s.flee }} disabled={acting} onClick={() => useGame.getState().battleFlee()}>Flee</button>
           </div>
@@ -94,7 +99,8 @@ const s: Record<string, React.CSSProperties> = {
   panel: { background: 'rgba(12,16,12,0.95)', borderTop: '1px solid rgba(212,176,106,0.5)', padding: 14, display: 'flex', flexDirection: 'column', gap: 12 },
   log: { minHeight: 54, fontSize: 14, lineHeight: 1.4 },
   actions: { display: 'flex', gap: 10, justifyContent: 'center' },
-  btn: { border: 'none', borderRadius: 8, padding: '12px 22px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: font, minWidth: 110 },
+  btn: { border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: font, minWidth: 110, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, lineHeight: 1.1 },
+  moveType: { fontSize: 10, fontWeight: 600, opacity: 0.7 },
   attack: { background: '#d4b06a', color: '#1a1208' },
   tame: { background: '#6ab04c', color: '#0d1a08' },
   flee: { background: 'transparent', color: '#e8e6d8', border: '1px solid rgba(255,255,255,0.3)' },
