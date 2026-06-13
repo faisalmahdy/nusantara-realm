@@ -1,5 +1,17 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Bamut 3D model (5th monster ported)
+- Built `src/models/bamut.ts` (mossy boar earth-beast) from the in-game sprite
+  (no ref sheet): stocky front-heavy quadruped with a mottled moss CanvasTexture
+  hide, shoulder hump, tan snout barrel + nose pad with nostrils, big amber
+  eyes, upturned cream tusks, pointed ears, dark hooves, a curly tail, and red
+  mushrooms + a fern sprig sprouting from its back. Idle: heavy breathing +
+  tail curl-wiggle. Registered `bamut`.
+- Verified: tsc clean; QA 3/4 + back in model-viewer (no errors); Bamut renders
+  grounded in-world with the proximity prompt; full begin→tame→party loop intact
+  (party 0→1, mode→explore, tamed hidden, nearby cleared). Screenshots
+  /tmp/bamut-34.png, /tmp/bamut-back.png. 5/12 roster now true 3D.
+
 ## 2026-06-13 — Dugang 3D model (4th monster ported)
 - Built `src/models/dugang.ts` (dugong/manatee sea-spirit) from the in-game
   sprite (no ref sheet): plump blue-grey body + lighter belly, broad whiskered

@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Dugang added — 4th monster)
+Last touched: 2026-06-13 (Bamut added — 5th monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -46,6 +46,9 @@ review a different monster.
   body, whiskered snout + nostrils, pale-blue eyes, flippers, tail fluke,
   seaweed necklace + scallop-shell pendant, turquoise water-swirl wisps. Idle:
   breathing + wisp sway. NB: necklace beads sit on a frontal surface arc.
+- `bamut.ts` — mossy boar (from the sprite): front-heavy quadruped, mottled moss
+  CanvasTexture hide, tan snout + nostrils, amber eyes, cream tusks, hooves,
+  curly tail, mushrooms + fern on its back. Idle: breathing + tail wiggle.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -58,10 +61,8 @@ review a different monster.
   uses this for a slow wing-flap.
 
 ## Next
-- More in-roster monsters: only `kancil` + `camar` have both a ref sheet AND a
-  wild-spawn slot. Others (matong, dugang, gambang, …) must be modelled from
-  their in-game sprites + species blurb. Penyu/Ubur/etc. have sheets but no
-  roster slot or taming-modal portrait yet — adding them needs a roster + a
-  portrait fallback for sheet-only species.
-- (Decision, msg #138) No paid/credit-gated image-to-3D — all monsters are
-  hand-built in Three.js from the reference sheets.
+- Roster porting (5/12 done: kancil, camar, matong, dugang, bamut). Remaining
+  spawn-slot species — gambang, ayaka, babur, kepiting, naris, watua, rabuas —
+  are modelled from their in-game sprite + blurb (only kancil/camar have ref
+  sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait yet.
+- (Decision, msg #138) No paid/credit-gated image-to-3D — all hand-built.
