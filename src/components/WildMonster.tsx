@@ -2,6 +2,8 @@ import { useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Sprite3D } from './Sprite3D';
+import { MonsterModel } from './MonsterModel';
+import { hasModel } from '../models/registry';
 import { playerPos, WildSpawn } from '../game/shared';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
@@ -47,7 +49,11 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
 
   return (
     <group ref={group} position={[spawn.x, 0, spawn.z]}>
-      <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
+      {hasModel(spawn.speciesId) ? (
+        <MonsterModel speciesId={spawn.speciesId} height={2.4} />
+      ) : (
+        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
+      )}
       {/* element ring on the ground */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
         <ringGeometry args={[1.0, 1.25, 24]} />

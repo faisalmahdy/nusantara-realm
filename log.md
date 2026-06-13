@@ -1,5 +1,15 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — model registry: 3D Kancil renders in the world
+- Added `src/models/registry.ts` (species id → builder, `hasModel`) and
+  `src/components/MonsterModel.tsx` (builds mesh, normalises to world height via
+  Box3, shadows, `<primitive>`). `WildMonster` now renders the 3D model when a
+  builder exists, else falls back to the 2D billboard. Kancil is the first ported.
+- Exposed `cameraState` on `window.__realm` for QA orbit control.
+- Verified: tsc clean; Kancil mesh renders grounded in-world, no console errors;
+  proximity prompt fires; drove begin→tame→party (party=1, mode back to explore,
+  nearby cleared — race fix holds). Screenshot /tmp/realm-kancil-clear.png.
+
 ## 2026-06-13 — Kancil v1 refine + image-to-3D decision (msg #138)
 - Mahdy: no paid/credit-gated image-to-3D generators. All reachable ones (Meshy/
   Tripo) gate behind small free caps; open-source (TripoSR/InstantMesh/Hunyuan3D)

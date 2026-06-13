@@ -34,8 +34,14 @@ review a different monster.
   plump bean body, cream muzzle/belly, batik on flank + rump, short legs tucked
   under the body, gold anklet front-left.
 
+## Registry (wired)
+- `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
+- `src/components/MonsterModel.tsx` builds the mesh, normalises it to a target
+  world height (Box3), enables shadows, renders via `<primitive>`.
+- `WildMonster` renders `MonsterModel` when `hasModel`, else the 2D billboard.
+  Port a species by adding its builder to the registry.
+
 ## Next
-- Add a model registry so the game/world can render a 3D model instead of the
-  billboard, then port monsters one by one. Camar, Penyu, Ubur next (have sheets).
+- Build Camar, Penyu, Ubur builders (have ref sheets), add to the registry.
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all monsters are
   hand-built in Three.js from the reference sheets.
