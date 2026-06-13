@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Rabuas added — 12th & final monster; full roster now true 3D)
+Last touched: 2026-06-14 (Kancil refined to v2 — closer ref-sheet match)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -29,10 +29,13 @@ Open `http://localhost:5181/model-viewer.html`. Swap which builder it imports to
 review a different monster.
 
 ## Done
-- `kancil.ts` — Kancil Emas v1. Chibi proportions matching the ref sheet: big
-  rounded head, large amber eyes (+catch-light), big cream-lined leaf ears,
-  plump bean body, cream muzzle/belly, batik on flank + rump, short legs tucked
-  under the body, gold anklet front-left.
+- `kancil.ts` — Kancil Emas v2 (refined to the ref sheet). Deer silhouette now:
+  fuller front chest tapering to a batik-diamond rump, a cream chest blaze, and
+  crisper concentric batik diamonds (3 nested + pip). Face gains the chimera's
+  flared cheek ruff (gold→cream tufts swept back along the jaw), a forehead
+  cowlick, taller dark-rimmed cream-lined ears, and soft brows over the big amber
+  eyes (+catch-light). Keeps cream muzzle/belly, black hooves, gold anklet
+  front-left. Subtle idle: head bob/sway + periodic ear flick + tail sway.
 - `camar.ts` — Camar Badai storm-gull: slate body + white chest, hooked golden
   beak, golden eyes, blue-tipped crest, swept blade-wings with electric-blue
   lightning-streak feathers, turquoise throat gem, pennant tail, talon feet.

@@ -53,9 +53,12 @@ window.addEventListener('pointermove', (e) => {
 });
 
 const clock = new THREE.Clock();
+let elapsed = 0;
 function animate() {
   const dt = clock.getDelta();
+  elapsed += dt;
   if (autoRotate) model.rotation.y += dt * 0.6;
+  (model.userData.idle as ((t: number) => void) | undefined)?.(elapsed);
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }

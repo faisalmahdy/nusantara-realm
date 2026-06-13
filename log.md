@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Kancil model refined to v2 (roadmap #0, msg #202)
+- Mahdy asked to make a 3D model "a lot better"; picked the flagship Kancil
+  (starter, only model with a real ref sheet) for the most impact.
+- Studied `kancil_refsheet.png` and rewrote `buildKancil()` from the plump-bean
+  v1 to a true mousedeer silhouette: fuller front chest tapering to a batik rump,
+  a cream chest blaze, crisper concentric batik diamonds (3 nested + centre pip).
+- Added the chimera's signature flared cheek ruff (gold→cream tufts swept back
+  along the jaw), a forehead cowlick, taller dark-rimmed cream-lined ears, and
+  soft brows over the amber eyes. First pass the cheek tufts splayed out like
+  horizontal paddles — re-angled them (rot.x -2.3) to hug the cheek.
+- Gave it a subtle idle (head bob/sway + periodic ear flick + tail sway) and
+  wired the model-viewer loop to run `userData.idle` so it shows in QA.
+- Verified: `tsc --noEmit` clean; viewer front/3-4/side shots match the sheet;
+  in-game render + console clean; core loop (beginTaming→tame→party) intact.
+
 ## 2026-06-14 — Mobile touch controls (roadmap #5)
 - The game was keyboard-only — literally unplayable on a phone, which is Mahdy's
   primary test device. Closed that gap.
