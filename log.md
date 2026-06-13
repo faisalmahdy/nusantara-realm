@@ -1,5 +1,23 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Gambang 3D model (6th monster ported)
+- Built `src/models/gambang.ts` (flower-spirit bird) from the in-game sprite (no
+  ref sheet): a chibi bird whose plump body is a layered bloom of coral/peach
+  petals (four overlapping rings of flattened spheres, lower rows splayed out),
+  a petal ruff radiating around the face, a crown of upright petals topped by
+  golden flower-buds, big teal eyes + catch-light, a small hooked golden beak,
+  green leaf wings + a fanned leaf tail, and golden talon legs. Idle: gentle
+  breathing + crown-bud sway + soft wing flutter. Registered `gambang`.
+- Gotcha: first pass the petals came out as tiny nubs — I'd scaled them off a
+  `SphereGeometry(0.1)` base, so the real petals were ~2cm. Rebuilt `petal()` on
+  a `SphereGeometry(0.5)` base sized in true world units; body now reads as an
+  artichoke-like bloom.
+- Verified: tsc clean; QA front + 3/4 in model-viewer (no errors), restored the
+  viewer import after; Gambang renders grounded in-world with the proximity
+  prompt; full begin→tame→party loop intact (party 0→1, mode→explore, tamed
+  hidden, nearby cleared); console clean. Screenshots /tmp/gambang-front.png,
+  /tmp/gambang-world.png. 6/12 roster now true 3D.
+
 ## 2026-06-13 — Bamut 3D model (5th monster ported)
 - Built `src/models/bamut.ts` (mossy boar earth-beast) from the in-game sprite
   (no ref sheet): stocky front-heavy quadruped with a mottled moss CanvasTexture
