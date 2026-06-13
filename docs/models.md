@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Kancil v1 refine)
+Last touched: 2026-06-13 (Camar added)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -33,6 +33,9 @@ review a different monster.
   rounded head, large amber eyes (+catch-light), big cream-lined leaf ears,
   plump bean body, cream muzzle/belly, batik on flank + rump, short legs tucked
   under the body, gold anklet front-left.
+- `camar.ts` — Camar Badai storm-gull: slate body + white chest, hooked golden
+  beak, golden eyes, blue-tipped crest, swept blade-wings with electric-blue
+  lightning-streak feathers, turquoise throat gem, pennant tail, talon feet.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -42,6 +45,10 @@ review a different monster.
   Port a species by adding its builder to the registry.
 
 ## Next
-- Build Camar, Penyu, Ubur builders (have ref sheets), add to the registry.
+- More in-roster monsters: only `kancil` + `camar` have both a ref sheet AND a
+  wild-spawn slot. Others (matong, dugang, gambang, …) must be modelled from
+  their in-game sprites + species blurb. Penyu/Ubur/etc. have sheets but no
+  roster slot or taming-modal portrait yet — adding them needs a roster + a
+  portrait fallback for sheet-only species.
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all monsters are
   hand-built in Three.js from the reference sheets.

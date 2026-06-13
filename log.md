@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Camar storm-gull 3D model (2nd monster ported)
+- Built `src/models/camar.ts` (Camar Badai): slate body + white chest, hooked
+  golden beak, golden eyes, blue-tipped spiky crest, swept blade-wings with
+  electric-blue lightning-streak feathers, turquoise throat gem, pennant tail,
+  talon feet. Registered `camar` in the model registry.
+- Note: only kancil + camar have BOTH a ref sheet and a wild-spawn slot. Sheet-
+  only species (penyu/ubur/…) need a roster slot + taming-modal portrait before
+  they can be added — captured in docs/models.md Next. (Built a penyu.ts this
+  run, then removed it since it had nowhere to render + no modal portrait.)
+- Verified: tsc clean; QA turntable 3/4 + back in model-viewer (no errors);
+  Camar renders grounded in-world; drove begin→tame→party (party=1, explore,
+  nearby cleared). Screenshots /tmp/camar-34.png, /tmp/camar-world2.png.
+
 ## 2026-06-13 — model registry: 3D Kancil renders in the world
 - Added `src/models/registry.ts` (species id → builder, `hasModel`) and
   `src/components/MonsterModel.tsx` (builds mesh, normalises to world height via
