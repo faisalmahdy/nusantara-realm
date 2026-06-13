@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Ayaka 3D model (9th monster ported)
+- Built `src/models/ayaka.ts` (dancing flame-spirit ram-bird) from the in-game
+  sprite/portrait: a fluffy golden body with red flame-swirl batik markings
+  (CanvasTexture), cream belly, a ruffled tuft skirt round the lower body, big
+  curling ram horns (ridged partial-torus), big amber eyes + catch-light, small
+  muzzle + nose, fluffy cheeks, a flickering flame crest on the head, a dramatic
+  phoenix-like flame tail-plume sweeping up/back, and two orange talon legs.
+  Flames are flattened emissive cones arranged in a fan (`flameFan` helper).
+  Idle: dancing side-sway + breathing + crest flicker + tail sway. Registered
+  `ayaka`. 9/12 roster now true 3D.
+- Verified: tsc clean; QA front + 3/4 + back-3/4 in model-viewer (tail-plume
+  reads great from behind; console clean), restored the viewer import after;
+  Ayaka renders in-world at spawn index 6 (wild-ayaka-6) with the proximity
+  prompt; full begin→tame→party loop intact (party 0→1 in 3 tries, mode→explore,
+  tamed flagged, nearby cleared); console clean. Screenshots /tmp/ayaka-front.png,
+  /tmp/ayaka-back.png, /tmp/ayaka-world.png.
+
 ## 2026-06-13 — Babur 3D model (8th monster ported)
 - Built `src/models/babur.ts` (winged cloud-piglet) from the in-game sprite. The
   roster blurb calls Babur "tusked and territorial," but the art is a gentle

@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Babur added — 8th monster)
+Last touched: 2026-06-13 (Ayaka added — 9th monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -70,6 +70,14 @@ review a different monster.
   plume fan sweeping up/back). Idle: breathing + gentle wing-flap + tail wiggle.
   NB: feathers are broadened cones (scale 1.4,1,0.55) fanned in the vertical
   plane + splayed outward so the wing reads from front and 3/4, not just side.
+- `ayaka.ts` — dancing flame-spirit ram-bird (from the sprite): fluffy golden
+  body with red flame-swirl batik markings (CanvasTexture), cream belly, a
+  ruffled tuft skirt round the lower body, big curling ram horns (ridged partial
+  torus), big amber eyes + catch-light, small muzzle + nose, fluffy cheeks, a
+  flickering flame crest on the head, a dramatic phoenix-like flame tail-plume
+  sweeping up/back, and two orange talon legs. Flames are flattened emissive
+  cones in a fan (`flameFan`). Idle: dancing side-sway + breathing + crest
+  flicker + tail sway.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -82,8 +90,8 @@ review a different monster.
   uses this for a slow wing-flap.
 
 ## Next
-- Roster porting (8/12 done: kancil, camar, matong, dugang, bamut, gambang,
-  kepiting, babur). Remaining spawn-slot species — ayaka, naris, watua, rabuas —
+- Roster porting (9/12 done: kancil, camar, matong, dugang, bamut, gambang,
+  kepiting, babur, ayaka). Remaining spawn-slot species — naris, watua, rabuas —
   are modelled from their in-game sprite + blurb (only kancil/camar have ref
   sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait yet.
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all hand-built.
