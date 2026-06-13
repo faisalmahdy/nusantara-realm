@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-13 (turn-based battle scaffold)
+Last touched: 2026-06-13 (battle hit juice)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -40,4 +40,7 @@ and the taming modal. Inline-styled; `pointerEvents:auto` only on interactive bi
 The taming modal shows a "Battle to weaken" button when the party is non-empty.
 - `BattleScreen.tsx` — full-screen battle overlay (mounted by HUD when
   mode==='battle'): enemy + player fighters with HP bars, a battle log, and
-  Attack/Tame/Flee actions; swaps to the 2D attack/hit sprite frames on a hit.
+  per-move/Tame/Flee actions; swaps to the 2D attack/hit sprite frames on a hit.
+  Hit juice (visual-only): tracks HP deltas to pop staggered floating damage
+  numbers (enemy first, player counter delayed ~280ms) + a flash/shake on the
+  struck fighter.

@@ -1,6 +1,6 @@
 # Design & roadmap
 
-Last touched: 2026-06-13 (turn-based battle scaffold)
+Last touched: 2026-06-13 (battle hit juice)
 
 ## Pillars (from Mahdy, msg #126/#128/#130)
 - **Pokémon-style taming** — roam, find wild monsters, win them over.
@@ -31,8 +31,10 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    (2026-06-13): each monster has a typed Strike (STAB, ×matchup) and a typeless
    Focus Blow (always ×1.0 but higher power) — pick Focus Blow when your element
    is resisted; enemy AI greedily picks its best move (`movesFor`/`pickEnemyMove`
-   in battle.ts). STILL TO DO: staggered per-hit animation/juice, persist party
-   HP between battles, sfx/particles, mobile button sizing.
+   in battle.ts). Hit juice DONE (2026-06-13): staggered floating damage numbers
+   (your strike pops first, then the counter) + a brightness-flash/shake on the
+   struck fighter (BattleScreen.tsx, visual-only). STILL TO DO: persist party HP
+   between battles, sfx/particles, mobile button sizing.
 2. **Ranch / bonding loop** — feed, raise bond, gain XP, level up the party.
 3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
    assets exist); wire level-gated evolution.

@@ -1,5 +1,19 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Battle hit juice (roadmap #1 cont.)
+- Made trades read as distinct, weighty hits without touching the engine.
+- `BattleScreen.tsx` (visual-only) — watches player/enemy HP deltas to pop
+  rising/fading "-N" floating damage numbers; the store resolves both hits in
+  one update, so the enemy's number shows immediately and the player's
+  counter-hit number is staggered ~280ms later. The struck fighter gets a brief
+  brightness-flash + shake. New `FloatingDamage` sub-component; sprite wrapped in
+  a relative container so numbers position over it.
+- No engine/store changes → zero risk to battle math or the tame loop.
+- QA: tsc --noEmit clean; in-browser Kancil(Lv9 Forest) vs Bamut(Earth) — Strike
+  super-effective 32, Bamut greedily picked Focus Blow (typeless 40) over its
+  resisted Strike; floating "-N" nodes confirmed in DOM; console clean;
+  direct-tame loop non-regressed (empty party → tamed Watua → party 1).
+
 ## 2026-06-13 — Battle move-sets (roadmap #1 cont., msg #182)
 - Replaced the single "Attack" with a 2-move kit per monster, making each turn
   a real choice instead of a button-mash.
