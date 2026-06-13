@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Watua added — 11th monster)
+Last touched: 2026-06-13 (Rabuas added — 12th & final monster; full roster now true 3D)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -93,6 +93,13 @@ review a different monster.
   moss patches, and a bushy low-poly leaf canopy (icosahedron clumps) crowning
   the head with willow drooping strands. Idle: slow sway + canopy rustle + beard
   drift.
+- `rabuas.ts` — Rafflesia corpse-flower forest beast (from the sprite): a warty
+  green body (sphere + 12 wart bumps) on four stubby vine legs ending in bulbous
+  leaf-pod feet, crowned by a five-petal Rafflesia bloom (deep-red cream-spotted
+  petals via CanvasTexture, cupped forward) ruffing a toothy green toad-face (big
+  amber eyes + catch-light, heavy brow, nostrils, dark grin with cream fangs), and
+  a couple of curling vine tendrils. Idle: breathing + bloom flex/sway + face bob
+  + tendril sway. NB: lower petals tuck behind the body — bloom reads best at 3/4.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -105,8 +112,9 @@ review a different monster.
   uses this for a slow wing-flap.
 
 ## Next
-- Roster porting (11/12 done: kancil, camar, matong, dugang, bamut, gambang,
-  kepiting, babur, ayaka, naris, watua). Last remaining spawn-slot species —
-  rabuas — is modelled from its in-game sprite + blurb (only kancil/camar have
-  ref sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait.
+- Roster porting COMPLETE (12/12): kancil, camar, matong, dugang, bamut, gambang,
+  kepiting, babur, ayaka, naris, watua, rabuas. Every roster/spawn-slot species
+  now renders as a from-scratch low-poly 3D model with a subtle idle flourish.
+  Penyu/Ubur/etc. have ref sheets but no roster slot or modal portrait (port only
+  if they get added to the roster).
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all hand-built.

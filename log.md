@@ -1,5 +1,24 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Rabuas 3D model (12th & final monster — roster COMPLETE)
+- Built `src/models/rabuas.ts` (Rafflesia corpse-flower forest beast) from the
+  in-game sprite + blurb: a warty green body (sphere + 12 wart bumps) on four
+  stubby vine legs ending in bulbous leaf-pod feet, crowned by a five-petal
+  Rafflesia bloom (deep-red cream-spotted petals via CanvasTexture, cupped
+  forward) ruffing a toothy green toad-face (big amber eyes + catch-light, heavy
+  brow, nostrils, dark grin with cream fangs), plus a couple of curling vine
+  tendrils. Idle: breathing + bloom flex/sway + face bob + tendril sway.
+  Registered `rabuas`. Hit the TS6133 unused-const trap once more (PETAL only
+  used as a hex string inside petalTexture) — removed the const.
+- Verified: tsc clean; QA front + 3/4 in model-viewer (bloom reads best at 3/4 —
+  the lower petals tuck behind the body in straight-front; face/body/legs read
+  well; console clean), restored the viewer import after; Rabuas renders in-world
+  at spawn index 11 (wild-rabuas-11, x≈21.7 z≈-12.5) with the proximity prompt;
+  full begin→tame→party loop intact (party 0→1 rabuas, mode→explore, nearby
+  cleared); console clean. Screenshots /tmp/rabuas-front.png, /tmp/rabuas-34.png.
+- **Milestone: all 12 roster monsters are now true from-scratch 3D models, each
+  with a subtle idle flourish.** Roster porting (the core of msg #164) is done.
+
 ## 2026-06-13 — Watua 3D model (11th monster ported)
 - Built `src/models/watua.ts` (treant / root-spirit) from the in-game sprite.
   The roster blurb calls Watua a "stone-spirit," but the art is a wood/root
