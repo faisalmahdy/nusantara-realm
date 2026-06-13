@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Naris 3D model (10th monster ported)
+- Built `src/models/naris.ts` (storm-touched coiled naga) from the in-game
+  sprite: an olive-green body coiled into two stacked banded toruses (red-brown
+  chevron CanvasTexture), cream belly plates up the front, an upright torso
+  rising to a frilled dragon head (spike fan) with big green eyes + catch-light,
+  snout + nostrils, golden brow scales, a golden storm-smoke wisp (alternating
+  partial-torus arcs) curling up from the crown, two little clawed arms resting
+  on the coil, and a tapering tail curling up at the back with a golden tuft.
+  Idle: breathing + smoke wisp curl/spin + head sway + tail drift. Registered
+  `naris`. 10/12 roster now true 3D.
+- Verified: tsc clean; QA front + 3/4 in model-viewer (the coiled banded body +
+  smoke wisp read great; console clean), restored the viewer import after; Naris
+  renders in-world at spawn index 9 (wild-naris-9) with the proximity prompt;
+  full begin→tame→party loop intact (party 0→1, mode→explore, tamed flagged,
+  nearby cleared); console clean. Screenshots /tmp/naris-front.png,
+  /tmp/naris-34.png, /tmp/naris-world.png.
+
 ## 2026-06-13 — Ayaka 3D model (9th monster ported)
 - Built `src/models/ayaka.ts` (dancing flame-spirit ram-bird) from the in-game
   sprite/portrait: a fluffy golden body with red flame-swirl batik markings

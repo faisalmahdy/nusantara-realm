@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Ayaka added — 9th monster)
+Last touched: 2026-06-13 (Naris added — 10th monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -78,6 +78,13 @@ review a different monster.
   sweeping up/back, and two orange talon legs. Flames are flattened emissive
   cones in a fan (`flameFan`). Idle: dancing side-sway + breathing + crest
   flicker + tail sway.
+- `naris.ts` — storm-touched coiled naga (from the sprite): an olive-green
+  body coiled into two stacked banded toruses (red-brown chevron CanvasTexture),
+  cream belly plates up the front, a frilled dragon head (spike fan) with big
+  green eyes + catch-light, snout + nostrils, golden brow scales, a golden
+  storm-smoke wisp (alternating partial-torus arcs) curling up from the crown,
+  two little clawed arms resting on the coil, and a tapering tail curling up at
+  the back. Idle: breathing + smoke wisp curl/spin + head sway + tail drift.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.
@@ -90,8 +97,8 @@ review a different monster.
   uses this for a slow wing-flap.
 
 ## Next
-- Roster porting (9/12 done: kancil, camar, matong, dugang, bamut, gambang,
-  kepiting, babur, ayaka). Remaining spawn-slot species — naris, watua, rabuas —
+- Roster porting (10/12 done: kancil, camar, matong, dugang, bamut, gambang,
+  kepiting, babur, ayaka, naris). Remaining spawn-slot species — watua, rabuas —
   are modelled from their in-game sprite + blurb (only kancil/camar have ref
   sheets). Penyu/Ubur/etc. have sheets but no roster slot or modal portrait yet.
 - (Decision, msg #138) No paid/credit-gated image-to-3D — all hand-built.

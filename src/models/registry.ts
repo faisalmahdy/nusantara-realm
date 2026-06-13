@@ -8,6 +8,7 @@ import { buildGambang } from './gambang';
 import { buildKepiting } from './kepiting';
 import { buildBabur } from './babur';
 import { buildAyaka } from './ayaka';
+import { buildNaris } from './naris';
 
 // Maps a species id to its from-scratch Three.js builder. Species absent from
 // this map still render as 2D billboards in the world (ported over time).
@@ -21,6 +22,7 @@ export const MODEL_BUILDERS: Record<string, () => THREE.Group> = {
   kepiting: buildKepiting,
   babur: buildBabur,
   ayaka: buildAyaka,
+  naris: buildNaris,
 };
 
 export function hasModel(id: string): boolean {
