@@ -1,0 +1,31 @@
+# Design & roadmap
+
+Last touched: 2026-06-13
+
+## Pillars (from Mahdy, msg #126/#128/#130)
+- **Pokémon-style taming** — roam, find wild monsters, win them over.
+- **Monster Rancher-style raising** — bond, level, care for the roster.
+- **Fable-style open world** — continuous explorable 3D realm.
+- HD-2D: 2D Nusantara art as billboards in a true 3D world.
+
+## v0 (shipped 2026-06-13)
+Explorable overworld, follow camera w/ drag-orbit, player walk frames,
+12 wild monsters bobbing in a ring, proximity taming prompt, taming modal
+(species stats + treat/tame), party panel. Taming odds scale with rarity.
+
+## Roadmap (priority order — pick ONE per loop iteration)
+1. **Turn-based battle** — reuse attack/hit frames; element type matchups
+   (Forest/Sea/Sky/Earth/Spirit already on species). Wild battle → weaken → tame.
+2. **Ranch / bonding loop** — feed, raise bond, gain XP, level up the party.
+3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
+   assets exist); wire level-gated evolution.
+4. **World richness** — biomes (forest vs coast), water plane, day/night, more
+   scenery variety, collision with trees.
+5. **Polish** — soft shadows/contact shadows under billboards, particle on tame,
+   audio, mobile touch controls (on-screen stick + tame button).
+6. **Persistence** — save party to localStorage.
+
+## Taste rules (from memory)
+- Action-reactive poses ok (hurt/victory/gather); never sleep-on-idle.
+- Arenas = simple flat stage, monster reads as standing ON it.
+- Keep it readable and performant on mobile (Mahdy tests on phone).
