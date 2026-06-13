@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Matong added — 3rd monster)
+Last touched: 2026-06-13 (Dugang added — 4th monster)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -42,6 +42,10 @@ review a different monster.
   big ears, amber eyes, banded tail, belly-pouch with a green fern. Idle:
   tail-sway + breathing. NB: mapped meshes use `mat(0xffffff,{map})` so the
   texture isn't darkened by a base-color multiply.
+- `dugang.ts` — dugong/manatee sea-spirit (from the sprite): plump blue-grey
+  body, whiskered snout + nostrils, pale-blue eyes, flippers, tail fluke,
+  seaweed necklace + scallop-shell pendant, turquoise water-swirl wisps. Idle:
+  breathing + wisp sway. NB: necklace beads sit on a frontal surface arc.
 
 ## Registry (wired)
 - `src/models/registry.ts` maps species id → builder; `hasModel(id)` gates it.

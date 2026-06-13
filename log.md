@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Dugang 3D model (4th monster ported)
+- Built `src/models/dugang.ts` (dugong/manatee sea-spirit) from the in-game
+  sprite (no ref sheet): plump blue-grey body + lighter belly, broad whiskered
+  snout with nostrils, big pale-blue eyes, side flippers, tail fluke, a green
+  seaweed necklace draped across the chest with a pale scallop-shell pendant,
+  and turquoise water-swirl wisps (partial-torus arcs) rising at its sides.
+  Idle flourish: slow breathing + the wisps rise and sway. Registered `dugang`.
+- Necklace/pendant first rendered buried inside the body sphere; moved them to a
+  frontal arc sitting proud of the surface (beads sweep across the front only,
+  dipping in the middle; shell hangs at centre).
+- Verified: tsc clean; QA 3/4 in model-viewer (no errors); Dugang renders
+  grounded in-world with the proximity prompt; full begin→tame→party loop intact
+  (party 0→1, mode→explore, tamed hidden, nearby cleared). Screenshots
+  /tmp/dugang-v2.png, /tmp/dugang-world.png. 4/12 roster now true 3D.
+
 ## 2026-06-13 — Matong 3D model (3rd monster ported)
 - Built `src/models/matong.ts` (striped marsupial-tiger forest guardian) from
   the in-game sprite (no ref sheet exists): vibrant orange fur banded with black
