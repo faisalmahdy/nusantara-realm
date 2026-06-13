@@ -1,5 +1,17 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — Kancil v1 refine + image-to-3D decision (msg #138)
+- Mahdy: no paid/credit-gated image-to-3D generators. All reachable ones (Meshy/
+  Tripo) gate behind small free caps; open-source (TripoSR/InstantMesh/Hunyuan3D)
+  need a GPU we don't have. Decision: every monster is hand-built in Three.js
+  from the reference sheets. Recorded in docs/models.md.
+- Refined `src/models/kancil.ts` toward the ref sheet's chibi look: bigger
+  rounded head, large amber eyes (+catch-light), big cream-lined leaf ears,
+  plump bean body sitting low, cream muzzle/belly, batik on flank + rump,
+  short legs tucked under the body (no longer floating stilts), splayed feet.
+- tsc clean; QA turntable front + 3/4 in model-viewer, no console errors.
+  Screenshots /tmp/kancil-v1-front.png, /tmp/kancil-v1-34.png (sent).
+
 ## 2026-06-13 — pivot to true 3D models (msg #134)
 - Mahdy: make assets real 3D, built from scratch in Three.js, using our
   character reference sheets (turnaround sheets in nusantara-monster/assets/raw).

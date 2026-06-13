@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13
+Last touched: 2026-06-13 (Kancil v1 refine)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -29,9 +29,13 @@ Open `http://localhost:5181/model-viewer.html`. Swap which builder it imports to
 review a different monster.
 
 ## Done
-- `kancil.ts` — Kancil Emas v0 (recognisable; legs/proportions to refine).
+- `kancil.ts` — Kancil Emas v1. Chibi proportions matching the ref sheet: big
+  rounded head, large amber eyes (+catch-light), big cream-lined leaf ears,
+  plump bean body, cream muzzle/belly, batik on flank + rump, short legs tucked
+  under the body, gold anklet front-left.
 
 ## Next
-- Refine Kancil proportions (attach legs to body, smaller head, softer ears).
 - Add a model registry so the game/world can render a 3D model instead of the
   billboard, then port monsters one by one. Camar, Penyu, Ubur next (have sheets).
+- (Decision, msg #138) No paid/credit-gated image-to-3D — all monsters are
+  hand-built in Three.js from the reference sheets.
