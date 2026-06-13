@@ -99,8 +99,10 @@ export function buildCamar(): THREE.Group {
   // Legs + talons.
   root.add(leg(0.13), leg(-0.13));
 
-  // Wings.
-  root.add(wing(1), wing(-1));
+  // Wings (kept referenced for the idle flap).
+  const wingR = wing(1);
+  const wingL = wing(-1);
+  root.add(wingR, wingL);
 
   // Throat gem pendant.
   const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.06), mat(GEM, { metalness: 0.3, roughness: 0.2, emissive: 0x0a3a40, emissiveIntensity: 0.6 }));
@@ -152,6 +154,15 @@ export function buildCamar(): THREE.Group {
     t.position.set(tx, 0.5, -0.32);
     root.add(t);
   });
+
+  // Idle flourish — a slow wing-flap (the wing groups droop at x=0.25 at rest).
+  root.userData.idle = (time: number) => {
+    const flap = Math.sin(time * 2.4) * 0.24;
+    wingR.rotation.z = flap;
+    wingL.rotation.z = -flap;
+    wingR.rotation.x = 0.25 + flap * 0.2;
+    wingL.rotation.x = 0.25 + flap * 0.2;
+  };
 
   return root;
 }

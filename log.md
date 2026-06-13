@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — per-creature idle hook + Camar wing-flap
+- Added a reusable per-creature idle-animation hook: a builder may set
+  `group.userData.idle = (t) => {...}` referencing its own sub-meshes;
+  `MonsterModel` calls it each frame via `useFrame`. Keeps per-species motion
+  inside the builder instead of the renderer.
+- Camar now slow-flaps its wings at rest: captured `wingR`/`wingL` and drive
+  their `rotation.z`/`.x` from `sin(t*2.4)`. Reads as a hovering storm-gull.
+- Verified: tsc clean; console clean; Camar renders in-world with the proximity
+  prompt; full begin→tame→party loop intact (party 0→1, mode→explore, tamed
+  hidden, nearby cleared). Note: R3F v8 `canvas.__r3f` is unreadable here, so the
+  flap is confirmed by clean typecheck + the same useFrame path that already
+  drives the working bob/face-player. Screenshot /tmp/camar-flap-3.png.
+
 ## 2026-06-13 — wild monsters turn to face the player
 - `WildMonster.useFrame` now smoothly rotates the group to face the player when
   within ~20u (shortest-path angle lerp, frame-rate independent). Idle bob is

@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-13 (Camar added)
+Last touched: 2026-06-13 (per-creature idle hook + Camar wing-flap)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -43,6 +43,9 @@ review a different monster.
   world height (Box3), enables shadows, renders via `<primitive>`.
 - `WildMonster` renders `MonsterModel` when `hasModel`, else the 2D billboard.
   Port a species by adding its builder to the registry.
+- Per-creature idle: a builder may set `group.userData.idle = (t) => {...}`
+  (referencing its own sub-meshes); `MonsterModel` calls it each frame. Camar
+  uses this for a slow wing-flap.
 
 ## Next
 - More in-roster monsters: only `kancil` + `camar` have both a ref sheet AND a
