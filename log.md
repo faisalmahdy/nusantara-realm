@@ -1,5 +1,19 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Tree collision (roadmap #4 world richness)
+- Player walked through trees, breaking the solid-world feel. Now you can't.
+- Extracted the deterministic scenery layout (mulberry32 seed 1337) out of
+  World.tsx into `src/game/scenery.ts`, shared by World (render) and Player
+  (collision) so both agree on tree positions. Each scenery item carries a trunk
+  radius `r` (banyan 1.4, palm 1.0, fern 0); `COLLIDERS` = the trees.
+- Player.tsx does a circular push-out vs COLLIDERS after each move
+  (PLAYER_R 0.55): radial resolution, so you slide smoothly around trunks rather
+  than sticking. Ferns stay walkable; the central path is already tree-free.
+- tsc clean; console clean. Verified collision end-to-end in browser by driving
+  the player straight at an isolated tree and sampling min distance to its
+  center over the walk: bottomed out at exactly minD (1.95) — never penetrated.
+  Core tame loop intact (matong tamed). Pushed to main.
+
 ## 2026-06-14 — Day/night cycle (roadmap #4 world richness)
 - Checked roadmap #3 (Evolution) first: it's asset-blocked — every species
   folder under public/sprites is just idle/attack/hit/portrait, no evolved-form

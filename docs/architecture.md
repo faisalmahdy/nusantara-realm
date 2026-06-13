@@ -1,6 +1,6 @@
 # Architecture
 
-Last touched: 2026-06-14 (world: day/night cycle)
+Last touched: 2026-06-14 (world: tree collision)
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -15,12 +15,16 @@ Last touched: 2026-06-14 (world: day/night cycle)
   noon→dusk→night→dawn. Mutates the scene's own background/fog objects in place.
   Starts at midday (+0.25 phase offset).
 - `World.tsx` — grass ground plane + path strip (RepeatWrapping) + scattered
-  scenery billboards (deterministic mulberry32 RNG, seed 1337). Exports `WORLD=90`.
+  scenery billboards from `game/scenery.ts`.
+- `game/scenery.ts` — deterministic scenery layout (mulberry32, seed 1337),
+  shared by World (render) and Player (collision). Exports `WORLD=90`, `SCENERY`
+  (each with a trunk radius `r`; ferns r=0), and `COLLIDERS` (trees only).
 - `Sprite3D.tsx` — the HD-2D primitive: a camera-facing `<sprite>` with a
   NearestFilter pixel texture, aspect-from-image scaling, base-anchored.
   Also `loadPixelTexture(url)` (cached) for non-suspense texture loads.
 - `Player.tsx` — keyboard movement (camera-relative), directional walk-frame
-  swap, writes `playerPos`, reads/begins taming on `E`.
+  swap, writes `playerPos`, reads/begins taming on `E`. Resolves circular
+  push-out against `COLLIDERS` each move (slides around tree trunks).
 - `WildMonster.tsx` — bobbing idle billboard + element ring; proximity sets
   `nearbyWildId`; removed once tamed.
 - `CameraRig.tsx` — third-person follow (lerp) + pointer-drag orbit.

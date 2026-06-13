@@ -1,6 +1,6 @@
 # Design & roadmap
 
-Last touched: 2026-06-14 (world: day/night cycle)
+Last touched: 2026-06-14 (world: tree collision)
 
 ## Pillars (from Mahdy, msg #126/#128/#130)
 - **Pokémon-style taming** — roam, find wild monsters, win them over.
@@ -50,8 +50,11 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    assets exist); wire level-gated evolution.
 4. **World richness** — Day/night cycle DONE (2026-06-14): `DayNight.tsx` runs a
    120s sun-orbit, lerping sky/fog/sun/hemisphere color + intensity through
-   noon→dusk→night→dawn (starts at midday). STILL TO DO: biomes (forest vs
-   coast), water plane, more scenery variety, collision with trees.
+   noon→dusk→night→dawn (starts at midday). Tree collision DONE (2026-06-14):
+   scenery layout moved to `game/scenery.ts` (shared render+collision); Player
+   does circular push-out vs tree trunks (`COLLIDERS`), sliding around them;
+   ferns stay walkable. STILL TO DO: biomes (forest vs coast), water plane,
+   more scenery variety.
 5. **Polish** — soft shadows/contact shadows under billboards, particle on tame,
    audio, mobile touch controls (on-screen stick + tame button).
 6. **Persistence** — save party to localStorage.

@@ -4,10 +4,11 @@ import { useFrame } from '@react-three/fiber';
 import { loadPixelTexture } from './Sprite3D';
 import { useKeyboard } from '../game/useKeyboard';
 import { playerPos, cameraState } from '../game/shared';
-import { WORLD } from './World';
+import { WORLD, COLLIDERS } from '../game/scenery';
 import { useGame } from '../game/store';
 
 const SPEED = 10;
+const PLAYER_R = 0.55;
 
 export function Player() {
   const keys = useKeyboard();
@@ -44,6 +45,18 @@ export function Player() {
       playerPos.addScaledVector(move, dt * SPEED);
       playerPos.x = THREE.MathUtils.clamp(playerPos.x, -WORLD / 2 + 2, WORLD / 2 - 2);
       playerPos.z = THREE.MathUtils.clamp(playerPos.z, -WORLD / 2 + 2, WORLD / 2 - 2);
+      // Push out of tree trunks so you can't walk through them.
+      for (const c of COLLIDERS) {
+        const dx = playerPos.x - c.x;
+        const dz = playerPos.z - c.z;
+        const minD = c.r + PLAYER_R;
+        const d2 = dx * dx + dz * dz;
+        if (d2 < minD * minD && d2 > 1e-6) {
+          const push = (minD - Math.sqrt(d2)) / Math.sqrt(d2);
+          playerPos.x += dx * push;
+          playerPos.z += dz * push;
+        }
+      }
       movingAway.current = move.dot(forward) > 0;
       walkT.current += dt * 8;
     }
