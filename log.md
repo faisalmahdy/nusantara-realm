@@ -1,5 +1,15 @@
 # Log — Nusantara Realm
 
+## 2026-06-13 — wild monsters turn to face the player
+- `WildMonster.useFrame` now smoothly rotates the group to face the player when
+  within ~20u (shortest-path angle lerp, frame-rate independent). Idle bob is
+  gentler at rest and livelier within tame range. Reusable for every 3D model;
+  harmless for billboards (Sprites always face the camera) and the flat element
+  ring (rotationally symmetric, stays flat).
+- Verified: tsc clean; Camar visibly orients toward the trainer (side-view
+  shot /tmp/camar-face-profile.png); no console errors; begin→tame→party still
+  works (party=1, explore, nearby cleared).
+
 ## 2026-06-13 — Camar storm-gull 3D model (2nd monster ported)
 - Built `src/models/camar.ts` (Camar Badai): slate body + white chest, hooked
   golden beak, golden eyes, blue-tipped spiky crest, swept blade-wings with

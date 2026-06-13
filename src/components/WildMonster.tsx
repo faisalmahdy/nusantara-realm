@@ -16,12 +16,10 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
   const tamingTargetId = useGame((s) => s.tamingTargetId);
   const tamed = useGame((s) => s.tamedWildIds.includes(spawn.wildId));
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
-    // Gentle idle bob.
-    g.position.y = Math.abs(Math.sin(t * 2 + spawn.phase)) * 0.18;
 
     const store = useGame.getState();
     // Read live tamed state to avoid a one-frame race where a just-tamed
@@ -30,9 +28,23 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
       if (store.nearbyWildId === spawn.wildId) store.setNearby(null);
       return;
     }
-    const dx = g.position.x - playerPos.x;
-    const dz = g.position.z - playerPos.z;
+    const dx = spawn.x - playerPos.x;
+    const dz = spawn.z - playerPos.z;
     const dist = Math.hypot(dx, dz);
+
+    // Idle bob — a touch livelier when the player is close.
+    g.position.y = Math.abs(Math.sin(t * 2 + spawn.phase)) * (dist < TAME_RANGE ? 0.16 : 0.09);
+
+    // Turn to face the player when they come within noticing range. Harmless
+    // for billboards (Sprites always face the camera); the flat element ring is
+    // rotationally symmetric, so spinning the group keeps it flat on the ground.
+    if (dist < 20) {
+      const desired = Math.atan2(playerPos.x - spawn.x, playerPos.z - spawn.z);
+      let d = desired - g.rotation.y;
+      d = Math.atan2(Math.sin(d), Math.cos(d)); // shortest-path angle
+      g.rotation.y += d * Math.min(1, delta * 5);
+    }
+
     if (dist < TAME_RANGE) {
       if (store.nearbyWildId !== spawn.wildId && store.mode === 'explore') {
         store.setNearby(spawn.wildId);
