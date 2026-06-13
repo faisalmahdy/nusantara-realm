@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Persistent battle HP + Rest (roadmap #2)
+- Battles now have lasting stakes: damage carries between fights, and the ranch
+  is where you recover.
+- `battle.ts` — exported `maxHpFor(speciesId, level)`.
+- `store.ts` — `TamedMonster.hp` (current HP, init full on tame). `beginBattle`
+  starts the lead at its stored HP and refuses if it's fainted (hp 0);
+  `endBattle` writes the lead's remaining HP back to the party. New `rest(uid)`
+  heals a monster to full.
+- `HUD.tsx` — party rows show an HP bar (green/yellow/red) above the bond bar,
+  plus a blue Rest button beside Feed (dimmed at full HP).
+- QA: tsc clean; in-browser Kancil took a hit to 7 HP, fled, reopened battle
+  still at 7 (persisted); a 0-HP lead was blocked ("rest it first"); Rest
+  restored full; newly tamed monster starts full; console clean; direct-tame
+  loop non-regressed.
+
 ## 2026-06-14 — Ranch: bond pays off in battle (roadmap #2, msg #188)
 - Made the bond stat matter: a well-fed lead now fights harder, so the Feed
   loop has a real combat payoff.

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
-import { xpToNext } from '../game/battle';
+import { xpToNext, maxHpFor } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 
 export function HUD() {
@@ -45,22 +45,26 @@ export function HUD() {
           {party.length === 0 && <div style={styles.empty}>None yet — tame a wild monster!</div>}
           {party.map((m) => {
             const sp = speciesById(m.speciesId);
+            const maxHp = maxHpFor(m.speciesId, m.level);
+            const hpFrac = Math.max(0, m.hp) / maxHp;
+            const hpColor = hpFrac > 0.5 ? '#5fcf6a' : hpFrac > 0.25 ? '#e0c452' : '#d65a4a';
             return (
               <div key={m.uid} style={styles.partyRow}>
                 <img src={`/sprites/${sp.id}/portrait.png`} style={styles.portrait} alt={sp.name} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{sp.element}</span></div>
                   <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · XP {m.xp}/{xpToNext(m.level)}</div>
-                  <div style={styles.bondTrack} title={`Bond ${m.bond}/100`}>
-                    <div style={{ ...styles.bondFill, width: `${m.bond}%` }} />
+                  <div style={styles.statTrack} title={`HP ${Math.max(0, m.hp)}/${maxHp}`}>
+                    <div style={{ ...styles.statFill, width: `${hpFrac * 100}%`, background: hpColor }} />
+                  </div>
+                  <div style={styles.statTrack} title={`Bond ${m.bond}/100`}>
+                    <div style={{ ...styles.statFill, width: `${m.bond}%`, background: '#e07ba0' }} />
                   </div>
                 </div>
-                <button
-                  style={{ ...styles.feedBtn, opacity: m.bond >= 100 ? 0.5 : 1 }}
-                  onClick={() => useGame.getState().feed(m.uid)}
-                >
-                  Feed
-                </button>
+                <div style={styles.rowBtns}>
+                  <button style={{ ...styles.rowBtn, ...styles.feedBtn, opacity: m.bond >= 100 ? 0.5 : 1 }} onClick={() => useGame.getState().feed(m.uid)}>Feed</button>
+                  <button style={{ ...styles.rowBtn, ...styles.restBtn, opacity: m.hp >= maxHp ? 0.5 : 1 }} onClick={() => useGame.getState().rest(m.uid)}>Rest</button>
+                </div>
               </div>
             );
           })}
@@ -115,9 +119,12 @@ const styles: Record<string, React.CSSProperties> = {
   empty: { fontSize: 12, opacity: 0.7 },
   partyRow: { display: 'flex', gap: 8, alignItems: 'center', padding: '5px 0' },
   portrait: { width: 38, height: 38, imageRendering: 'pixelated', borderRadius: 6, background: 'rgba(0,0,0,0.3)' },
-  bondTrack: { height: 5, marginTop: 3, background: 'rgba(0,0,0,0.5)', borderRadius: 3, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' },
-  bondFill: { height: '100%', background: '#e07ba0', borderRadius: 3, transition: 'width 0.3s ease' },
-  feedBtn: { background: '#6ab04c', color: '#0d1a08', border: 'none', borderRadius: 6, padding: '5px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: font },
+  statTrack: { height: 5, marginTop: 3, background: 'rgba(0,0,0,0.5)', borderRadius: 3, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' },
+  statFill: { height: '100%', borderRadius: 3, transition: 'width 0.3s ease' },
+  rowBtns: { display: 'flex', flexDirection: 'column', gap: 4 },
+  rowBtn: { border: 'none', borderRadius: 6, padding: '4px 9px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: font },
+  feedBtn: { background: '#6ab04c', color: '#0d1a08' },
+  restBtn: { background: '#5a9fd4', color: '#08131a' },
   modalWrap: { position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.45)', pointerEvents: 'auto' },
   modal: { width: 320, background: 'linear-gradient(180deg,#1d2a1d,#10160f)', border: '1px solid rgba(212,176,106,0.55)', borderRadius: 14, padding: 18, textAlign: 'center', boxShadow: '0 12px 40px rgba(0,0,0,0.6)' },
   modalImg: { width: 120, height: 120, imageRendering: 'pixelated', objectFit: 'contain' },

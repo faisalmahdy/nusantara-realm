@@ -1,6 +1,6 @@
 # Design & roadmap
 
-Last touched: 2026-06-14 (ranch: bond battle perk)
+Last touched: 2026-06-14 (ranch: HP persistence + rest)
 
 ## Pillars (from Mahdy, msg #126/#128/#130)
 - **Pokémon-style taming** — roam, find wild monsters, win them over.
@@ -41,9 +41,11 @@ Explorable overworld, follow camera w/ drag-orbit, player walk frames,
    monster is fully content so it can't be button-mashed for infinite levels.
    Bond perk DONE (2026-06-14): a bonded lead deals up to +20% battle damage
    (`bondAtkMult` in battle.ts, applied in `computeDamage`; shown as ♥bond on the
-   battle fighter + a log note at bond≥50). STILL TO DO: a proper ranch screen/
-   biome, HP healing/rest (unblocks persisting party HP between battles), treats
-   as a resource instead of a free button.
+   battle fighter + a log note at bond≥50). HP persistence + Rest DONE
+   (2026-06-14): a monster's battle damage now carries between fights
+   (`TamedMonster.hp`); the party panel shows an HP bar + a Rest button (heals to
+   full); a fainted lead can't battle until rested. STILL TO DO: a proper ranch
+   screen/biome, make Feed/Rest cost something (treats/cooldown) vs free buttons.
 3. **Evolution stages** — the 2D game has 2/3-stage chains (e.g. bamut2/bamut3
    assets exist); wire level-gated evolution.
 4. **World richness** — biomes (forest vs coast), water plane, day/night, more

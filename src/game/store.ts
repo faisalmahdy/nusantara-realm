@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
-  xpForDefeating, applyXp, pickEnemyMove, bondAtkMult,
+  xpForDefeating, applyXp, pickEnemyMove, bondAtkMult, maxHpFor,
 } from './battle';
 
 export interface TamedMonster {
@@ -12,6 +12,7 @@ export interface TamedMonster {
   level: number;
   xp: number;
   bond: number; // 0..100, raised at the ranch
+  hp: number; // current HP; persists between battles, restored by resting
 }
 
 export type GameMode = 'explore' | 'taming' | 'party' | 'battle';
@@ -49,6 +50,7 @@ interface GameState {
   battleFlee: () => void;
   endBattle: () => void;
   feed: (uid: string) => void;
+  rest: (uid: string) => void;
   flash: (msg: string) => void;
 }
 
@@ -84,6 +86,7 @@ export const useGame = create<GameState>((set, get) => ({
         level: 1,
         xp: 0,
         bond: 10,
+        hp: maxHpFor(speciesId, 1),
       };
       set((s) => ({
         party: [...s.party, mon],
@@ -107,10 +110,15 @@ export const useGame = create<GameState>((set, get) => ({
       get().beginTaming(wildId);
       return;
     }
+    if (lead.hp <= 0) {
+      set({ message: `${lead.nickname} is in no shape to fight — rest it first.` });
+      return;
+    }
     const enemySpeciesId = wildId.split('-')[1];
     const enemyLevel = Math.max(2, lead.level + 1);
     const player = makeCombatant(lead.uid, lead.speciesId, lead.level);
     player.bond = lead.bond;
+    player.hp = Math.min(player.maxHp, lead.hp); // carry forward wear from past battles
     const enemy = makeCombatant(wildId, enemySpeciesId, enemyLevel);
     const log = [`A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`];
     if (lead.bond >= 50) log.push(`${player.name}'s bond spurs it on. (+${Math.round((bondAtkMult(lead.bond) - 1) * 100)}% damage)`);
@@ -183,6 +191,7 @@ export const useGame = create<GameState>((set, get) => ({
         level: b.enemy.level,
         xp: 0,
         bond: 15,
+        hp: maxHpFor(b.enemy.speciesId, b.enemy.level),
       };
       const lead = get().party[0];
       const gain = xpForDefeating(b.enemy.level);
@@ -229,7 +238,11 @@ export const useGame = create<GameState>((set, get) => ({
       : b?.outcome === 'won' ? `The wild ${b.enemy.name} fled.`
       : b?.outcome === 'lost' ? `${b.player.name} was defeated…`
       : null;
-    set({ mode: 'explore', battle: null, tamingTargetId: null, message: msg });
+    // Carry the lead's remaining HP out of battle so wear persists until it rests.
+    const party = b
+      ? get().party.map((m) => (m.uid === b.player.uid ? { ...m, hp: b.player.hp } : m))
+      : get().party;
+    set({ mode: 'explore', battle: null, tamingTargetId: null, message: msg, party });
   },
 
   // --- Ranch (roadmap #2): feed a party monster to raise bond + a little XP.
@@ -249,6 +262,22 @@ export const useGame = create<GameState>((set, get) => ({
       message: res.levelsGained > 0
         ? `${m.nickname} grew to Lv ${res.level}!`
         : `${m.nickname} enjoyed the treat. (Bond ${bond})`,
+    }));
+  },
+
+  // Rest a monster back to full HP. The recovery side of persistent battle HP —
+  // without this a worn-down party would have no way back to fighting shape.
+  rest: (uid) => {
+    const m = get().party.find((x) => x.uid === uid);
+    if (!m) return;
+    const full = maxHpFor(m.speciesId, m.level);
+    if (m.hp >= full) {
+      set({ message: `${m.nickname} is already at full health.` });
+      return;
+    }
+    set((s) => ({
+      party: s.party.map((x) => (x.uid === uid ? { ...x, hp: full } : x)),
+      message: `${m.nickname} is fully rested.`,
     }));
   },
 

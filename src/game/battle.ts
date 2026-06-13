@@ -65,6 +65,11 @@ function derive(species: MonsterSpecies, level: number): { maxHp: number; atk: n
   };
 }
 
+/** Max HP for a species at a given level (used to persist/heal party HP). */
+export function maxHpFor(speciesId: string, level: number): number {
+  return derive(speciesById(speciesId), level).maxHp;
+}
+
 /** Build a fresh, full-HP combatant from a species id + level. */
 export function makeCombatant(uid: string, speciesId: string, level: number): Combatant {
   const sp = speciesById(speciesId);
