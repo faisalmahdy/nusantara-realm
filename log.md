@@ -1,5 +1,25 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — PIVOT to Meshy.ai pipeline; Kancil locked in as a GLB (msg #212/#226)
+- Mahdy got a Meshy subscription — switched the 3D pipeline from hand-built
+  primitives to **Meshy.ai-generated models** (reverses old msg #138).
+- Got Meshy connected through the OneCLI gateway: the `credential_not_found`
+  was a too-narrow path pattern — fixed by setting Path to `/*` in Advanced
+  settings. Balance came back 2100.
+- Pipeline: base64 a clean sprite → `POST /openapi/v1/image-to-3d` (meshy-5,
+  pbr/remesh/texture) → poll to SUCCEEDED → save `public/models/<id>.glb`.
+- A/B'd single-sprite vs refsheet multi-view on Kancil. Single sprite wins:
+  the refsheet's painted shadows bake into the texture (dark/bronze, washed
+  batik), while the flat sprite stays bright and picks up scene light. So
+  `public/sprites/<id>/idle.png` is the standard input.
+- Wired GLB loading into the game: `registry.ts` `GLB_MODELS`/`hasGlb`;
+  `MonsterModel` renders a drei `useGLTF` `GlbModel` (Box3-normalised, own
+  Suspense) when a GLB exists, else the procedural builder. Built a standalone
+  QA viewer (`glb-viewer.html?model=/models/<id>.glb`).
+- Verified: `tsc --noEmit` clean; Kancil GLB renders in-game, console clean;
+  full tame loop intact (tame kancil → party). **kancil** locked in; other 11
+  pending Mahdy's go.
+
 ## 2026-06-14 — Matong model refined to v2 (roadmap #0)
 - Third model-refinement pass. Matong has no turnaround ref sheet, so I worked
   from its in-game `idle.png` sprite.

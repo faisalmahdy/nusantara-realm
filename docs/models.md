@@ -1,9 +1,28 @@
-# 3D models (from-scratch Three.js)
+# 3D models
 
-Last touched: 2026-06-14 (Matong refined to v2 — bolder tiger stripes + cheek fluff)
+Last touched: 2026-06-14 (Meshy pipeline live — Kancil locked in as a GLB)
 
-Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
-Three.js, using our **character reference sheets** as the guide (not billboards).
+## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
+Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead
+of hand-building primitives. Reverses the old msg #138 "no paid image-to-3D".
+- **Single sprite wins over refsheet multi-view.** Tested both on Kancil: the
+  refsheet's painted shadows bake into the texture (dark/bronze, washed-out
+  motif), while the flat in-game sprite stays bright and picks up scene light.
+  So feed **`public/sprites/<id>/idle.png`** (one clean front view) every time.
+- Pipeline: base64 the sprite → `POST https://api.meshy.ai/openapi/v1/image-to-3d`
+  ( `{ image_url, ai_model:"meshy-5", enable_pbr, should_remesh, should_texture }` )
+  → poll `GET .../image-to-3d/{id}` to SUCCEEDED → download `model_urls.glb` →
+  save `public/models/<id>.glb`. Auth via the OneCLI gateway (Bearer, host
+  `api.meshy.ai`, path `/*`). Async (2–4 min/model), consumes credits.
+- Loading: `registry.ts` `GLB_MODELS` set + `hasGlb(id)`; `MonsterModel` renders
+  `GlbModel` (drei `useGLTF`, Box3-normalised, own Suspense) when `hasGlb`, else
+  the procedural builder. QA via `glb-viewer.html?model=/models/<id>.glb`.
+- Status: **kancil** locked in (single-sprite GLB). Other 11 pending Mahdy's go.
+
+## Legacy (hand-built primitives — superseded, kept as fallback)
+Original direction (msg #134): real 3D built from scratch in Three.js using our
+**character reference sheets**. All 12 builders below still exist and render for
+any species without a GLB.
 
 ## Reference sheets
 `/workspace/agent/projects/nusantara-monster/assets/raw/monsters/*_refsheet.png`

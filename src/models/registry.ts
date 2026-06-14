@@ -29,6 +29,14 @@ export const MODEL_BUILDERS: Record<string, () => THREE.Group> = {
   rabuas: buildRabuas,
 };
 
+// Species with a Meshy-generated GLB in public/models/<id>.glb. These take
+// priority over the procedural builder (see MonsterModel).
+export const GLB_MODELS = new Set<string>(['kancil']);
+
+export function hasGlb(id: string): boolean {
+  return GLB_MODELS.has(id);
+}
+
 export function hasModel(id: string): boolean {
-  return id in MODEL_BUILDERS;
+  return id in MODEL_BUILDERS || GLB_MODELS.has(id);
 }
