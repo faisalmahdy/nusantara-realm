@@ -1,5 +1,19 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Wired 3D props into the world (msg #238)
+- Mahdy said "yes start wiring it" — began with props (most visible, lowest risk).
+  New `WorldProp.tsx`: loads a prop GLB via drei `useGLTF`, Box3-normalises the
+  cloned scene to the scenery height, plants it on y=0, applies a deterministic
+  per-item `rotationY`, casts/receives shadows. Exports `propGlbId(url)` (maps
+  `/world/tree-palm.png` → `tree-palm`) and `hasPropGlb(id)` (set of the 3 props
+  that have GLBs: tree-palm, tree-banyan, fern).
+- `World.tsx` now renders `<WorldProp>` instead of `<Sprite3D>` for any scenery
+  item whose sprite has a GLB; non-GLB scenery still falls back to the billboard.
+  ~80 scenery items, but only 3 unique GLBs load (drei caches; each item clones).
+- QA: `tsc` clean; headless render shows 3D palms/banyans across the field, WebGL
+  context healthy (not lost), console clean (only favicon 404). Tame loop intact
+  (programmatic `tame("matong",...)` → party 0→1). Next: 3D player, then evolutions.
+
 ## 2026-06-14 — Generated evolutions + player + props (28 GLBs) (msg #234)
 - Mahdy asked to also generate the L2/L3 evolution stages, the main character,
   and world props. Batch-generated 28 GLBs via the same single-sprite pipeline:
