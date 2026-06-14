@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Generated evolutions + player + props (28 GLBs) (msg #234)
+- Mahdy asked to also generate the L2/L3 evolution stages, the main character,
+  and world props. Batch-generated 28 GLBs via the same single-sprite pipeline:
+  24 evolutions (`<id>2`/`<id>3` for all 12, from
+  `nusantara-monster/assets/sprites/<id>{2,3}/idle.png`), `player.glb`
+  (`sprites/player/front_idle.png`), and props `tree-palm`/`tree-banyan`/`fern`
+  (from `public/world/`). Skipped grass/path — those tile, they don't model.
+- New batch orchestrator `/tmp/meshy_batch2.mjs`: a queue capped at 8 concurrent
+  (under Meshy's 10 limit), auto-refills, resubmits on transient FAILED, and is
+  idempotent (skips any `<out>.glb` that already exists). All 28 succeeded, no
+  failures this run.
+- QA: captured all 28 headless (puppeteer + glb-viewer) into two sharp montages
+  (evolutions; player+props) — every model renders bright/clean.
+- Assets committed to `public/models/` but **not yet wired**: evolutions need an
+  evolution-render path, the player is still a 2D billboard, props are still 2D.
+  Offered those as the next step.
+
 ## 2026-06-14 — Generated the other 11 Meshy GLBs; full roster is now 3D (msg #228)
 - Batch-generated the remaining 11 species (matong, dugang, camar, gambang,
   bamut, ayaka, babur, kepiting, naris, watua, rabuas) via single-sprite

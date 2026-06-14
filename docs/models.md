@@ -1,6 +1,6 @@
 # 3D models
 
-Last touched: 2026-06-14 (Meshy pipeline live — all 12 roster species are GLBs)
+Last touched: 2026-06-14 (Meshy: +24 evolutions, player, 3 props generated)
 
 ## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
 Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead
@@ -23,6 +23,13 @@ of hand-building primitives. Reverses the old msg #138 "no paid image-to-3D".
   `node /tmp/shoot.mjs <id...>` (puppeteer + glb-viewer) → sharp grid.
   NB: rabuas/babur 503'd once on submit (transient `service_unavailable`) — just
   resubmit. Meshy caps pending tasks at 10, so the 11th queues after a slot frees.
+- Beyond the base 12, generated (msg #234) and saved in `public/models/`:
+  evolution stages `<id>2.glb`/`<id>3.glb` for all 12 (L2/L3 sprites live in
+  `../nusantara-monster/assets/sprites/<id>{2,3}/idle.png`), the main character
+  `player.glb` (from `sprites/player/front_idle.png`), and props `tree-palm`,
+  `tree-banyan`, `fern` (from `public/world/`). These are **generated but not yet
+  wired** — needs an evolution-render system, a 3D player swap, and 3D prop
+  placement. Batch tool: `/tmp/meshy_batch2.mjs` (queue, 8-concurrent, resubmits).
 
 ## Legacy (hand-built primitives — superseded, kept as fallback)
 Original direction (msg #134): real 3D built from scratch in Three.js using our
