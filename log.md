@@ -1,5 +1,17 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Matong model refined to v2 (roadmap #0)
+- Third model-refinement pass. Matong has no turnaround ref sheet, so I worked
+  from its in-game `idle.png` sprite.
+- Boldened the tiger stripes: 9 alternating thick/thin wavy bands (was 6 thin),
+  richer orange base — now reads clearly as a tiger from across the field.
+- Added the sprite's face details that were missing: bushy cream cheek-tuft fans
+  and three dark stripe marks fanning down the forehead.
+- Dev server had died at QA start — rebooted vite (esbuild workaround) before
+  shooting.
+- Verified: `tsc --noEmit` clean; viewer front/3-4 shots match the sprite;
+  console clean; core loop (tame a matong → party) intact.
+
 ## 2026-06-14 — Camar model refined to v2 (roadmap #0, msg #206)
 - Continued the model-refinement pass; Camar Badai was next (in the roster AND
   has a real ref sheet). Studied `camar_refsheet.png`.

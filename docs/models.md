@@ -1,6 +1,6 @@
 # 3D models (from-scratch Three.js)
 
-Last touched: 2026-06-14 (Camar refined to v2 — bigger lightning wings + fiercer face)
+Last touched: 2026-06-14 (Matong refined to v2 — bolder tiger stripes + cheek fluff)
 
 Mahdy's direction (msg #134): make the assets real 3D, built from scratch in
 Three.js, using our **character reference sheets** as the guide (not billboards).
@@ -44,11 +44,13 @@ review a different monster.
   plus a feathered neck ruff and a curling storm wisp behind the shoulder. Keeps
   white chest, hooked golden beak, turquoise gem, pennant tail, talon feet. Idle:
   slow wing-beat + crest/wisp drift.
-- `matong.ts` — striped marsupial-tiger (modelled from the in-game sprite, no
-  ref sheet): orange fur + black tiger stripes (CanvasTexture), cream belly,
-  big ears, amber eyes, banded tail, belly-pouch with a green fern. Idle:
-  tail-sway + breathing. NB: mapped meshes use `mat(0xffffff,{map})` so the
-  texture isn't darkened by a base-color multiply.
+- `matong.ts` — striped marsupial-tiger v2 (from the in-game sprite, no ref
+  sheet). Bolder tiger stripes now (9 alternating thick/thin wavy bands), plus
+  the sprite's signature face: bushy cream cheek-tuft fans and dark stripe marks
+  fanning down the forehead. Keeps cream belly, big ears, amber eyes, banded
+  tail, belly-pouch with a green fern. Idle: tail-sway + breathing. NB: mapped
+  meshes use `mat(0xffffff,{map})` so the texture isn't darkened by a base
+  multiply.
 - `dugang.ts` — dugong/manatee sea-spirit (from the sprite): plump blue-grey
   body, whiskered snout + nostrils, pale-blue eyes, flippers, tail fluke,
   seaweed necklace + scallop-shell pendant, turquoise water-swirl wisps. Idle:

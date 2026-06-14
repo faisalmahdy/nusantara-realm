@@ -21,28 +21,42 @@ function mat(color: number, opts: Partial<THREE.MeshStandardMaterialParameters> 
   return new THREE.MeshStandardMaterial({ color, roughness: 0.74, metalness: 0.03, ...opts });
 }
 
-// Orange fur banded with black tiger stripes, for the body/head/tail.
+// Orange fur banded with bold black tiger stripes, for the body/head/tail.
 function stripeTexture(): THREE.Texture {
   const s = 128;
   const c = document.createElement('canvas');
   c.width = c.height = s;
   const ctx = c.getContext('2d')!;
-  ctx.fillStyle = '#f0821f';
+  ctx.fillStyle = '#e8761b';
   ctx.fillRect(0, 0, s, s);
   ctx.strokeStyle = STRIPE;
-  ctx.lineWidth = 9;
   ctx.lineCap = 'round';
-  // Wavy vertical stripes wrapping around the body.
-  for (let i = 0; i < 6; i++) {
-    const x = 8 + i * 22;
+  // Bold wavy vertical tiger stripes, alternating thick/thin, wrapping around.
+  for (let i = 0; i < 9; i++) {
+    const x = 4 + i * 14;
+    ctx.lineWidth = i % 2 === 0 ? 11 : 6;
     ctx.beginPath();
     ctx.moveTo(x, -4);
-    ctx.bezierCurveTo(x + 10, s * 0.33, x - 10, s * 0.66, x + 6, s + 4);
+    ctx.bezierCurveTo(x + 9, s * 0.33, x - 9, s * 0.66, x + 5, s + 4);
     ctx.stroke();
   }
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
+}
+
+// Bushy white cheek fluff — a fan of cream whisker-tufts sweeping out from the
+// lower face, the distinctive marsupial-tiger detail from the sprite.
+function cheekTuft(side: number): THREE.Group {
+  const g = new THREE.Group();
+  [0.95, 1.3, 1.65].forEach((a) => {
+    const spike = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.17, 6), mat(CREAM, { flatShading: true }));
+    spike.rotation.z = -side * a;
+    g.add(spike);
+  });
+  g.position.set(side * 0.16, -0.05, 0.14);
+  g.scale.set(1, 1, 0.5);
+  return g;
 }
 
 // Big triangular ear: orange back, pink inner, dark stripe accent.
@@ -147,6 +161,16 @@ export function buildMatong(): THREE.Group {
   const nose = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), mat(NOSE, { roughness: 0.4 }));
   nose.position.set(0, -0.06, 0.3);
   head.add(nose);
+  // Dark tiger stripe marks fanning down the forehead.
+  [-0.08, 0, 0.08].forEach((mx) => {
+    const mark = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.15, 5), mat(NOSE, { flatShading: true }));
+    mark.position.set(mx, 0.17, 0.17);
+    mark.rotation.x = 0.55;
+    mark.rotation.z = mx * 1.6;
+    mark.scale.set(1, 1, 0.35);
+    head.add(mark);
+  });
+  head.add(cheekTuft(1), cheekTuft(-1));
   head.add(ear(1), ear(-1));
   head.add(eye(1), eye(-1));
   root.add(head);

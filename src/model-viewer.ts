@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { buildCamar } from './models/camar';
+import { buildMatong } from './models/matong';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -36,7 +36,7 @@ ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const model = buildCamar();
+const model = buildMatong();
 model.traverse((o) => { if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; } });
 scene.add(model);
 
