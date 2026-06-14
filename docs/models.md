@@ -1,6 +1,6 @@
 # 3D models
 
-Last touched: 2026-06-14 (props + player + evolutions all wired)
+Last touched: 2026-06-14 (real party-evolution view: 3D party viewer + stage-up notice)
 
 ## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
 Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead

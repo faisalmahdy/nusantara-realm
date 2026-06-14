@@ -3,8 +3,15 @@ import { persist } from 'zustand/middleware';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
-  xpForDefeating, applyXp, pickEnemyMove, bondAtkMult, maxHpFor,
+  xpForDefeating, applyXp, pickEnemyMove, bondAtkMult, maxHpFor, evolutionStage,
 } from './battle';
+
+// A stage-up line if the level gain crossed an evolution boundary, else null.
+function evolutionNote(name: string, oldLevel: number, newLevel: number): string | null {
+  const to = evolutionStage(newLevel);
+  if (to > evolutionStage(oldLevel)) return `${name} evolved into its Stage ${to} form!`;
+  return null;
+}
 
 export interface TamedMonster {
   uid: string;
@@ -158,6 +165,8 @@ export const useGame = create<GameState>()(
       const res = applyXp(lead.level, lead.xp, gain);
       log.push(`${lead.nickname} gained ${gain} XP.`);
       if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
+      const evo = evolutionNote(lead.nickname, lead.level, res.level);
+      if (evo) log.push(evo);
       set((st) => ({
         party: st.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)),
         battle: { ...b, player, enemy, log, turn: 'over', outcome: 'won' },
@@ -202,6 +211,8 @@ export const useGame = create<GameState>()(
       log.push(`${species.name} was tamed!`);
       log.push(`${lead.nickname} gained ${gain} XP.`);
       if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
+      const evo = evolutionNote(lead.nickname, lead.level, res.level);
+      if (evo) log.push(evo);
       set((s) => ({
         party: [...s.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
@@ -260,9 +271,12 @@ export const useGame = create<GameState>()(
     }
     const bond = Math.min(100, m.bond + 8);
     const res = applyXp(m.level, m.xp, 5);
+    const evo = evolutionNote(m.nickname, m.level, res.level);
     set((s) => ({
       party: s.party.map((x) => (x.uid === uid ? { ...x, bond, level: res.level, xp: res.xp } : x)),
-      message: res.levelsGained > 0
+      message: evo
+        ? evo
+        : res.levelsGained > 0
         ? `${m.nickname} grew to Lv ${res.level}!`
         : `${m.nickname} enjoyed the treat. (Bond ${bond})`,
     }));

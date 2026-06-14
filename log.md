@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Real party-evolution view + stage-up notice (msg #242)
+- Mahdy: "yes build that" — party monsters now visibly evolve as they level.
+  Added a live 3D party viewer: `PartyViewer3D.tsx` (its own small `<Canvas>`,
+  one at a time to stay under the WebGL-context limit) renders the *selected*
+  party monster's current evolution-stage GLB, slowly auto-rotating.
+- HUD party panel: rows are now selectable (click to highlight); the panel top
+  shows the selected monster's 3D model, a "Stage N" badge, and an "Evolves at
+  Lv X" / "Final form reached" line. Stage comes from `evolutionStage(level)`,
+  next threshold from `nextEvolutionLevel(level)` (new in battle.ts: [8, 16]).
+- Stage-up notice: `store.ts` now pushes "X evolved into its Stage N form!" when
+  an XP gain crosses a boundary — in battle wins, battle-tames (battle log) and
+  ranch feeding (flash message). Progression numbers are unchanged.
+- QA: `tsc` clean; headless render confirms stage-1 lead shows Stage 1 +
+  "Evolves at Lv 8", selecting a Lv 18 monster swaps to its Stage 3 model +
+  "Final form reached"; only 2 canvases (overworld + viewer), no GLB 404s,
+  console clean (favicon only); tame loop intact (party 0→1).
+
 ## 2026-06-14 — Wired evolution-stage models (msg #240)
 - Final wiring pass: the L2/L3 evolution GLBs now render in-world. Added
   `evolutionStage(level)` (battle.ts: Lv8 → stage 2, Lv16 → stage 3),

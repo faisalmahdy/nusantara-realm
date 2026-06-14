@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
-import { xpToNext, maxHpFor } from '../game/battle';
+import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
+import { PartyViewer3D } from './PartyViewer3D';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
   const [showParty, setShowParty] = useState(false);
+  const [selectedUid, setSelectedUid] = useState<string | null>(null);
   const hasParty = party.length > 0;
+  const selected = party.find((m) => m.uid === selectedUid) ?? party[0];
 
   // Auto-clear the flash message.
   useEffect(() => {
@@ -44,13 +47,35 @@ export function HUD() {
         <div style={styles.partyPanel}>
           <div style={styles.panelHead}>Your Tamed Monsters</div>
           {party.length === 0 && <div style={styles.empty}>None yet — tame a wild monster!</div>}
+          {selected && (() => {
+            const sp = speciesById(selected.speciesId);
+            const stage = evolutionStage(selected.level);
+            const nextLv = nextEvolutionLevel(selected.level);
+            return (
+              <div style={styles.viewer}>
+                <PartyViewer3D speciesId={selected.speciesId} level={selected.level} />
+                <div style={styles.viewerOverlay}>
+                  <span style={{ color: ELEMENT_COLOR[sp.element], fontWeight: 700 }}>{selected.nickname}</span>
+                  <span style={styles.stageBadge}>Stage {stage}</span>
+                </div>
+                <div style={styles.evoLine}>
+                  {nextLv ? `Evolves at Lv ${nextLv}` : 'Final form reached'}
+                </div>
+              </div>
+            );
+          })()}
           {party.map((m) => {
             const sp = speciesById(m.speciesId);
             const maxHp = maxHpFor(m.speciesId, m.level);
             const hpFrac = Math.max(0, m.hp) / maxHp;
             const hpColor = hpFrac > 0.5 ? '#5fcf6a' : hpFrac > 0.25 ? '#e0c452' : '#d65a4a';
+            const isSelected = selected?.uid === m.uid;
             return (
-              <div key={m.uid} style={styles.partyRow}>
+              <div
+                key={m.uid}
+                style={{ ...styles.partyRow, ...(isSelected ? styles.partyRowActive : null) }}
+                onClick={() => setSelectedUid(m.uid)}
+              >
                 <img src={`/sprites/${sp.id}/portrait.png`} style={styles.portrait} alt={sp.name} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{sp.element}</span></div>
@@ -119,7 +144,12 @@ const styles: Record<string, React.CSSProperties> = {
   partyPanel: { position: 'fixed', right: 12, top: 52, width: 230, background: 'rgba(16,22,16,0.94)', border: '1px solid rgba(212,176,106,0.4)', borderRadius: 10, padding: 10, pointerEvents: 'auto' },
   panelHead: { fontSize: 13, fontWeight: 700, color: '#d4b06a', marginBottom: 8 },
   empty: { fontSize: 12, opacity: 0.7 },
-  partyRow: { display: 'flex', gap: 8, alignItems: 'center', padding: '5px 0' },
+  viewer: { position: 'relative', background: 'radial-gradient(circle at 50% 35%, rgba(60,80,55,0.5), rgba(0,0,0,0.3))', borderRadius: 8, marginBottom: 8, border: '1px solid rgba(212,176,106,0.25)' },
+  viewerOverlay: { position: 'absolute', left: 8, top: 6, right: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, textShadow: '0 1px 2px #000', pointerEvents: 'none' },
+  stageBadge: { background: 'rgba(212,176,106,0.9)', color: '#1a1208', borderRadius: 999, padding: '1px 8px', fontSize: 10, fontWeight: 800 },
+  evoLine: { position: 'absolute', left: 0, right: 0, bottom: 6, textAlign: 'center', fontSize: 10, opacity: 0.8, textShadow: '0 1px 2px #000', pointerEvents: 'none' },
+  partyRow: { display: 'flex', gap: 8, alignItems: 'center', padding: '5px 6px', borderRadius: 6, cursor: 'pointer' },
+  partyRowActive: { background: 'rgba(212,176,106,0.14)', outline: '1px solid rgba(212,176,106,0.4)' },
   portrait: { width: 38, height: 38, imageRendering: 'pixelated', borderRadius: 6, background: 'rgba(0,0,0,0.3)' },
   statTrack: { height: 5, marginTop: 3, background: 'rgba(0,0,0,0.5)', borderRadius: 3, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' },
   statFill: { height: '100%', borderRadius: 3, transition: 'width 0.3s ease' },

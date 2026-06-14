@@ -117,10 +117,17 @@ export function xpToNext(level: number): number {
 
 // Evolution stage (1/2/3) for a given level — picks which model a creature
 // shows. Stage 2 from Lv 8, stage 3 from Lv 16.
+export const EVOLUTION_LEVELS = [8, 16] as const;
+
 export function evolutionStage(level: number): 1 | 2 | 3 {
   if (level >= 16) return 3;
   if (level >= 8) return 2;
   return 1;
+}
+
+// Level at which a monster reaches its next evolution stage, or null if final.
+export function nextEvolutionLevel(level: number): number | null {
+  return EVOLUTION_LEVELS.find((l) => l > level) ?? null;
 }
 
 // Apply an XP gain, rolling over into as many level-ups as it covers.
