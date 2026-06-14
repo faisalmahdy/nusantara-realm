@@ -1,5 +1,19 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Fixed Cloudflare deploy (msg #252)
+- Cloudflare Workers Build failed at install: `pnpm install --frozen-lockfile`
+  → "packages field missing or empty". The settings-only `pnpm-workspace.yaml`
+  (held `onlyBuiltDependencies: esbuild`) made pnpm 10.x treat the repo as a
+  workspace with no packages. Added `packages: [.]` — install now clean on
+  pnpm 10.11.1 and 11.6.0.
+- The deploy step runs `npx wrangler deploy` (Workers, not Pages), which needs a
+  config. Added `wrangler.jsonc`: an assets-only Worker serving `./dist` with
+  SPA fallback (`name: nusantara-realm`). `wrangler deploy --dry-run` reads the
+  dist assets cleanly, no server script needed.
+- Removed the earlier `.github/workflows/deploy-cloudflare.yml` — Cloudflare's
+  native Git integration now handles builds, so the Action was redundant and
+  would fail on every push without the CF secrets.
+
 ## 2026-06-14 — Real party-evolution view + stage-up notice (msg #242)
 - Mahdy: "yes build that" — party monsters now visibly evolve as they level.
   Added a live 3D party viewer: `PartyViewer3D.tsx` (its own small `<Canvas>`,

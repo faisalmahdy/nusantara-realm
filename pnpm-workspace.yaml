@@ -1,2 +1,7 @@
+# Single-package repo. The explicit `packages` list keeps pnpm 10.x from
+# erroring "packages field missing or empty" when it reads this file (which
+# also holds the onlyBuiltDependencies allowlist for esbuild's install script).
+packages:
+  - .
 onlyBuiltDependencies:
   - esbuild

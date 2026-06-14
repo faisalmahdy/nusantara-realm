@@ -1,0 +1,11 @@
+{
+  // Static-assets-only Worker: `wrangler deploy` uploads the built `dist/`
+  // folder and serves it. No server script — Cloudflare serves the files
+  // directly, with index.html as the SPA fallback for unknown paths.
+  "name": "nusantara-realm",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
