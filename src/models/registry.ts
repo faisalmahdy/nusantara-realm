@@ -31,7 +31,10 @@ export const MODEL_BUILDERS: Record<string, () => THREE.Group> = {
 
 // Species with a Meshy-generated GLB in public/models/<id>.glb. These take
 // priority over the procedural builder (see MonsterModel).
-export const GLB_MODELS = new Set<string>(['kancil']);
+export const GLB_MODELS = new Set<string>([
+  'kancil', 'matong', 'dugang', 'camar', 'gambang', 'bamut',
+  'ayaka', 'babur', 'kepiting', 'naris', 'watua', 'rabuas',
+]);
 
 export function hasGlb(id: string): boolean {
   return GLB_MODELS.has(id);

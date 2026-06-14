@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Generated the other 11 Meshy GLBs; full roster is now 3D (msg #228)
+- Batch-generated the remaining 11 species (matong, dugang, camar, gambang,
+  bamut, ayaka, babur, kepiting, naris, watua, rabuas) via single-sprite
+  image-to-3d, same pipeline as Kancil. All wired into `GLB_MODELS`.
+- Meshy caps pending tasks at 10, so submitting all 11 at once 429'd the last
+  one (rabuas) — orchestrator resubmits it once a slot frees. babur 503'd once
+  (transient `service_unavailable`); a resubmit succeeded.
+- Built a reusable batch-QA path: `/tmp/shoot.mjs` (puppeteer-core drives the
+  glb-viewer headless, waits for `window.__glb.ready`, screenshots each) → a
+  sharp 4×3 montage. puppeteer-core + sharp installed temporarily for QA and
+  reverted from package.json before commit (not app deps).
+- Verified: `tsc --noEmit` clean; all 12 render bright/clean in the viewer;
+  in-game tame loop intact (tame kancil → party=['kancil'], mode→explore, no
+  console errors beyond a harmless favicon 404).
+
 ## 2026-06-14 — PIVOT to Meshy.ai pipeline; Kancil locked in as a GLB (msg #212/#226)
 - Mahdy got a Meshy subscription — switched the 3D pipeline from hand-built
   primitives to **Meshy.ai-generated models** (reverses old msg #138).

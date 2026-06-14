@@ -1,6 +1,6 @@
 # 3D models
 
-Last touched: 2026-06-14 (Meshy pipeline live — Kancil locked in as a GLB)
+Last touched: 2026-06-14 (Meshy pipeline live — all 12 roster species are GLBs)
 
 ## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
 Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead
@@ -17,7 +17,12 @@ of hand-building primitives. Reverses the old msg #138 "no paid image-to-3D".
 - Loading: `registry.ts` `GLB_MODELS` set + `hasGlb(id)`; `MonsterModel` renders
   `GlbModel` (drei `useGLTF`, Box3-normalised, own Suspense) when `hasGlb`, else
   the procedural builder. QA via `glb-viewer.html?model=/models/<id>.glb`.
-- Status: **kancil** locked in (single-sprite GLB). Other 11 pending Mahdy's go.
+- Status: **all 12 roster species are GLBs** (kancil, matong, dugang, camar,
+  gambang, bamut, ayaka, babur, kepiting, naris, watua, rabuas) — single-sprite
+  image-to-3d, wired into `GLB_MODELS`, live in-game. Batch QA montage approach:
+  `node /tmp/shoot.mjs <id...>` (puppeteer + glb-viewer) → sharp grid.
+  NB: rabuas/babur 503'd once on submit (transient `service_unavailable`) — just
+  resubmit. Meshy caps pending tasks at 10, so the 11th queues after a slot frees.
 
 ## Legacy (hand-built primitives — superseded, kept as fallback)
 Original direction (msg #134): real 3D built from scratch in Three.js using our
