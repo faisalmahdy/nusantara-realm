@@ -18,6 +18,9 @@ export function GameScene() {
         x: Math.cos(angle) * r,
         z: Math.sin(angle) * r,
         phase: i,
+        // Spread levels across the roster so base / stage-2 / stage-3 evolution
+        // models all appear in the field (evolutionStage: Lv8 → 2, Lv16 → 3).
+        level: 1 + i * 2,
       };
     });
   }, []);

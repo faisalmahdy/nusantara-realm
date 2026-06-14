@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Wired evolution-stage models (msg #240)
+- Final wiring pass: the L2/L3 evolution GLBs now render in-world. Added
+  `evolutionStage(level)` (battle.ts: Lv8 → stage 2, Lv16 → stage 3),
+  `stageGlbId(speciesId, stage)` + `GLB_STAGE_MODELS` (registry.ts, all 24
+  `<id>2`/`<id>3`), and a `stage` prop on `MonsterModel` that loads the matching
+  GLB. `GlbModel` now takes a generic `glbId` (species OR evolution model).
+- Each wild spawn gets a cosmetic `level` (GameScene: `1 + i*2`, spreading the
+  roster evenly across stages 1/2/3 so all evolution models appear in the field).
+  WildMonster passes `stage={evolutionStage(spawn.level)}`. **Cosmetic only** —
+  battle difficulty still scales to your lead (`beginBattle` untouched), so this
+  doesn't rebalance fights. A real level-up evolution mechanic is a follow-up.
+- QA: `tsc` clean, all 24 stage GLBs present, headless render loads them with no
+  404s, context healthy, tame loop intact. This completes wiring every generated
+  asset (props, player, evolutions); the base 12 were already live.
+
 ## 2026-06-14 — Wired the 3D player (msg #240)
 - Mahdy: "do start 3d player then evolutions, then another assets... loop on it."
   Swapped the 2D billboard player for `player.glb`. `Player.tsx` now renders a

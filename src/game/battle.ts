@@ -115,6 +115,14 @@ export function xpToNext(level: number): number {
   return 12 + level * 8;
 }
 
+// Evolution stage (1/2/3) for a given level — picks which model a creature
+// shows. Stage 2 from Lv 8, stage 3 from Lv 16.
+export function evolutionStage(level: number): 1 | 2 | 3 {
+  if (level >= 16) return 3;
+  if (level >= 8) return 2;
+  return 1;
+}
+
 // Apply an XP gain, rolling over into as many level-ups as it covers.
 export function applyXp(level: number, xp: number, gain: number): { level: number; xp: number; levelsGained: number } {
   let l = level, x = xp + gain, gained = 0;

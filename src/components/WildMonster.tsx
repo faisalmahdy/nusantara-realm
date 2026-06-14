@@ -6,6 +6,7 @@ import { MonsterModel } from './MonsterModel';
 import { hasModel } from '../models/registry';
 import { playerPos, WildSpawn } from '../game/shared';
 import { useGame } from '../game/store';
+import { evolutionStage } from '../game/battle';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
 
 const TAME_RANGE = 4.5;
@@ -62,7 +63,7 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
   return (
     <group ref={group} position={[spawn.x, 0, spawn.z]}>
       {hasModel(spawn.speciesId) ? (
-        <MonsterModel speciesId={spawn.speciesId} height={2.4} />
+        <MonsterModel speciesId={spawn.speciesId} height={2.4} stage={evolutionStage(spawn.level)} />
       ) : (
         <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
       )}

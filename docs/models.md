@@ -1,6 +1,6 @@
 # 3D models
 
-Last touched: 2026-06-14 (3D props wired into the world)
+Last touched: 2026-06-14 (props + player + evolutions all wired)
 
 ## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
 Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead
@@ -29,12 +29,21 @@ of hand-building primitives. Reverses the old msg #138 "no paid image-to-3D".
   `player.glb` (from `sprites/player/front_idle.png`), and props `tree-palm`,
   `tree-banyan`, `fern` (from `public/world/`). Batch tool: `/tmp/meshy_batch2.mjs`
   (queue, 8-concurrent, resubmits).
-- **Props are now wired (msg #238).** `WorldProp.tsx` loads a prop GLB (drei
-  `useGLTF`, Box3-normalised to the scenery height, planted on y=0, deterministic
-  `rotationY`); exports `propGlbId(url)` + `hasPropGlb(id)` (set: tree-palm,
-  tree-banyan, fern). `World.tsx` renders `<WorldProp>` for any scenery item with
-  a GLB, else the `Sprite3D` billboard. ~80 items, 3 unique GLBs (drei-cached
-  clones). Still **not wired**: evolution-render swap + 3D player.
+- **All generated assets are now wired (msg #238, #240).**
+  - **Props:** `WorldProp.tsx` loads a prop GLB (drei `useGLTF`, Box3-normalised
+    to the scenery height, planted on y=0, deterministic `rotationY`); exports
+    `propGlbId(url)` + `hasPropGlb(id)` (set: tree-palm, tree-banyan, fern).
+    `World.tsx` renders `<WorldProp>` for scenery with a GLB, else the `Sprite3D`
+    billboard. ~80 items, 3 unique GLBs (drei-cached clones).
+  - **Player:** `Player.tsx` renders `player.glb` (Box3-normalised, own Suspense)
+    instead of the 2D billboard; the group's `rotation.y` faces the move
+    direction (idle → faces camera). Movement/collision/tame logic unchanged.
+  - **Evolutions:** `evolutionStage(level)` (battle.ts: Lv8 → 2, Lv16 → 3) +
+    `stageGlbId(speciesId, stage)` + `GLB_STAGE_MODELS` (registry.ts). `MonsterModel`
+    takes a `stage` prop and loads the `<id>2`/`<id>3` GLB. Each wild spawn has a
+    cosmetic `level` (`GameScene`: `1 + i*2`) so all three stages appear in-field.
+    **Cosmetic only** — battle difficulty still scales to your lead. A real
+    level-up evolution mechanic for party monsters is a follow-up.
 
 ## Legacy (hand-built primitives — superseded, kept as fallback)
 Original direction (msg #134): real 3D built from scratch in Three.js using our

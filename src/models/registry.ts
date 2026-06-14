@@ -36,8 +36,18 @@ export const GLB_MODELS = new Set<string>([
   'ayaka', 'babur', 'kepiting', 'naris', 'watua', 'rabuas',
 ]);
 
+// Every base-GLB species also shipped evolution-stage models <id>2.glb and
+// <id>3.glb in public/models/ (see docs/models.md).
+export const GLB_STAGE_MODELS = new Set<string>();
+for (const id of GLB_MODELS) { GLB_STAGE_MODELS.add(`${id}2`); GLB_STAGE_MODELS.add(`${id}3`); }
+
+// Resolve a species + evolution stage to its GLB file id (stage 1 = base id).
+export function stageGlbId(speciesId: string, stage: number): string {
+  return stage <= 1 ? speciesId : `${speciesId}${stage}`;
+}
+
 export function hasGlb(id: string): boolean {
-  return GLB_MODELS.has(id);
+  return GLB_MODELS.has(id) || GLB_STAGE_MODELS.has(id);
 }
 
 export function hasModel(id: string): boolean {

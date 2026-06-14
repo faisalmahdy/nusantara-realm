@@ -2,7 +2,7 @@ import { Suspense, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import { MODEL_BUILDERS, hasGlb } from '../models/registry';
+import { MODEL_BUILDERS, hasGlb, stageGlbId } from '../models/registry';
 
 // A builder may attach `group.userData.idle = (t) => {...}` to drive a subtle
 // per-creature animation (e.g. a wing-flap) referencing its own sub-meshes.
@@ -25,9 +25,9 @@ function groundAndScale(g: THREE.Group, height: number) {
   });
 }
 
-// Meshy-generated GLB asset for this species.
-function GlbModel({ speciesId, height }: { speciesId: string; height: number }) {
-  const { scene } = useGLTF(`/models/${speciesId}.glb`);
+// Meshy-generated GLB asset (a species or one of its evolution-stage models).
+function GlbModel({ glbId, height }: { glbId: string; height: number }) {
+  const { scene } = useGLTF(`/models/${glbId}.glb`);
   const object = useMemo(() => {
     const g = scene.clone(true) as THREE.Group;
     groundAndScale(g, height);
@@ -61,11 +61,12 @@ function ProceduralModel({ speciesId, height }: { speciesId: string; height: num
 // Renders a 3D monster: a Meshy GLB if one exists for the species, otherwise the
 // procedural primitive mesh. The GLB path suspends, so it gets its own boundary
 // to avoid blanking the rest of the scene while it loads.
-export function MonsterModel({ speciesId, height = 2.4 }: { speciesId: string; height?: number }) {
-  if (hasGlb(speciesId)) {
+export function MonsterModel({ speciesId, height = 2.4, stage = 1 }: { speciesId: string; height?: number; stage?: number }) {
+  const glbId = stageGlbId(speciesId, stage);
+  if (hasGlb(glbId)) {
     return (
       <Suspense fallback={null}>
-        <GlbModel speciesId={speciesId} height={height} />
+        <GlbModel glbId={glbId} height={height} />
       </Suspense>
     );
   }
