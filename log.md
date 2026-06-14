@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-14 — Wired the 3D player (msg #240)
+- Mahdy: "do start 3d player then evolutions, then another assets... loop on it."
+  Swapped the 2D billboard player for `player.glb`. `Player.tsx` now renders a
+  Box3-normalised GLB (height 2.6) inside its own Suspense; all movement,
+  collision (tree push-out), joystick, and E-to-tame logic is unchanged.
+- Facing: the model's native front is +Z (same as the monster GLBs), so the
+  group's `rotation.y` turns it. While walking it faces the move direction
+  (`atan2(move.x, move.z)`); when idle it turns to face the camera
+  (`atan2(-forward.x, -forward.z)`), lerped for a smooth turn. Dropped the old
+  front/back directional walk-frame sprites — the 3D model rotates instead.
+- QA: `tsc` clean, headless render shows the player as a 3D figure on the path
+  facing camera, context healthy, console clean (favicon only).
+
 ## 2026-06-14 — Wired 3D props into the world (msg #238)
 - Mahdy said "yes start wiring it" — began with props (most visible, lowest risk).
   New `WorldProp.tsx`: loads a prop GLB via drei `useGLTF`, Box3-normalises the

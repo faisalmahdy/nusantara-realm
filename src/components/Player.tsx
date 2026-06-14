@@ -1,7 +1,7 @@
-import { useMemo, useRef } from 'react';
+import { Suspense, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-import { loadPixelTexture } from './Sprite3D';
+import { useGLTF } from '@react-three/drei';
 import { useKeyboard } from '../game/useKeyboard';
 import { playerPos, cameraState, touchInput } from '../game/shared';
 import { WORLD, COLLIDERS } from '../game/scenery';
@@ -9,24 +9,37 @@ import { useGame } from '../game/store';
 
 const SPEED = 10;
 const PLAYER_R = 0.55;
+const PLAYER_HEIGHT = 2.6;
+
+// The Meshy-generated player GLB, normalised to a target height, centred on x/z
+// and dropped onto y=0. Its native front faces +Z (same convention as the
+// monster GLBs), so the parent group's rotation.y points it where it walks.
+function PlayerModel() {
+  const { scene } = useGLTF('/models/player.glb');
+  const object = useMemo(() => {
+    const g = scene.clone(true) as THREE.Group;
+    const box = new THREE.Box3().setFromObject(g);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const s = PLAYER_HEIGHT / (size.y || 1);
+    g.scale.setScalar(s);
+    g.position.set(-center.x * s, -box.min.y * s, -center.z * s);
+    return g;
+  }, [scene]);
+  return <primitive object={object} />;
+}
 
 export function Player() {
   const keys = useKeyboard();
-  const sprite = useRef<THREE.Sprite>(null);
-  const walkT = useRef(0);
-  const movingAway = useRef(false);
+  const group = useRef<THREE.Group>(null);
+  const facing = useRef(0);
   const tamePressed = useRef(false);
 
-  const frames = useMemo(() => ({
-    frontIdle: loadPixelTexture('/sprites/player/front_idle.png'),
-    backIdle: loadPixelTexture('/sprites/player/back_idle.png'),
-    front: [0, 1, 2, 3].map((i) => loadPixelTexture(`/sprites/player/front_walk_${i}.png`)),
-    back: [0, 1, 2, 3].map((i) => loadPixelTexture(`/sprites/player/back_walk_${i}.png`)),
-  }), []);
-
   useFrame((_, dtRaw) => {
-    const s = sprite.current;
-    if (!s) return;
+    const g = group.current;
+    if (!g) return;
     const dt = Math.min(dtRaw, 0.05);
     const orbit = cameraState.orbit;
 
@@ -62,15 +75,17 @@ export function Player() {
           playerPos.z += dz * push;
         }
       }
-      movingAway.current = move.dot(forward) > 0;
-      walkT.current += dt * 8;
     }
-    s.position.set(playerPos.x, 0, playerPos.z);
+    g.position.set(playerPos.x, 0, playerPos.z);
 
-    const mat = s.material as THREE.SpriteMaterial;
-    const set = movingAway.current ? frames.back : frames.front;
-    mat.map = moving ? set[Math.floor(walkT.current) % 4] : (movingAway.current ? frames.backIdle : frames.frontIdle);
-    mat.needsUpdate = true;
+    // Turn to face the way you walk; when idle, turn to face the camera.
+    const desiredYaw = moving
+      ? Math.atan2(move.x, move.z)
+      : Math.atan2(-forward.x, -forward.z);
+    let d = desiredYaw - facing.current;
+    d = Math.atan2(Math.sin(d), Math.cos(d)); // shortest-path angle
+    facing.current += d * Math.min(1, dt * 10);
+    g.rotation.y = facing.current;
 
     // Press E to start taming the nearby wild.
     const store = useGame.getState();
@@ -83,8 +98,12 @@ export function Player() {
   });
 
   return (
-    <sprite ref={sprite} position={[0, 0, 8]} scale={[2.3, 2.5, 1]} center={[0.5, 0] as any} renderOrder={1}>
-      <spriteMaterial map={frames.frontIdle} transparent alphaTest={0.5} depthWrite />
-    </sprite>
+    <group ref={group} position={[0, 0, 8]}>
+      <Suspense fallback={null}>
+        <PlayerModel />
+      </Suspense>
+    </group>
   );
 }
+
+useGLTF.preload('/models/player.glb');
