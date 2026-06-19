@@ -246,7 +246,9 @@ first devlog.
 - [~] **Biome — ocean + beach (2026-06-19)** — `Ocean.tsx`: the island now sits
       in a sea (shore ring + animated water + horizon fade, lit by day/night).
       Still to do: framing myth, terrain variety, distinct sub-biomes.
-- [ ] **Encounter/respawn** system (biome-tagged), replacing the static ring.
+- [x] **Encounter/respawn (2026-06-19)** — `game/spawns.ts` + GameScene timer:
+      tamed slots respawn a fresh random wild after 3.5s so the world stays
+      huntable. (Biome-tagged encounter tables still to come.)
 - [ ] **Party switching in battle** + a **treat economy** for Feed/Rest/taming.
 - [ ] One **Guardian boss** as the region's goal + an evolution-as-event moment.
 - [x] **Field Guide / Almanac + folklore lore (2026-06-19)** — `Almanac.tsx`:

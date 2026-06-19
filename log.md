@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Wild respawn: the island stays huntable (plan-10x Horizon 1)
+- Tamed wilds used to vanish forever, so after a few tames the world emptied out.
+  Now each tamed slot **respawns a fresh wild** (random species + level) after a
+  3.5s delay — the world stays populated and the Field Guide stays completable.
+- Extracted spawn logic into pure, unit-tested `game/spawns.ts`:
+  `makeInitialSpawns()` (the starting ring) and `respawnTamed(spawns, tamed,
+  counter, rng?)` which swaps tamed slots for fresh wilds with monotonic
+  `…-r<n>` ids (never collide or re-flag as tamed). `GameScene` holds spawns in
+  state and runs the respawn timer off `tamedWildIds`.
+- QA: `tsc` clean; 33/33 tests (4 new in `spawns.test.ts`); `vite build` clean;
+  headless end-to-end — tamed `wild-matong-0` → slot empty right after → after
+  the delay a fresh `wild-kancil-r1000` occupied the same spot; console clean.
+
 ## 2026-06-19 — Ocean + beach: the island reads as Nusantara (plan-10x Horizon 1)
 - The world was a flat green square. Added `Ocean.tsx`: a sandy shore ring just
   beyond the grass and a gently swelling sea around the whole island. Now it
