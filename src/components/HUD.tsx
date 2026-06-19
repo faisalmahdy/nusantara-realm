@@ -4,6 +4,8 @@ import { speciesById, ELEMENT_COLOR } from '../game/monsters';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
+import { AudioControls } from './AudioControls';
+import { sfx } from '../game/audio';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
@@ -29,6 +31,7 @@ export function HUD() {
         <span style={{ opacity: 0.7 }}> · HD-2D taming RPG</span>
       </div>
       <div style={styles.controls}>WASD / arrows walk · drag to orbit · <b>E</b> to tame</div>
+      <AudioControls />
 
       {nearbySpecies && mode === 'explore' && (
         <div style={styles.prompt}>
@@ -39,7 +42,7 @@ export function HUD() {
       {message && <div style={styles.flash}>{message}</div>}
 
       {/* Party button + panel */}
-      <button style={{ ...styles.partyBtn, pointerEvents: 'auto' }} onClick={() => setShowParty((v) => !v)}>
+      <button style={{ ...styles.partyBtn, pointerEvents: 'auto' }} onClick={() => { sfx.uiClick(); setShowParty((v) => !v); }}>
         Party · {party.length}
       </button>
       {showParty && (
@@ -118,7 +121,7 @@ export function HUD() {
               <button style={styles.tameBtn} onClick={() => useGame.getState().tame(tamingSpecies.id, tamingTargetId)}>
                 Offer Treat & Tame
               </button>
-              <button style={styles.cancelBtn} onClick={() => useGame.getState().cancelTaming()}>
+              <button style={styles.cancelBtn} onClick={() => { sfx.uiClick(); useGame.getState().cancelTaming(); }}>
                 Back away
               </button>
             </div>

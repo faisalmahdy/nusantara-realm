@@ -5,12 +5,20 @@ import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
   xpForDefeating, applyXp, pickEnemyMove, bondAtkMult, maxHpFor, evolutionStage,
 } from './battle';
+import { sfx } from './audio';
 
 // A stage-up line if the level gain crossed an evolution boundary, else null.
 function evolutionNote(name: string, oldLevel: number, newLevel: number): string | null {
   const to = evolutionStage(newLevel);
   if (to > evolutionStage(oldLevel)) return `${name} evolved into its Stage ${to} form!`;
   return null;
+}
+
+// Play the louder evolution flourish when a level-up crossed a stage boundary,
+// otherwise the plain level-up sting.
+function progressSfx(leveled: boolean, evolved: boolean) {
+  if (evolved) sfx.evolve();
+  else if (leveled) sfx.levelUp();
 }
 
 export interface TamedMonster {
@@ -106,8 +114,10 @@ export const useGame = create<GameState>()(
         nearbyWildId: null,
         message: `${species.name} was tamed!`,
       }));
+      sfx.tameSuccess();
     } else {
       set({ mode: 'explore', tamingTargetId: null, message: `${species.name} broke free!` });
+      sfx.tameFail();
     }
     return success;
   },
@@ -132,6 +142,7 @@ export const useGame = create<GameState>()(
     const enemy = makeCombatant(wildId, enemySpeciesId, enemyLevel);
     const log = [`A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`];
     if (lead.bond >= 50) log.push(`${player.name}'s bond spurs it on. (+${Math.round((bondAtkMult(lead.bond) - 1) * 100)}% damage)`);
+    sfx.battleStart();
     set({
       mode: 'battle',
       tamingTargetId: null,
@@ -167,6 +178,7 @@ export const useGame = create<GameState>()(
       if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
       const evo = evolutionNote(lead.nickname, lead.level, res.level);
       if (evo) log.push(evo);
+      progressSfx(res.levelsGained > 0, !!evo);
       set((st) => ({
         party: st.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)),
         battle: { ...b, player, enemy, log, turn: 'over', outcome: 'won' },
@@ -213,6 +225,8 @@ export const useGame = create<GameState>()(
       if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
       const evo = evolutionNote(lead.nickname, lead.level, res.level);
       if (evo) log.push(evo);
+      sfx.tameSuccess();
+      if (evo) sfx.evolve();
       set((s) => ({
         party: [...s.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
@@ -226,6 +240,7 @@ export const useGame = create<GameState>()(
     const enemy = { ...b.enemy };
     const player = { ...b.player };
     log.push(`${species.name} broke free!`);
+    sfx.tameFail();
     const eMove = pickEnemyMove(enemy, player);
     const back = computeDamage(enemy, player, eMove);
     player.hp = Math.max(0, player.hp - back.damage);
@@ -280,6 +295,9 @@ export const useGame = create<GameState>()(
         ? `${m.nickname} grew to Lv ${res.level}!`
         : `${m.nickname} enjoyed the treat. (Bond ${bond})`,
     }));
+    if (evo) sfx.evolve();
+    else if (res.levelsGained > 0) sfx.levelUp();
+    else sfx.uiClick();
   },
 
   // Rest a monster back to full HP. The recovery side of persistent battle HP —
@@ -296,6 +314,7 @@ export const useGame = create<GameState>()(
       party: s.party.map((x) => (x.uid === uid ? { ...x, hp: full } : x)),
       message: `${m.nickname} is fully rested.`,
     }));
+    sfx.uiClick();
   },
 
   flash: (msg) => set({ message: msg }),

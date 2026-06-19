@@ -6,6 +6,7 @@ import { playerPos, cameraState, touchInput } from '../game/shared';
 import { WORLD, COLLIDERS } from '../game/scenery';
 import { useGame } from '../game/store';
 import { loadPixelTexture } from './Sprite3D';
+import { sfx } from '../game/audio';
 
 const SPEED = 10;
 const PLAYER_R = 0.55;
@@ -23,6 +24,7 @@ export function Player() {
   const keys = useKeyboard();
   const group = useRef<THREE.Group>(null);
   const tamePressed = useRef(false);
+  const stepT = useRef(0);
 
   // Preload every player frame once (cached), then swap the sprite's texture
   // each frame by walk direction — no React re-renders.
@@ -73,6 +75,10 @@ export function Player() {
           playerPos.z += dz * push;
         }
       }
+      stepT.current += dt;
+      if (stepT.current >= 0.34) { stepT.current = 0; sfx.step(); }
+    } else {
+      stepT.current = 0.34; // first step lands promptly when you start walking
     }
     g.position.set(playerPos.x, 0, playerPos.z);
 

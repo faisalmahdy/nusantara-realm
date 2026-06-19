@@ -59,6 +59,10 @@ Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
 - `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit` +
   `touchInput` joystick vector (shared refs read every frame, not React state).
 - `useKeyboard.ts` — WASD/arrows/E → a mutable ref (no re-renders).
+- `audio.ts` — procedural Web Audio engine (no asset files): gamelan-ish
+  `explore`/`battle` music loops (look-ahead scheduler) + SFX; exposes
+  `initAudio`/`playMusic`/`stopMusic`/`sfx.*` + mute/volume (persisted). The
+  store calls `sfx.*` on game events; all calls no-op until the context unlocks.
 
 ## HUD (`src/components/HUD.tsx`)
 DOM overlay: title, controls, taming prompt, flash message, Party button+panel,
@@ -66,6 +70,8 @@ and the taming modal. Inline-styled; `pointerEvents:auto` only on interactive bi
 The taming modal shows a "Battle to weaken" button when the party is non-empty.
 - `TouchControls.tsx` — on-screen joystick (writes `shared.touchInput`) + E/tame
   button; mounted by HUD in explore mode for phone play.
+- `AudioControls.tsx` — unlocks the AudioContext on first gesture, syncs the
+  music loop to game `mode` (explore↔battle), renders the mute + volume control.
 The party panel rows show HP + bond bars and Feed/Rest buttons (store `feed`/`rest`).
 - `BattleScreen.tsx` — full-screen battle overlay (mounted by HUD when
   mode==='battle'): enemy + player fighters with HP bars, a battle log, and

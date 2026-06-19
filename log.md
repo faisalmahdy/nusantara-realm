@@ -1,5 +1,30 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Audio: procedural gamelan music + SFX (plan-10x Horizon 0)
+- The game was totally silent. Added a full audio layer with **zero asset
+  files** — everything is synthesized at runtime with the Web Audio API
+  (`src/game/audio.ts`), in the spirit of the just-completed asset slimming.
+- Music: a look-ahead scheduler plays interlocking metallophone/gong patterns on
+  a slendro-ish 5-tone scale — a calm `explore` loop and a faster, denser
+  `battle` loop. Voices: `bell` (inharmonic partials, fast attack/exp decay),
+  `gong` (deep, long, downward shimmer), `noise` (filtered burst).
+- SFX: tame success (bright arpeggio) / fail (descending), battle hit (noise +
+  thud, brighter + gong when strong), level-up, evolution (longer shimmer +
+  gong), battle start (gong), UI tick, footstep.
+- Wiring: `AudioControls.tsx` unlocks the AudioContext on first gesture (browser
+  autoplay policy), syncs the loop to game `mode` (explore↔battle), and renders a
+  mute button + volume slider (persisted to localStorage `nusantara-realm-audio`).
+  SFX fire from the store (tame/level/evolve/battle-start, feed/rest) and from
+  `BattleScreen` hits (synced to the existing staggered damage-number timing);
+  footsteps from `Player`. A couple of HUD nav buttons get the UI tick.
+- All audio is guarded: if the context can't start (headless/blocked) every call
+  is a silent no-op — nothing throws.
+- QA: `tsc` clean; `vite build` clean; headless run after a gesture inits audio
+  with **no console errors** (favicon 404 only), the mute/volume control renders
+  at the expected box, 0 `.glb`, lazy chunk still not fetched, tame loop intact.
+  Actual sound can only be heard in a real browser (headless has no output).
+- App chunk grew ~2 KB gzip for the whole system (procedural = no audio files).
+
 ## 2026-06-19 — Retire the Meshy GLB pipeline + chunk the bundle (HD-2D follow-ups)
 - Two follow-ups to the HD-2D switch. (1) **Deploy slimmed 385 MB → 13 MB:**
   `git rm`'d all 40 GLBs from `public/models/` (they were dead weight in hd2d).

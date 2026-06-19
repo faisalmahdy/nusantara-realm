@@ -232,7 +232,9 @@ first devlog.
 - [x] **Bundle chunked (2026-06-19)** — 3D path lazy-split; three/react in their
       own cacheable vendor chunks; first-load ~271 KB gzip (three.js floor).
 - [n/a] **Instance** scenery — moot in HD-2D (scenery is cheap 2D billboards).
-- [ ] **Audio basics**: lib + SFX (walk/tame/hit/win/evolve) + one explore loop.
+- [x] **Audio (2026-06-19)** — procedural Web Audio engine (`game/audio.ts`):
+      gamelan-flavored explore + battle loops, SFX (step/tame/hit/level/evolve/
+      battle-start/UI), mute+volume control. Zero asset files (~2 KB gzip).
 - [ ] **Restore CI**: lint + typecheck + build + **asset-size gate**.
 - [ ] **First tests**: Vitest over `battle.ts` (effectiveness, damage, XP, evo).
 - [ ] **A 60-second tutorial** prompt chain.
