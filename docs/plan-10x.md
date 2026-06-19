@@ -268,7 +268,9 @@ first devlog.
 - [x] **Settings & accessibility (2026-06-19)** — colorblind-safe element icons,
       a reduced-motion toggle, and a reset/new-game option (Settings panel).
 - [ ] A **gamelan** explore theme + battle theme; mobile UI + settings pass.
-- [ ] **Analytics funnel** live; **Playwright** smoke test in CI.
+- [x] **Playwright smoke test in CI (2026-06-19)** — an `e2e` job builds, serves
+      the preview, and asserts the core loop (boots, 0 GLB, tame grows the party,
+      no runtime errors) in headless Chromium. Still to do: **analytics funnel**.
 
 ### Horizon 2 — Depth & Identity (Months 2–3)
 - [ ] **Resolve & execute the art direction** (HD-2D vs stylized 3D — *decide
