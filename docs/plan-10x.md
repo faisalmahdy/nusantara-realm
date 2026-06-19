@@ -237,7 +237,9 @@ first devlog.
       battle-start/UI), mute+volume control. Zero asset files (~2 KB gzip).
 - [ ] **Restore CI**: lint + typecheck + build + **asset-size gate**.
 - [ ] **First tests**: Vitest over `battle.ts` (effectiveness, damage, XP, evo).
-- [ ] **A 60-second tutorial** prompt chain.
+- [x] **60-second tutorial (2026-06-19)** — `Tutorial.tsx`: a 5-step contextual
+      onboarding chain (walk → approach → E → tame → open Party) that advances as
+      the player acts; skippable, shown once (localStorage).
 
 ### Horizon 1 — The Vertical Slice: "One island, done right" (Weeks 2–6)
 *Prove the game is **fun**, not just functional. This is the make-or-break.*

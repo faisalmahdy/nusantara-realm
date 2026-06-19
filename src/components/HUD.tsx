@@ -5,6 +5,7 @@ import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
 import { AudioControls } from './AudioControls';
+import { Tutorial } from './Tutorial';
 import { sfx } from '../game/audio';
 
 export function HUD() {
@@ -131,6 +132,7 @@ export function HUD() {
 
       {mode === 'explore' && <TouchControls />}
       {mode === 'battle' && <BattleScreen />}
+      <Tutorial />
     </div>
   );
 }

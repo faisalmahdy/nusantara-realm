@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Onboarding tutorial (plan-10x Horizon 0 — completes H0)
+- New players were dropped in cold. Added `Tutorial.tsx`: a 5-step contextual
+  prompt chain (walk → approach a wild → press E → tame → open Party) that
+  advances only when the player actually does each step. Movement is detected by
+  polling the shared `playerPos`; the rest reads store state (nearby/mode/party).
+- Shown once for new players (persisted to localStorage `nusantara-realm-tutorial`;
+  auto-skipped for returning players who already have a party), skippable at any
+  step, and hidden during battle so it never covers that overlay. Mounted by HUD.
+- QA: `tsc` clean; 24/24 tests; `vite build` clean; headless shows the
+  "Getting started · 1/5" card above the joystick, advancing through the loop;
+  tame loop intact; 0 `.glb`, console clean (favicon only). This finishes the
+  Horizon-0 foundations (assets, bundle, audio, CI+tests, tutorial).
+
 ## 2026-06-19 — Audio: procedural gamelan music + SFX (plan-10x Horizon 0)
 - The game was totally silent. Added a full audio layer with **zero asset
   files** — everything is synthesized at runtime with the Web Audio API
