@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { World } from './World';
+import { Ocean } from './Ocean';
 import { Player } from './Player';
 import { WildMonster } from './WildMonster';
 import { CameraRig } from './CameraRig';
@@ -29,6 +30,7 @@ export function GameScene() {
     <>
       <DayNight />
 
+      <Ocean />
       <World />
       <Player />
       {spawns.map((s) => (

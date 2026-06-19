@@ -243,8 +243,9 @@ first devlog.
 
 ### Horizon 1 — The Vertical Slice: "One island, done right" (Weeks 2–6)
 *Prove the game is **fun**, not just functional. This is the make-or-break.*
-- [ ] Pick the **starter region**; give it a framing myth + a real **biome**
-      (terrain, water, sky) — not the flat green plane.
+- [~] **Biome — ocean + beach (2026-06-19)** — `Ocean.tsx`: the island now sits
+      in a sea (shore ring + animated water + horizon fade, lit by day/night).
+      Still to do: framing myth, terrain variety, distinct sub-biomes.
 - [ ] **Encounter/respawn** system (biome-tagged), replacing the static ring.
 - [ ] **Party switching in battle** + a **treat economy** for Feed/Rest/taming.
 - [ ] One **Guardian boss** as the region's goal + an evolution-as-event moment.
