@@ -1,30 +1,34 @@
-import { useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { World } from './World';
 import { Ocean } from './Ocean';
 import { Player } from './Player';
 import { WildMonster } from './WildMonster';
 import { CameraRig } from './CameraRig';
 import { DayNight } from './DayNight';
-import { SPECIES } from '../game/monsters';
-import { WildSpawn } from '../game/shared';
+import { useGame } from '../game/store';
+import { makeInitialSpawns, respawnTamed } from '../game/spawns';
+
+const RESPAWN_DELAY = 3500; // ms after a tame before a fresh wild appears in the slot
 
 export function GameScene() {
-  const spawns = useMemo<WildSpawn[]>(() => {
-    return SPECIES.map((sp, i) => {
-      const angle = (i / SPECIES.length) * Math.PI * 2;
-      const r = 13 + (i % 4) * 4;
-      return {
-        wildId: `wild-${sp.id}-${i}`,
-        speciesId: sp.id,
-        x: Math.cos(angle) * r,
-        z: Math.sin(angle) * r,
-        phase: i,
-        // Spread levels across the roster so base / stage-2 / stage-3 evolution
-        // models all appear in the field (evolutionStage: Lv8 → 2, Lv16 → 3).
-        level: 1 + i * 2,
-      };
-    });
-  }, []);
+  const [spawns, setSpawns] = useState(makeInitialSpawns);
+  const counter = useRef(1000); // monotonic source for fresh respawn ids
+  const tamedWildIds = useGame((s) => s.tamedWildIds);
+
+  // When a wild in the field gets tamed, repopulate its slot with a fresh wild
+  // after a short delay so the island stays huntable instead of emptying out.
+  useEffect(() => {
+    const tamed = new Set(tamedWildIds);
+    if (!spawns.some((s) => tamed.has(s.wildId))) return;
+    const t = setTimeout(() => {
+      setSpawns((prev) => {
+        const res = respawnTamed(prev, new Set(useGame.getState().tamedWildIds), counter.current);
+        counter.current = res.counter;
+        return res.changed ? res.spawns : prev;
+      });
+    }, RESPAWN_DELAY);
+    return () => clearTimeout(t);
+  }, [tamedWildIds, spawns]);
 
   return (
     <>
