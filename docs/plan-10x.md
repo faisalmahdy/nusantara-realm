@@ -248,7 +248,9 @@ first devlog.
 - [ ] **Encounter/respawn** system (biome-tagged), replacing the static ring.
 - [ ] **Party switching in battle** + a **treat economy** for Feed/Rest/taming.
 - [ ] One **Guardian boss** as the region's goal + an evolution-as-event moment.
-- [ ] **Lore cards** on tame; **Almanac** screen; a first **village + NPCs**.
+- [x] **Field Guide / Almanac + folklore lore (2026-06-19)** — `Almanac.tsx`:
+      all 12 species with lore that unlocks on taming, "N/12 discovered". Still
+      to do: a first **village + NPCs**.
 - [ ] A **gamelan** explore theme + battle theme; mobile UI + settings pass.
 - [ ] **Analytics funnel** live; **Playwright** smoke test in CI.
 
