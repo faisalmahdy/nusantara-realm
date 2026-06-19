@@ -51,7 +51,7 @@ export function BattleScreen() {
   }, []);
   if (!battle) return null;
 
-  const { player, enemy, log, turn } = battle;
+  const { player, enemy, log, turn, party, active, mustSwitch } = battle;
   const over = turn === 'over';
 
   // Show the attack/hit frames briefly, then run the store action.
@@ -76,21 +76,48 @@ export function BattleScreen() {
           {log.slice(-3).map((line, i) => <div key={i} style={{ opacity: i === Math.min(log.length, 3) - 1 ? 1 : 0.55 }}>{line}</div>)}
         </div>
 
-        {!over ? (
-          <div style={s.actions}>
-            {player.moves.map((m, i) => (
-              <button key={m.name} style={{ ...s.btn, ...s.attack }} disabled={acting} onClick={() => withFx(() => useGame.getState().battleMove(i))}>
-                {m.name}
-                <span style={s.moveType}>{m.element ?? 'Typeless'}</span>
-              </button>
-            ))}
-            <button style={{ ...s.btn, ...s.tame, opacity: treats < 1 ? 0.5 : 1 }} disabled={acting || treats < 1} onClick={() => withFx(() => useGame.getState().battleTame())} title={treats < 1 ? 'No treats left' : 'Offer a treat'}>{treats < 1 ? 'No treats' : 'Tame'}</button>
-            <button style={{ ...s.btn, ...s.flee }} disabled={acting} onClick={() => useGame.getState().battleFlee()}>Flee</button>
-          </div>
-        ) : (
+        {over ? (
           <div style={s.actions}>
             <button style={{ ...s.btn, ...s.attack }} onClick={() => useGame.getState().endBattle()}>Continue</button>
           </div>
+        ) : mustSwitch ? (
+          <div>
+            <div style={s.switchHead}>{player.name} fainted! Send out…</div>
+            <div style={s.switchRow}>
+              {party.map((c, i) => (
+                <button key={c.uid} style={{ ...s.swap, opacity: i === active || c.hp <= 0 ? 0.4 : 1 }}
+                  disabled={i === active || c.hp <= 0}
+                  onClick={() => useGame.getState().battleSwitch(i)}>
+                  {c.name}<span style={s.swapHp}>{c.hp}/{c.maxHp}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <>
+            <div style={s.actions}>
+              {player.moves.map((m, i) => (
+                <button key={m.name} style={{ ...s.btn, ...s.attack }} disabled={acting} onClick={() => withFx(() => useGame.getState().battleMove(i))}>
+                  {m.name}
+                  <span style={s.moveType}>{m.element ?? 'Typeless'}</span>
+                </button>
+              ))}
+              <button style={{ ...s.btn, ...s.tame, opacity: treats < 1 ? 0.5 : 1 }} disabled={acting || treats < 1} onClick={() => withFx(() => useGame.getState().battleTame())} title={treats < 1 ? 'No treats left' : 'Offer a treat'}>{treats < 1 ? 'No treats' : 'Tame'}</button>
+              <button style={{ ...s.btn, ...s.flee }} disabled={acting} onClick={() => useGame.getState().battleFlee()}>Flee</button>
+            </div>
+            {party.length > 1 && (
+              <div style={s.switchRow}>
+                {party.map((c, i) => (
+                  <button key={c.uid} style={{ ...s.swap, opacity: i === active || c.hp <= 0 || acting ? 0.4 : 1 }}
+                    disabled={i === active || c.hp <= 0 || acting}
+                    onClick={() => useGame.getState().battleSwitch(i)}
+                    title={i === active ? 'Active' : c.hp <= 0 ? 'Fainted' : `Switch to ${c.name} (costs a turn)`}>
+                    {i === active ? '▶ ' : ''}{c.name}<span style={s.swapHp}>{c.hp}/{c.maxHp}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -180,4 +207,8 @@ const s: Record<string, React.CSSProperties> = {
   attack: { background: '#d4b06a', color: '#1a1208' },
   tame: { background: '#6ab04c', color: '#0d1a08' },
   flee: { background: 'transparent', color: '#e8e6d8', border: '1px solid rgba(255,255,255,0.3)' },
+  switchHead: { textAlign: 'center', fontSize: 14, marginBottom: 8, color: '#d4b06a', fontWeight: 700 },
+  switchRow: { display: 'flex', gap: 6, justifyContent: 'center', flexWrap: 'wrap', marginTop: 8 },
+  swap: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1, background: 'rgba(255,255,255,0.08)', color: '#e8e6d8', border: '1px solid rgba(212,176,106,0.4)', borderRadius: 8, padding: '5px 10px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: font },
+  swapHp: { fontSize: 9, opacity: 0.75, fontWeight: 400 },
 };

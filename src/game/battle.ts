@@ -98,6 +98,36 @@ export function pickEnemyMove(enemy: Combatant, target: Combatant): Move {
   enemy.moves[0]);
 }
 
+// Outcome of the enemy's counterattack against the active party member.
+export interface CounterResult {
+  party: Combatant[];
+  turn: 'player' | 'over';
+  outcome: 'lost' | null;
+  mustSwitch: boolean; // active fainted but the team still has a fighter
+}
+
+/**
+ * The enemy attacks the active team member, resolving a faint into either a
+ * forced switch (others still standing) or a loss (whole team down). Pure;
+ * appends to `log`. Used for the counter after your move, a failed tame, and the
+ * free hit you take when you voluntarily switch.
+ */
+export function enemyCounter(party: Combatant[], active: number, enemy: Combatant, log: string[]): CounterResult {
+  const target = party[active];
+  const move = pickEnemyMove(enemy, target);
+  const { damage, eff } = computeDamage(enemy, target, move);
+  const hit = { ...target, hp: Math.max(0, target.hp - damage) };
+  const next = party.map((c, i) => (i === active ? hit : c));
+  log.push(`Wild ${enemy.name} used ${move.name} for ${damage}.${effectivenessNote(eff)}`);
+  if (hit.hp > 0) return { party: next, turn: 'player', outcome: null, mustSwitch: false };
+  log.push(`${hit.name} fainted!`);
+  if (next.some((c) => c.hp > 0)) {
+    log.push('Choose another monster!');
+    return { party: next, turn: 'player', outcome: null, mustSwitch: true };
+  }
+  return { party: next, turn: 'over', outcome: 'lost', mustSwitch: false };
+}
+
 /** A short human-readable note on the matchup, for the battle log. */
 export function effectivenessNote(eff: number): string {
   if (eff > 1) return " It's super effective!";
