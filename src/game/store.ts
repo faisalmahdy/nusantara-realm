@@ -54,6 +54,9 @@ interface GameState {
   nearbyWildId: string | null;
   // wild monster the taming overlay is focused on
   tamingTargetId: string | null;
+  // nearby/in-conversation villager (camp NPCs)
+  nearbyNpcId: string | null;
+  dialogueNpcId: string | null;
   // active turn-based battle, if any
   battle: BattleState | null;
   message: string | null;
@@ -64,6 +67,9 @@ interface GameState {
 
   setMode: (m: GameMode) => void;
   setNearby: (id: string | null) => void;
+  setNearbyNpc: (id: string | null) => void;
+  talkToNpc: (id: string) => void;
+  closeDialogue: () => void;
   beginTaming: (wildId: string) => void;
   cancelTaming: () => void;
   tame: (speciesId: string, wildId: string) => boolean;
@@ -95,6 +101,8 @@ export const useGame = create<GameState>()(
   tamedWildIds: [],
   nearbyWildId: null,
   tamingTargetId: null,
+  nearbyNpcId: null,
+  dialogueNpcId: null,
   battle: null,
   message: null,
   treats: START_TREATS,
@@ -102,6 +110,9 @@ export const useGame = create<GameState>()(
 
   setMode: (m) => set({ mode: m }),
   setNearby: (id) => set({ nearbyWildId: id }),
+  setNearbyNpc: (id) => set({ nearbyNpcId: id }),
+  talkToNpc: (id) => { sfx.uiClick(); set({ dialogueNpcId: id }); },
+  closeDialogue: () => set({ dialogueNpcId: null }),
 
   beginTaming: (wildId) => set({ mode: 'taming', tamingTargetId: wildId }),
   cancelTaming: () => set({ mode: 'explore', tamingTargetId: null }),

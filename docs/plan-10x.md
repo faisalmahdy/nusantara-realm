@@ -258,8 +258,9 @@ first devlog.
       north: boss-level (max lead+4, 16), distinct visuals/prompt, one-time +15
       treat bounty, never respawns. Still to do: an evolution-as-event moment.
 - [x] **Field Guide / Almanac + folklore lore (2026-06-19)** — `Almanac.tsx`:
-      all 12 species with lore that unlocks on taming, "N/12 discovered". Still
-      to do: a first **village + NPCs**.
+      all 12 species with lore that unlocks on taming, "N/12 discovered".
+- [x] **Camp + NPCs (2026-06-19)** — `Npc.tsx` + `game/npcs.ts`: three villagers
+      with E-to-talk dialogue (guidance + Nusantara worldbuilding).
 - [ ] A **gamelan** explore theme + battle theme; mobile UI + settings pass.
 - [ ] **Analytics funnel** live; **Playwright** smoke test in CI.
 

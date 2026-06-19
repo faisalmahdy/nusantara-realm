@@ -110,7 +110,10 @@ export function Player() {
     const store = useGame.getState();
     if (k.tame && !tamePressed.current) {
       tamePressed.current = true;
-      if (store.mode === 'explore' && store.nearbyWildId) store.beginTaming(store.nearbyWildId);
+      if (store.mode === 'explore') {
+        if (store.nearbyWildId) store.beginTaming(store.nearbyWildId);
+        else if (store.nearbyNpcId) store.talkToNpc(store.nearbyNpcId);
+      }
     } else if (!k.tame) {
       tamePressed.current = false;
     }

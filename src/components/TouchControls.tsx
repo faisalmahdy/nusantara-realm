@@ -10,8 +10,8 @@ export function TouchControls() {
   const baseRef = useRef<HTMLDivElement>(null);
   const active = useRef(false);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
-  const { mode, nearbyWildId } = useGame();
-  const canTame = mode === 'explore' && !!nearbyWildId;
+  const { mode, nearbyWildId, nearbyNpcId } = useGame();
+  const canTame = mode === 'explore' && (!!nearbyWildId || !!nearbyNpcId);
 
   const update = (clientX: number, clientY: number) => {
     const el = baseRef.current;
@@ -35,7 +35,9 @@ export function TouchControls() {
 
   const tame = () => {
     const s = useGame.getState();
-    if (s.mode === 'explore' && s.nearbyWildId) s.beginTaming(s.nearbyWildId);
+    if (s.mode !== 'explore') return;
+    if (s.nearbyWildId) s.beginTaming(s.nearbyWildId);
+    else if (s.nearbyNpcId) s.talkToNpc(s.nearbyNpcId);
   };
 
   return (
