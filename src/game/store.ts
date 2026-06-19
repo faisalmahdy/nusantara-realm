@@ -64,6 +64,8 @@ interface GameState {
   treats: number;
   // whether the island Guardian has been bested (one-time reward milestone)
   guardianDefeated: boolean;
+  // accessibility: damp repetitive idle/ambient motion
+  reducedMotion: boolean;
 
   setMode: (m: GameMode) => void;
   setNearby: (id: string | null) => void;
@@ -82,6 +84,8 @@ interface GameState {
   feed: (uid: string) => void;
   rest: (uid: string) => void;
   flash: (msg: string) => void;
+  setReducedMotion: (v: boolean) => void;
+  resetGame: () => void;
 }
 
 // Economy tuning. You start with enough treats to tame your first few monsters
@@ -107,6 +111,7 @@ export const useGame = create<GameState>()(
   message: null,
   treats: START_TREATS,
   guardianDefeated: false,
+  reducedMotion: false,
 
   setMode: (m) => set({ mode: m }),
   setNearby: (id) => set({ nearbyWildId: id }),
@@ -379,12 +384,23 @@ export const useGame = create<GameState>()(
   },
 
   flash: (msg) => set({ message: msg }),
+
+  setReducedMotion: (v) => set({ reducedMotion: v }),
+
+  // Wipe the save (progress + tutorial) and start fresh.
+  resetGame: () => {
+    try {
+      localStorage.removeItem('nusantara-realm-save');
+      localStorage.removeItem('nusantara-realm-tutorial');
+    } catch { /* ignore */ }
+    if (typeof location !== 'undefined') location.reload();
+  },
     }),
     {
       name: 'nusantara-realm-save',
       // Only the durable progression survives a reload; transient UI/battle
       // state always starts fresh in 'explore'.
-      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats, guardianDefeated: s.guardianDefeated }),
+      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats, guardianDefeated: s.guardianDefeated, reducedMotion: s.reducedMotion }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         // Resume uid issuance past any restored monster so new tames don't collide.

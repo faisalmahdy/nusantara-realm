@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../game/store';
-import { ELEMENT_COLOR, speciesById } from '../game/monsters';
+import { ELEMENT_COLOR, ELEMENT_ICON, speciesById } from '../game/monsters';
 import { sfx } from '../game/audio';
 import type { Combatant } from '../game/battle';
 
@@ -148,7 +148,7 @@ function Fighter({ c, side, acting, dmg }: { c: Combatant; side: 'player' | 'ene
     <div style={{ ...s.fighter, ...(side === 'enemy' ? s.enemyPos : s.playerPos) }}>
       <div style={s.nameRow}>
         <span style={{ fontWeight: 700 }}>{c.name}</span>
-        <span style={{ color: ELEMENT_COLOR[c.element], fontSize: 11 }}>{c.element}</span>
+        <span style={{ color: ELEMENT_COLOR[c.element], fontSize: 11 }}>{ELEMENT_ICON[c.element]} {c.element}</span>
         <span style={{ opacity: 0.7, fontSize: 11 }}>Lv {c.level}</span>
         {c.bond > 0 && <span style={{ color: '#e07ba0', fontSize: 11 }} title={`Bond ${c.bond}/100`}>♥{c.bond}</span>}
       </div>

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { WORLD } from '../game/scenery';
+import { useGame } from '../game/store';
 
 // Turns the flat grass plane into a Nusantara *island*: a sandy shore ring and
 // a gently swelling sea around it. Works with the day/night cycle — the sun
@@ -14,6 +15,7 @@ export function Ocean() {
   // Gentle crossing swells. Local +z becomes world-up after the -90° X rotation;
   // amplitude is kept well below the shore drop so waves never clip the island.
   useFrame(({ clock }) => {
+    if (useGame.getState().reducedMotion) return; // keep a flat, calm sea
     const t = clock.elapsedTime;
     const pos = geo.attributes.position as THREE.BufferAttribute;
     const arr = pos.array as Float32Array;

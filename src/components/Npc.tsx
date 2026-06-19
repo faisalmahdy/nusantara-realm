@@ -19,8 +19,9 @@ export function Npc({ npc }: { npc: NpcData }) {
     const g = group.current;
     if (!g) return;
     const t = state.clock.elapsedTime;
-    g.position.y = Math.sin(t * 1.6 + npc.x) * 0.05; // gentle idle bob
-    if (marker.current) marker.current.position.y = 2.9 + Math.sin(t * 3) * 0.12;
+    const reduced = useGame.getState().reducedMotion;
+    g.position.y = reduced ? 0 : Math.sin(t * 1.6 + npc.x) * 0.05; // gentle idle bob
+    if (marker.current) marker.current.position.y = 2.9 + (reduced ? 0 : Math.sin(t * 3) * 0.12);
 
     const dist = Math.hypot(npc.x - playerPos.x, npc.z - playerPos.z);
     const store = useGame.getState();

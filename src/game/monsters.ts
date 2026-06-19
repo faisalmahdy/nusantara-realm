@@ -37,6 +37,16 @@ export const ELEMENT_COLOR: Record<MonsterSpecies['element'], string> = {
   Spirit: '#b06ad6',
 };
 
+// A distinct glyph per element so they're told apart by shape, not color alone
+// (colorblind-safe). Shown alongside the element name throughout the UI.
+export const ELEMENT_ICON: Record<MonsterSpecies['element'], string> = {
+  Forest: '🌿',
+  Sea: '🌊',
+  Sky: '⚡',
+  Earth: '⛰️',
+  Spirit: '✨',
+};
+
 export function speciesById(id: string): MonsterSpecies {
   const s = SPECIES.find((x) => x.id === id);
   if (!s) throw new Error(`unknown species ${id}`);
