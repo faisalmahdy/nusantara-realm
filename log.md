@@ -1,5 +1,31 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Art-direction decision: revive HD-2D (plan-10x Decision #1)
+- Mahdy chose to act on the plan's #1 decision and revert the look to **HD-2D**
+  (2D Nusantara sprites as billboards in the 3D world) over the auto-generated
+  Meshy 3D models. This also resolves the project's worst problem for free: in
+  HD-2D mode **no GLB is fetched** (verified 0 GLB requests), so first load drops
+  from ~372 MB of models to ~11 MB of sprites.
+- Implemented as one reversible flag: `src/game/config.ts` `ART_MODE` ('hd2d' |
+  '3d'). Renderers branch on it:
+  - `Player.tsx` — restored the directional walk-frame billboard (front/back
+    idle + walk_0..3, picked by walk direction vs camera; idle faces camera),
+    via an imperative texture-swap (no per-frame re-renders). 3D GLB path kept
+    behind the flag; `useGLTF.preload(player.glb)` now only runs in 3D mode.
+  - `WildMonster.tsx` — renders the `idle.png` billboard in hd2d (evolved forms
+    reuse the base sprite — no per-stage 2D art exists).
+  - `World.tsx` — scenery renders as `Sprite3D` billboards in hd2d (no prop GLBs).
+  - `HUD.tsx` — party viewer shows the 2D `idle.png` instead of the 3D canvas.
+  - `BattleScreen.tsx` already used 2D frames — unchanged.
+- QA: `tsc --noEmit` clean; `vite build` clean; headless Chromium (Playwright)
+  shot the opening view, the field (player walking away = back frames), the
+  Matong tame prompt, and the party panel — all render the painterly 2D look;
+  full tame loop intact (forced tame → party 1, panel shows the 2D Kancil);
+  network trace: 0 `.glb`, 23 sprites, console clean (favicon 404 only).
+- Follow-up: the Meshy GLBs (`public/models/`, ~372 MB) are now dead weight in
+  the repo/deploy — move/remove them once 3D mode is formally retired. Also
+  code-split the three/drei 3D path to shrink the 998 KB JS bundle.
+
 ## 2026-06-19 — 10× strategy plan (analysis + roadmap)
 - Mahdy asked for a full analysis of what the repo is building, its current
   status, and a plan — written "with ten personas of a game-dev team" — for how

@@ -5,6 +5,7 @@ import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
 import { PartyViewer3D } from './PartyViewer3D';
+import { ART_MODE } from '../game/config';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
@@ -53,7 +54,11 @@ export function HUD() {
             const nextLv = nextEvolutionLevel(selected.level);
             return (
               <div style={styles.viewer}>
-                <PartyViewer3D speciesId={selected.speciesId} level={selected.level} />
+                {ART_MODE === 'hd2d' ? (
+                  <img src={`/sprites/${selected.speciesId}/idle.png`} style={styles.viewerImg} alt={selected.nickname} />
+                ) : (
+                  <PartyViewer3D speciesId={selected.speciesId} level={selected.level} />
+                )}
                 <div style={styles.viewerOverlay}>
                   <span style={{ color: ELEMENT_COLOR[sp.element], fontWeight: 700 }}>{selected.nickname}</span>
                   <span style={styles.stageBadge}>Stage {stage}</span>
@@ -145,6 +150,7 @@ const styles: Record<string, React.CSSProperties> = {
   panelHead: { fontSize: 13, fontWeight: 700, color: '#d4b06a', marginBottom: 8 },
   empty: { fontSize: 12, opacity: 0.7 },
   viewer: { position: 'relative', background: 'radial-gradient(circle at 50% 35%, rgba(60,80,55,0.5), rgba(0,0,0,0.3))', borderRadius: 8, marginBottom: 8, border: '1px solid rgba(212,176,106,0.25)' },
+  viewerImg: { display: 'block', width: '100%', height: 150, objectFit: 'contain', imageRendering: 'pixelated', padding: '10px 0' },
   viewerOverlay: { position: 'absolute', left: 8, top: 6, right: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, textShadow: '0 1px 2px #000', pointerEvents: 'none' },
   stageBadge: { background: 'rgba(212,176,106,0.9)', color: '#1a1208', borderRadius: 999, padding: '1px 8px', fontSize: 10, fontWeight: 800 },
   evoLine: { position: 'absolute', left: 0, right: 0, bottom: 6, textAlign: 'center', fontSize: 10, opacity: 0.8, textShadow: '0 1px 2px #000', pointerEvents: 'none' },

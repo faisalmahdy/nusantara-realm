@@ -268,9 +268,10 @@ first devlog.
 4. **A 60-second tutorial.** Turn "what do I do?" into "oh, neat!" *(Indah)*
 
 ## Decisions needed from Mahdy
-1. **Art direction (the big one):** revive **HD-2D** (recommended — distinctive,
-   light, the 2D art has soul) *or* commit to stylized 3D *with a human art
-   pass*? Everything in Horizon 2 depends on this.
+1. **Art direction (the big one): ✅ DECIDED 2026-06-19 — revived HD-2D.** The 2D
+   sprites are billboards again behind `ART_MODE='hd2d'`; 3D is opt-in. Bonus: in
+   hd2d no GLB is fetched, so this also resolved the 372 MB load problem (Bayu's
+   Horizon-0 item) — first load is now ~11 MB of sprites.
 2. **Narrative scope:** light texture (lore cards + a framing myth) vs a fuller
    story with NPCs and quests?
 3. **Budget/help:** stay AI-assisted only, or bring in a human **composer/artist**

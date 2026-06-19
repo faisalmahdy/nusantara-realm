@@ -1,6 +1,14 @@
 # 3D models
 
-Last touched: 2026-06-14 (real party-evolution view: 3D party viewer + stage-up notice)
+Last touched: 2026-06-19 (art direction reverted to HD-2D — 3D now opt-in)
+
+## SUPERSEDED — HD-2D is the shipped look again (2026-06-19, plan-10x #1)
+The signature look is back to **HD-2D**: the 2D Nusantara sprites as billboards
+in the 3D world. The 3D pipeline below (Meshy GLBs + hand-built builders) is kept
+**opt-in** behind `src/game/config.ts` `ART_MODE` — set it to `'3d'` to render
+the GLB/procedural models again. In the default `'hd2d'` mode no GLB is fetched
+(first load ~11 MB of sprites vs ~372 MB of models). Everything from here down
+documents that opt-in 3D pipeline.
 
 ## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
 Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead

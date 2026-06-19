@@ -8,6 +8,7 @@ import { playerPos, WildSpawn } from '../game/shared';
 import { useGame } from '../game/store';
 import { evolutionStage } from '../game/battle';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
+import { ART_MODE } from '../game/config';
 
 const TAME_RANGE = 4.5;
 
@@ -62,7 +63,11 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
 
   return (
     <group ref={group} position={[spawn.x, 0, spawn.z]}>
-      {hasModel(spawn.speciesId) ? (
+      {ART_MODE === 'hd2d' ? (
+        // HD-2D: the 2D pixel-art sprite as a camera-facing billboard. (No
+        // per-stage sprites exist, so evolved forms reuse the base idle art.)
+        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
+      ) : hasModel(spawn.speciesId) ? (
         <MonsterModel speciesId={spawn.speciesId} height={2.4} stage={evolutionStage(spawn.level)} />
       ) : (
         <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />

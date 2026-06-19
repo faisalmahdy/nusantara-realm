@@ -1,6 +1,13 @@
 # Architecture
 
-Last touched: 2026-06-14 (mobile touch controls)
+Last touched: 2026-06-19 (ART_MODE: HD-2D vs 3D renderers)
+
+## Art mode (`src/game/config.ts`)
+- `ART_MODE` ('hd2d' | '3d') is the one switch for the visual pipeline.
+  **'hd2d'** (default, shipped): Player/WildMonster/World/HUD-viewer render the
+  2D sprites as billboards; no GLB is fetched. **'3d'**: the same renderers use
+  the Meshy GLB / procedural-builder path (MonsterModel, WorldProp, player.glb,
+  PartyViewer3D). BattleScreen is 2D in both modes.
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
