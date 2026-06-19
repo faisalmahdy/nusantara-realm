@@ -26,13 +26,15 @@ interface Sprite3DProps {
   groundAnchored?: boolean;
   opacity?: number;
   renderOrder?: number;
+  /** optional tint multiplied over the texture (e.g. to recolor NPC sprites) */
+  color?: string;
 }
 
 /**
  * A camera-facing pixel-art billboard. This is the core of the HD-2D look:
  * the 2D Nusantara sprites planted in the real 3D world.
  */
-export function Sprite3D({ url, height, position = [0, 0, 0], groundAnchored = true, opacity = 1, renderOrder = 0 }: Sprite3DProps) {
+export function Sprite3D({ url, height, position = [0, 0, 0], groundAnchored = true, opacity = 1, renderOrder = 0, color }: Sprite3DProps) {
   const tex = useLoader(THREE.TextureLoader, url);
   const [aspect, setAspect] = useState(1);
 
@@ -50,7 +52,7 @@ export function Sprite3D({ url, height, position = [0, 0, 0], groundAnchored = t
 
   return (
     <sprite position={position} scale={[height * aspect, height, 1]} center={center as any} renderOrder={renderOrder}>
-      <spriteMaterial map={tex} transparent alphaTest={0.5} opacity={opacity} depthWrite />
+      <spriteMaterial map={tex} color={color as any} transparent alphaTest={0.5} opacity={opacity} depthWrite />
     </sprite>
   );
 }

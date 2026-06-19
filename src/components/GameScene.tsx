@@ -3,10 +3,12 @@ import { World } from './World';
 import { Ocean } from './Ocean';
 import { Player } from './Player';
 import { WildMonster } from './WildMonster';
+import { Npc } from './Npc';
 import { CameraRig } from './CameraRig';
 import { DayNight } from './DayNight';
 import { useGame } from '../game/store';
 import { makeInitialSpawns, respawnTamed } from '../game/spawns';
+import { NPCS } from '../game/npcs';
 
 const RESPAWN_DELAY = 3500; // ms after a tame before a fresh wild appears in the slot
 
@@ -37,6 +39,9 @@ export function GameScene() {
       <Ocean />
       <World />
       <Player />
+      {NPCS.map((n) => (
+        <Npc key={n.id} npc={n} />
+      ))}
       {spawns.map((s) => (
         <WildMonster key={s.wildId} spawn={s} />
       ))}

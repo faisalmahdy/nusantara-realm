@@ -1,5 +1,21 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Camp + NPCs: narrative texture (plan-10x Horizon 1)
+- Added the starting **camp** with three villagers (Elder Sari, Fisher Bayu,
+  Warden Intan) — `game/npcs.ts` data + `Npc.tsx` (a tinted player-sprite
+  billboard with a floating interact marker). Walk up and press E / tap the
+  button to talk; each has a couple of lines of guidance + Nusantara
+  worldbuilding (the term Pawang, bonding, treats, the Guardian/balance).
+- Store gained transient `nearbyNpcId`/`dialogueNpcId` + `setNearbyNpc`/
+  `talkToNpc`/`closeDialogue`. Player & TouchControls' E now talk to a nearby
+  NPC when no wild is in range (taming keeps priority). HUD shows a talk prompt
+  and a cycling dialogue box. `Sprite3D` gained an optional `color` tint.
+- Camp placed safely inside the wild ring (r≈3–7) so villagers never overlap a
+  wild (which would steal proximity). NPC proximity yields to wilds by design.
+- QA: `tsc` clean; 40/40 tests (2 new in `npcs.test.ts`); `vite build` clean;
+  headless — stood in camp → `nearbyNpcId` set → E opened Elder Sari's dialogue;
+  console clean. Screenshot shows the camp + markers + dialogue.
+
 ## 2026-06-19 — Guardian boss: a region goal (plan-10x Horizon 1)
 - The world had no objective. Added the island's **Guardian** — Naris the
   storm-naga — standing watch to the north (z=-34) in a bold gold double-ring,

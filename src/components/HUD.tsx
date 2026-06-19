@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
+import { npcById } from '../game/npcs';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
@@ -10,10 +11,12 @@ import { Almanac } from './Almanac';
 import { sfx } from '../game/audio';
 
 export function HUD() {
-  const { mode, party, nearbyWildId, tamingTargetId, message, treats } = useGame();
+  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId } = useGame();
   const [showParty, setShowParty] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
+  const [npcLine, setNpcLine] = useState(0);
+  useEffect(() => { setNpcLine(0); }, [dialogueNpcId]); // restart dialogue when the speaker changes
   const hasParty = party.length > 0;
   const selected = party.find((m) => m.uid === selectedUid) ?? party[0];
 
@@ -45,6 +48,12 @@ export function HUD() {
           ) : (
             <>A wild <b style={{ color: ELEMENT_COLOR[nearbySpecies.element] }}>{nearbySpecies.name}</b> is nearby — press <b>E</b> to tame</>
           )}
+        </div>
+      )}
+
+      {nearbyNpcId && mode === 'explore' && !nearbyWildId && !dialogueNpcId && (
+        <div style={styles.prompt}>
+          Talk to <b style={{ color: '#7ad7ff' }}>{npcById(nearbyNpcId)?.name}</b> — press <b>E</b>
         </div>
       )}
 
@@ -140,6 +149,25 @@ export function HUD() {
         </div>
       )}
 
+      {dialogueNpcId && (() => {
+        const npc = npcById(dialogueNpcId);
+        if (!npc) return null;
+        const last = npcLine >= npc.lines.length - 1;
+        return (
+          <div style={styles.dialogueWrap}>
+            <div style={styles.dialogue}>
+              <div style={styles.dialogueName}>{npc.name}</div>
+              <div style={styles.dialogueText}>{npc.lines[npcLine]}</div>
+              <div style={{ textAlign: 'right', marginTop: 10 }}>
+                <button style={styles.dialogueBtn} onClick={() => { sfx.uiClick(); if (last) useGame.getState().closeDialogue(); else setNpcLine((i) => i + 1); }}>
+                  {last ? 'Close' : 'Next ▸'}
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {showGuide && <Almanac onClose={() => setShowGuide(false)} />}
       {mode === 'explore' && <TouchControls />}
       {mode === 'battle' && <BattleScreen />}
@@ -155,6 +183,11 @@ const styles: Record<string, React.CSSProperties> = {
   controls: { position: 'fixed', left: 12, top: 32, fontSize: 12, opacity: 0.85, textShadow: '0 1px 2px #000' },
   prompt: { position: 'fixed', left: '50%', bottom: 90, transform: 'translateX(-50%)', background: 'rgba(20,28,20,0.82)', padding: '8px 16px', borderRadius: 999, fontSize: 14, textShadow: '0 1px 2px #000', border: '1px solid rgba(212,176,106,0.5)' },
   promptGuardian: { background: 'rgba(44,32,10,0.9)', border: '1px solid #f4d97b' },
+  dialogueWrap: { position: 'fixed', left: 0, right: 0, bottom: 24, display: 'flex', justifyContent: 'center', pointerEvents: 'none', padding: '0 12px' },
+  dialogue: { width: 'min(520px, 94vw)', background: 'rgba(16,22,16,0.96)', border: '1px solid rgba(122,215,255,0.5)', borderRadius: 12, padding: '12px 16px', pointerEvents: 'auto', boxShadow: '0 8px 28px rgba(0,0,0,0.5)' },
+  dialogueName: { fontSize: 13, fontWeight: 800, color: '#7ad7ff', marginBottom: 5 },
+  dialogueText: { fontSize: 15, lineHeight: 1.5 },
+  dialogueBtn: { background: '#7ad7ff', color: '#06222e', border: 'none', borderRadius: 8, padding: '7px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   flash: { position: 'fixed', left: '50%', top: 70, transform: 'translateX(-50%)', background: 'rgba(212,176,106,0.95)', color: '#1a1208', padding: '8px 18px', borderRadius: 8, fontSize: 15, fontWeight: 700 },
   topRight: { position: 'fixed', right: 12, top: 12, display: 'flex', gap: 8, pointerEvents: 'auto' },
   cornerBtn: { background: 'rgba(20,28,20,0.85)', color: '#e8e6d8', border: '1px solid rgba(212,176,106,0.6)', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontFamily: font, cursor: 'pointer' },
