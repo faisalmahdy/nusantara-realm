@@ -4,7 +4,8 @@ import { speciesById, ELEMENT_COLOR } from '../game/monsters';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
-import { PartyViewer3D } from './PartyViewer3D';
+import { AudioControls } from './AudioControls';
+import { sfx } from '../game/audio';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
@@ -30,6 +31,7 @@ export function HUD() {
         <span style={{ opacity: 0.7 }}> · HD-2D taming RPG</span>
       </div>
       <div style={styles.controls}>WASD / arrows walk · drag to orbit · <b>E</b> to tame</div>
+      <AudioControls />
 
       {nearbySpecies && mode === 'explore' && (
         <div style={styles.prompt}>
@@ -40,7 +42,7 @@ export function HUD() {
       {message && <div style={styles.flash}>{message}</div>}
 
       {/* Party button + panel */}
-      <button style={{ ...styles.partyBtn, pointerEvents: 'auto' }} onClick={() => setShowParty((v) => !v)}>
+      <button style={{ ...styles.partyBtn, pointerEvents: 'auto' }} onClick={() => { sfx.uiClick(); setShowParty((v) => !v); }}>
         Party · {party.length}
       </button>
       {showParty && (
@@ -53,7 +55,7 @@ export function HUD() {
             const nextLv = nextEvolutionLevel(selected.level);
             return (
               <div style={styles.viewer}>
-                <PartyViewer3D speciesId={selected.speciesId} level={selected.level} />
+                <img src={`/sprites/${selected.speciesId}/idle.png`} style={styles.viewerImg} alt={selected.nickname} />
                 <div style={styles.viewerOverlay}>
                   <span style={{ color: ELEMENT_COLOR[sp.element], fontWeight: 700 }}>{selected.nickname}</span>
                   <span style={styles.stageBadge}>Stage {stage}</span>
@@ -119,7 +121,7 @@ export function HUD() {
               <button style={styles.tameBtn} onClick={() => useGame.getState().tame(tamingSpecies.id, tamingTargetId)}>
                 Offer Treat & Tame
               </button>
-              <button style={styles.cancelBtn} onClick={() => useGame.getState().cancelTaming()}>
+              <button style={styles.cancelBtn} onClick={() => { sfx.uiClick(); useGame.getState().cancelTaming(); }}>
                 Back away
               </button>
             </div>
@@ -145,6 +147,7 @@ const styles: Record<string, React.CSSProperties> = {
   panelHead: { fontSize: 13, fontWeight: 700, color: '#d4b06a', marginBottom: 8 },
   empty: { fontSize: 12, opacity: 0.7 },
   viewer: { position: 'relative', background: 'radial-gradient(circle at 50% 35%, rgba(60,80,55,0.5), rgba(0,0,0,0.3))', borderRadius: 8, marginBottom: 8, border: '1px solid rgba(212,176,106,0.25)' },
+  viewerImg: { display: 'block', width: '100%', height: 150, objectFit: 'contain', imageRendering: 'pixelated', padding: '10px 0' },
   viewerOverlay: { position: 'absolute', left: 8, top: 6, right: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, textShadow: '0 1px 2px #000', pointerEvents: 'none' },
   stageBadge: { background: 'rgba(212,176,106,0.9)', color: '#1a1208', borderRadius: 999, padding: '1px 8px', fontSize: 10, fontWeight: 800 },
   evoLine: { position: 'absolute', left: 0, right: 0, bottom: 6, textAlign: 'center', fontSize: 10, opacity: 0.8, textShadow: '0 1px 2px #000', pointerEvents: 'none' },

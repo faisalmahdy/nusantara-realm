@@ -12,8 +12,10 @@ import { buildNaris } from './naris';
 import { buildWatua } from './watua';
 import { buildRabuas } from './rabuas';
 
-// Maps a species id to its from-scratch Three.js builder. Species absent from
-// this map still render as 2D billboards in the world (ported over time).
+// Maps a species id to its from-scratch Three.js builder. Used only when
+// ART_MODE === '3d' (opt-in); HD-2D (default) renders the 2D sprites instead.
+// MonsterModel + these builders are code-split into a lazy chunk (see
+// WildMonster), so none of this ships in the default download.
 export const MODEL_BUILDERS: Record<string, () => THREE.Group> = {
   kancil: buildKancil,
   camar: buildCamar,
@@ -29,27 +31,6 @@ export const MODEL_BUILDERS: Record<string, () => THREE.Group> = {
   rabuas: buildRabuas,
 };
 
-// Species with a Meshy-generated GLB in public/models/<id>.glb. These take
-// priority over the procedural builder (see MonsterModel).
-export const GLB_MODELS = new Set<string>([
-  'kancil', 'matong', 'dugang', 'camar', 'gambang', 'bamut',
-  'ayaka', 'babur', 'kepiting', 'naris', 'watua', 'rabuas',
-]);
-
-// Every base-GLB species also shipped evolution-stage models <id>2.glb and
-// <id>3.glb in public/models/ (see docs/models.md).
-export const GLB_STAGE_MODELS = new Set<string>();
-for (const id of GLB_MODELS) { GLB_STAGE_MODELS.add(`${id}2`); GLB_STAGE_MODELS.add(`${id}3`); }
-
-// Resolve a species + evolution stage to its GLB file id (stage 1 = base id).
-export function stageGlbId(speciesId: string, stage: number): string {
-  return stage <= 1 ? speciesId : `${speciesId}${stage}`;
-}
-
-export function hasGlb(id: string): boolean {
-  return GLB_MODELS.has(id) || GLB_STAGE_MODELS.has(id);
-}
-
 export function hasModel(id: string): boolean {
-  return id in MODEL_BUILDERS || GLB_MODELS.has(id);
+  return id in MODEL_BUILDERS;
 }

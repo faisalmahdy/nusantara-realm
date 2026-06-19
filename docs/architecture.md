@@ -1,6 +1,19 @@
 # Architecture
 
-Last touched: 2026-06-14 (mobile touch controls)
+Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
+
+## Art mode (`src/game/config.ts`)
+- `ART_MODE` ('hd2d' | '3d') switches the visual pipeline. **'hd2d'** (default,
+  shipped): everything is 2D sprites as billboards (player, wild monsters,
+  scenery, party viewer). **'3d'** (opt-in legacy): only wild monsters render as
+  the from-scratch procedural meshes — `MonsterModel` + the `models/*.ts`
+  builders are **code-split into a lazy chunk** (`WildMonster` lazy-imports it),
+  so they never load in HD-2D. Player/scenery/party-viewer stay 2D in both modes.
+- **No `.glb` is ever fetched.** The Meshy GLB pipeline (assets in
+  `public/models/`, the `drei useGLTF` loaders, and `WorldProp`/`PartyViewer3D`/
+  the player GLB) was removed once HD-2D was chosen — first load is sprites only.
+- Build (`vite.config.ts`): three + react are split into their own cacheable
+  vendor chunks; only the small app chunk (~57 KB gzip) changes per deploy.
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).
@@ -46,6 +59,10 @@ Last touched: 2026-06-14 (mobile touch controls)
 - `shared.ts` — module-level `playerPos` Vector3 + `cameraState.orbit` +
   `touchInput` joystick vector (shared refs read every frame, not React state).
 - `useKeyboard.ts` — WASD/arrows/E → a mutable ref (no re-renders).
+- `audio.ts` — procedural Web Audio engine (no asset files): gamelan-ish
+  `explore`/`battle` music loops (look-ahead scheduler) + SFX; exposes
+  `initAudio`/`playMusic`/`stopMusic`/`sfx.*` + mute/volume (persisted). The
+  store calls `sfx.*` on game events; all calls no-op until the context unlocks.
 
 ## HUD (`src/components/HUD.tsx`)
 DOM overlay: title, controls, taming prompt, flash message, Party button+panel,
@@ -53,6 +70,8 @@ and the taming modal. Inline-styled; `pointerEvents:auto` only on interactive bi
 The taming modal shows a "Battle to weaken" button when the party is non-empty.
 - `TouchControls.tsx` — on-screen joystick (writes `shared.touchInput`) + E/tame
   button; mounted by HUD in explore mode for phone play.
+- `AudioControls.tsx` — unlocks the AudioContext on first gesture, syncs the
+  music loop to game `mode` (explore↔battle), renders the mute + volume control.
 The party panel rows show HP + bond bars and Feed/Rest buttons (store `feed`/`rest`).
 - `BattleScreen.tsx` — full-screen battle overlay (mounted by HUD when
   mode==='battle'): enemy + player fighters with HP bars, a battle log, and

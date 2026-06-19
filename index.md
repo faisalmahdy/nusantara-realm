@@ -19,5 +19,6 @@ Load ONLY the doc(s) matching your task:
 | building true 3D monster models from reference sheets | docs/models.md |
 | assets (sprites, world tiles), where they come from | docs/assets.md |
 | the autonomous hourly improvement loop | docs/loop.md |
+| the 10× strategy: vision, gaps, phased roadmap, decisions needed | docs/plan-10x.md |
 
 Session protocol: append a `log.md` entry at the end of any work session.

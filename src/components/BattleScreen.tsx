@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../game/store';
 import { ELEMENT_COLOR, speciesById } from '../game/monsters';
+import { sfx } from '../game/audio';
 import type { Combatant } from '../game/battle';
 
 type Pop = { amount: number; key: number };
@@ -30,14 +31,15 @@ export function BattleScreen() {
     const dp = prevHp.current.p - pHp;
     const de = prevHp.current.e - eHp;
     prevHp.current = { p: pHp, e: eHp };
-    if (de > 0) setEnemyDmg({ amount: de, key: ++dmgKey.current });
+    if (de > 0) { setEnemyDmg({ amount: de, key: ++dmgKey.current }); sfx.hit(de >= 22); }
     if (dp > 0) {
       const pop = { amount: dp, key: ++dmgKey.current };
       if (de > 0) {
         if (stagger.current) clearTimeout(stagger.current);
-        stagger.current = setTimeout(() => setPlayerDmg(pop), 280);
+        stagger.current = setTimeout(() => { setPlayerDmg(pop); sfx.hit(dp >= 22); }, 280);
       } else {
         setPlayerDmg(pop);
+        sfx.hit(dp >= 22);
       }
     }
   }, [pHp, eHp, battle]);

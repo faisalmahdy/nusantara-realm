@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # pnpm 10 skips dependency build scripts by default; esbuild's native
+      # binary is allow-listed via onlyBuiltDependencies, but rebuild guarantees
+      # it's materialized before the Vite build.
+      - name: Ensure esbuild binary
+        run: pnpm rebuild esbuild
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Typecheck + build
+        run: pnpm build

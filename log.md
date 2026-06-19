@@ -1,5 +1,96 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Audio: procedural gamelan music + SFX (plan-10x Horizon 0)
+- The game was totally silent. Added a full audio layer with **zero asset
+  files** — everything is synthesized at runtime with the Web Audio API
+  (`src/game/audio.ts`), in the spirit of the just-completed asset slimming.
+- Music: a look-ahead scheduler plays interlocking metallophone/gong patterns on
+  a slendro-ish 5-tone scale — a calm `explore` loop and a faster, denser
+  `battle` loop. Voices: `bell` (inharmonic partials, fast attack/exp decay),
+  `gong` (deep, long, downward shimmer), `noise` (filtered burst).
+- SFX: tame success (bright arpeggio) / fail (descending), battle hit (noise +
+  thud, brighter + gong when strong), level-up, evolution (longer shimmer +
+  gong), battle start (gong), UI tick, footstep.
+- Wiring: `AudioControls.tsx` unlocks the AudioContext on first gesture (browser
+  autoplay policy), syncs the loop to game `mode` (explore↔battle), and renders a
+  mute button + volume slider (persisted to localStorage `nusantara-realm-audio`).
+  SFX fire from the store (tame/level/evolve/battle-start, feed/rest) and from
+  `BattleScreen` hits (synced to the existing staggered damage-number timing);
+  footsteps from `Player`. A couple of HUD nav buttons get the UI tick.
+- All audio is guarded: if the context can't start (headless/blocked) every call
+  is a silent no-op — nothing throws.
+- QA: `tsc` clean; `vite build` clean; headless run after a gesture inits audio
+  with **no console errors** (favicon 404 only), the mute/volume control renders
+  at the expected box, 0 `.glb`, lazy chunk still not fetched, tame loop intact.
+  Actual sound can only be heard in a real browser (headless has no output).
+- App chunk grew ~2 KB gzip for the whole system (procedural = no audio files).
+
+## 2026-06-19 — Retire the Meshy GLB pipeline + chunk the bundle (HD-2D follow-ups)
+- Two follow-ups to the HD-2D switch. (1) **Deploy slimmed 385 MB → 13 MB:**
+  `git rm`'d all 40 GLBs from `public/models/` (they were dead weight in hd2d).
+  Removed the now-dead GLB code with them — `WorldProp.tsx`, `PartyViewer3D.tsx`,
+  the GLB path in `MonsterModel`, the player GLB in `Player`, the GLB sets in
+  `registry.ts`, and the defunct `glb-viewer` QA page. That removes every
+  `drei useGLTF` call, so the drei GLTF loaders drop from the build too.
+- (2) **Bundle chunked for caching:** `WildMonster` now `lazy()`-imports
+  `MonsterModel`, so the 12 procedural builders are a separate ~40 KB chunk
+  (11 KB gzip) that HD-2D never fetches. `vite.config.ts` splits three (176 KB
+  gzip) and react (45 KB gzip) into their own cacheable vendor chunks; only the
+  ~57 KB-gzip app chunk changes per deploy. First-load JS ≈ 271 KB gzip — honest
+  floor is three.js itself, which HD-2D needs (sprites in a real 3D scene).
+- '3d' is now an opt-in legacy mode: only wild monsters render (procedural
+  meshes); player/scenery/party-viewer stay 2D (their 3D form was GLB-only).
+- QA: `tsc` clean; `vite build` clean (no size warning); headless render of all
+  four states unchanged from the HD-2D commit; network trace: 0 `.glb`, the
+  MonsterModel lazy chunk NOT fetched in hd2d, only index/three/react chunks +
+  23 sprites, console clean (favicon 404 only); tame loop intact (party 0→1).
+
+## 2026-06-19 — Art-direction decision: revive HD-2D (plan-10x Decision #1)
+- Mahdy chose to act on the plan's #1 decision and revert the look to **HD-2D**
+  (2D Nusantara sprites as billboards in the 3D world) over the auto-generated
+  Meshy 3D models. This also resolves the project's worst problem for free: in
+  HD-2D mode **no GLB is fetched** (verified 0 GLB requests), so first load drops
+  from ~372 MB of models to ~11 MB of sprites.
+- Implemented as one reversible flag: `src/game/config.ts` `ART_MODE` ('hd2d' |
+  '3d'). Renderers branch on it:
+  - `Player.tsx` — restored the directional walk-frame billboard (front/back
+    idle + walk_0..3, picked by walk direction vs camera; idle faces camera),
+    via an imperative texture-swap (no per-frame re-renders). 3D GLB path kept
+    behind the flag; `useGLTF.preload(player.glb)` now only runs in 3D mode.
+  - `WildMonster.tsx` — renders the `idle.png` billboard in hd2d (evolved forms
+    reuse the base sprite — no per-stage 2D art exists).
+  - `World.tsx` — scenery renders as `Sprite3D` billboards in hd2d (no prop GLBs).
+  - `HUD.tsx` — party viewer shows the 2D `idle.png` instead of the 3D canvas.
+  - `BattleScreen.tsx` already used 2D frames — unchanged.
+- QA: `tsc --noEmit` clean; `vite build` clean; headless Chromium (Playwright)
+  shot the opening view, the field (player walking away = back frames), the
+  Matong tame prompt, and the party panel — all render the painterly 2D look;
+  full tame loop intact (forced tame → party 1, panel shows the 2D Kancil);
+  network trace: 0 `.glb`, 23 sprites, console clean (favicon 404 only).
+- Follow-up: the Meshy GLBs (`public/models/`, ~372 MB) are now dead weight in
+  the repo/deploy — move/remove them once 3D mode is formally retired. Also
+  code-split the three/drei 3D path to shrink the 998 KB JS bundle.
+
+## 2026-06-19 — 10× strategy plan (analysis + roadmap)
+- Mahdy asked for a full analysis of what the repo is building, its current
+  status, and a plan — written "with ten personas of a game-dev team" — for how
+  to make the game 10× better.
+- Read all docs + log + core source (store/battle/monsters/GameScene) and audited
+  the assets. Key findings: solid working core loop (explore→tame→battle→raise→
+  evolve), but a flat single-biome world with a static finite ring of 12 spawns;
+  **zero audio**; **zero tests / no CI / no lint**; and the standout problem —
+  **372 MB of un-optimized GLBs (avg 9.3 MB, trees 12 MB each)** that would crush
+  mobile (Mahdy's own test device). Plus an unresolved HD-2D→Meshy-3D art pivot.
+- Wrote `docs/plan-10x.md`: a ten-persona roundtable (Creative Director, Lead
+  Designer, Narrative, Art Director, Tech Artist, Tech Director, UX, Audio,
+  Producer, Growth), a current-state scorecard, a 4-horizon roadmap, quick wins,
+  risks, decisions needed, and a north-star metric. Added an index.md routing row.
+- The 10× thesis: not more features — turn the sandbox into a *place worth being*,
+  fix the foundations that block everyone (compress assets, add audio, add CI),
+  ship one island done right, and lean all the way into Nusantara folklore.
+- No code/gameplay changes this session — analysis + planning only. Top decision
+  flagged for Mahdy: resolve the art direction (recommend reviving HD-2D).
+
 ## 2026-06-14 — Fixed Cloudflare deploy (msg #252)
 - Cloudflare Workers Build failed at install: `pnpm install --frozen-lockfile`
   → "packages field missing or empty". The settings-only `pnpm-workspace.yaml`
