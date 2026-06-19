@@ -1,5 +1,18 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Playwright smoke test in CI (QA hardening — Eka's item)
+- The core-loop browser check I'd been running by hand is now automated.
+  `@playwright/test` + `playwright.config.ts` + `e2e/smoke.spec.ts`: boots the
+  preview build, asserts the app boots, **fetches 0 GLBs** (HD-2D), throws no
+  page errors, and a forced tame **grows the party**. Headless Chromium with
+  software WebGL (swiftshader) so it runs on CI; `retries: 2` to absorb warm-up
+  flake.
+- `vitest` is scoped to `src` (`test: vitest run src`) so it ignores the e2e
+  `.spec`; new `e2e` script runs Playwright. A second CI job (`e2e`) builds,
+  `playwright install --with-deps chromium`, then runs the smoke test.
+- QA: locally — 40/40 unit tests (e2e excluded), `vite build` clean, and
+  `pnpm e2e` green in 11.6s against the preview build.
+
 ## 2026-06-19 — Error boundary (robustness — Tio's item)
 - A render-time crash used to mean a blank white page. Added `ErrorBoundary.tsx`
   (React class boundary) wrapping `<App/>` in `main.tsx`; on a caught error it
