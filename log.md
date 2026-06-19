@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Guardian boss: a region goal (plan-10x Horizon 1)
+- The world had no objective. Added the island's **Guardian** — Naris the
+  storm-naga — standing watch to the north (z=-34) in a bold gold double-ring,
+  rendered larger than normal wilds. Approaching it shows a distinct gold
+  "challenge it" prompt instead of the tame prompt.
+- It's a real **boss**: its battle level is `max(lead+4, 16)`, well above early
+  wilds, so it takes a leveled, type-savvy team — and party switching — to win.
+  Besting it the first time (defeat OR tame) pays a one-time **+15 treat** bounty
+  with a triumphant flourish; `guardianDefeated` is persisted so it pays once.
+  Guardians never respawn.
+- Spawn convention `guardian-<species>-0`; difficulty/reward keyed off the id
+  prefix in the store. `WildSpawn.guardian` flag drives the visuals.
+- QA: `tsc` clean; 38/38 tests (spawns now assert the Guardian); `vite build`
+  clean; headless end-to-end — approached → guardian prompt; enemy Lv 16 vs Lv 1
+  lead; first clear +18 treats (3 win + 15 bounty), flag set; second clear +3
+  only; console clean. Screenshot shows the looming Guardian + gold rings.
+
 ## 2026-06-19 — Party switching in battle: the whole team matters (plan-10x Horizon 1)
 - Previously only `party[0]` ever fought, so a diverse roster was decorative.
   Now a battle fields your **whole team** and you can switch the active fighter.

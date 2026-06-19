@@ -2,11 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { makeInitialSpawns, respawnTamed } from './spawns';
 
 describe('makeInitialSpawns', () => {
-  it('creates one unique wild per species', () => {
+  it('creates one unique wild per species plus the Guardian', () => {
     const init = makeInitialSpawns();
-    expect(init).toHaveLength(12);
-    expect(new Set(init.map((s) => s.wildId)).size).toBe(12);
+    expect(init).toHaveLength(13); // 12 species + 1 Guardian
+    expect(new Set(init.map((s) => s.wildId)).size).toBe(13);
     expect(init[0].wildId).toBe('wild-matong-0');
+    expect(init.find((s) => s.guardian)?.wildId).toBe('guardian-naris-0');
   });
 });
 
@@ -34,6 +35,13 @@ describe('respawnTamed', () => {
     expect(slot.z).toBe(init[3].z);
     // other slots unchanged
     expect(res.spawns[0]).toBe(init[0]);
+  });
+
+  it('never respawns the Guardian', () => {
+    const init = makeInitialSpawns();
+    const guardian = init.find((s) => s.guardian)!;
+    const res = respawnTamed(init, new Set([guardian.wildId]), 1000);
+    expect(res.spawns.find((s) => s.guardian)?.wildId).toBe(guardian.wildId);
   });
 
   it('advances the counter per replacement so ids never repeat', () => {

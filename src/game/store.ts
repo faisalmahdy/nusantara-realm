@@ -59,6 +59,8 @@ interface GameState {
   message: string | null;
   // treats: the currency. Spent to tame and to feed; earned by winning battles.
   treats: number;
+  // whether the island Guardian has been bested (one-time reward milestone)
+  guardianDefeated: boolean;
 
   setMode: (m: GameMode) => void;
   setNearby: (id: string | null) => void;
@@ -81,6 +83,7 @@ interface GameState {
 // soft-locked (resting is always free).
 const START_TREATS = 5;
 const TREAT_WIN_REWARD = 3;
+const GUARDIAN_REWARD = 15; // one-time bounty for besting the island Guardian
 
 let uidCounter = 1;
 
@@ -95,6 +98,7 @@ export const useGame = create<GameState>()(
   battle: null,
   message: null,
   treats: START_TREATS,
+  guardianDefeated: false,
 
   setMode: (m) => set({ mode: m }),
   setNearby: (id) => set({ nearbyWildId: id }),
@@ -163,10 +167,15 @@ export const useGame = create<GameState>()(
     });
     const active = firstAlive;
     const player = combatants[active];
+    const isGuardian = wildId.startsWith('guardian');
     const enemySpeciesId = wildId.split('-')[1];
-    const enemyLevel = Math.max(2, player.level + 1);
+    // A Guardian is a real boss — well above your lead — so it takes a built-up,
+    // type-savvy team (and switching) to win.
+    const enemyLevel = isGuardian ? Math.max(player.level + 4, 16) : Math.max(2, player.level + 1);
     const enemy = makeCombatant(wildId, enemySpeciesId, enemyLevel);
-    const log = [`A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`];
+    const log = [isGuardian
+      ? `The Guardian ${enemy.name} (Lv ${enemy.level}) rises to test you!`
+      : `A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`];
     if (player.bond >= 50) log.push(`${player.name}'s bond spurs it on. (+${Math.round((bondAtkMult(player.bond) - 1) * 100)}% damage)`);
     sfx.battleStart();
     set({
@@ -199,10 +208,14 @@ export const useGame = create<GameState>()(
       const evo = evolutionNote(real.nickname, real.level, res.level);
       if (evo) log.push(evo);
       log.push(`You gathered ${TREAT_WIN_REWARD} treats.`);
+      const firstGuardian = b.wildId.startsWith('guardian') && !get().guardianDefeated;
+      if (firstGuardian) log.push(`You bested the Guardian! +${GUARDIAN_REWARD} treats.`);
       progressSfx(res.levelsGained > 0, !!evo);
+      if (firstGuardian) sfx.evolve();
       set((st) => ({
         party: st.party.map((m) => (m.uid === active.uid ? { ...m, level: res.level, xp: res.xp } : m)),
-        treats: st.treats + TREAT_WIN_REWARD,
+        treats: st.treats + TREAT_WIN_REWARD + (firstGuardian ? GUARDIAN_REWARD : 0),
+        guardianDefeated: st.guardianDefeated || b.wildId.startsWith('guardian'),
         battle: { ...b, player: active, enemy, log, turn: 'over', outcome: 'won' },
       }));
       return;
@@ -260,12 +273,15 @@ export const useGame = create<GameState>()(
       if (res.levelsGained > 0) log.push(`${real.nickname} grew to Lv ${res.level}!`);
       const evo = evolutionNote(real.nickname, real.level, res.level);
       if (evo) log.push(evo);
+      const firstGuardian = b.wildId.startsWith('guardian') && !get().guardianDefeated;
+      if (firstGuardian) log.push(`You won over the Guardian! +${GUARDIAN_REWARD} treats.`);
       sfx.tameSuccess();
-      if (evo) sfx.evolve();
+      if (evo || firstGuardian) sfx.evolve();
       set((s) => ({
         party: [...s.party.map((m) => (m.uid === active.uid ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
-        treats: s.treats - 1,
+        treats: s.treats - 1 + (firstGuardian ? GUARDIAN_REWARD : 0),
+        guardianDefeated: s.guardianDefeated || b.wildId.startsWith('guardian'),
         nearbyWildId: null,
         battle: { ...b, log, turn: 'over', outcome: 'tamed' },
       }));
@@ -357,7 +373,7 @@ export const useGame = create<GameState>()(
       name: 'nusantara-realm-save',
       // Only the durable progression survives a reload; transient UI/battle
       // state always starts fresh in 'explore'.
-      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats }),
+      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats, guardianDefeated: s.guardianDefeated }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         // Resume uid issuance past any restored monster so new tames don't collide.

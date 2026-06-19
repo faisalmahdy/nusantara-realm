@@ -21,4 +21,7 @@ export interface WildSpawn {
   // Cosmetic level used to pick the creature's evolution stage (1/2/3) for its
   // 3D model. Battle difficulty still scales to your lead, so this is visual.
   level: number;
+  // A region Guardian: a rare, much tougher boss with distinct visuals, a
+  // one-time clear reward, and no respawn.
+  guardian?: boolean;
 }

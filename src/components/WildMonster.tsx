@@ -62,25 +62,35 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
   if (tamed) return null;
 
   const beingTamed = tamingTargetId === spawn.wildId;
+  const guardian = !!spawn.guardian;
+  // Guardians loom larger and stand in a bold gold double-ring.
+  const spriteH = guardian ? 4.2 : 2.7;
+  const ringColor = guardian ? '#f4d97b' : ELEMENT_COLOR[species.element];
 
   return (
     <group ref={group} position={[spawn.x, 0, spawn.z]}>
       {ART_MODE === 'hd2d' ? (
         // HD-2D: the 2D pixel-art sprite as a camera-facing billboard. (No
         // per-stage sprites exist, so evolved forms reuse the base idle art.)
-        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
+        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={spriteH} />
       ) : hasModel(spawn.speciesId) ? (
         <Suspense fallback={null}>
-          <MonsterModel speciesId={spawn.speciesId} height={2.4} />
+          <MonsterModel speciesId={spawn.speciesId} height={guardian ? 3.6 : 2.4} />
         </Suspense>
       ) : (
-        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
+        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={spriteH} />
       )}
-      {/* element ring on the ground */}
+      {/* element ring on the ground (gold + larger for Guardians) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
-        <ringGeometry args={[1.0, 1.25, 24]} />
-        <meshBasicMaterial color={ELEMENT_COLOR[species.element]} transparent opacity={beingTamed ? 0.9 : 0.35} />
+        <ringGeometry args={guardian ? [1.7, 2.1, 32] : [1.0, 1.25, 24]} />
+        <meshBasicMaterial color={ringColor} transparent opacity={beingTamed ? 0.95 : guardian ? 0.6 : 0.35} />
       </mesh>
+      {guardian && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]}>
+          <ringGeometry args={[2.3, 2.6, 32]} />
+          <meshBasicMaterial color="#fff0c0" transparent opacity={0.4} />
+        </mesh>
+      )}
     </group>
   );
 }
