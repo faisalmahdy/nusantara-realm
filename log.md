@@ -1,5 +1,25 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — 10× strategy plan (analysis + roadmap)
+- Mahdy asked for a full analysis of what the repo is building, its current
+  status, and a plan — written "with ten personas of a game-dev team" — for how
+  to make the game 10× better.
+- Read all docs + log + core source (store/battle/monsters/GameScene) and audited
+  the assets. Key findings: solid working core loop (explore→tame→battle→raise→
+  evolve), but a flat single-biome world with a static finite ring of 12 spawns;
+  **zero audio**; **zero tests / no CI / no lint**; and the standout problem —
+  **372 MB of un-optimized GLBs (avg 9.3 MB, trees 12 MB each)** that would crush
+  mobile (Mahdy's own test device). Plus an unresolved HD-2D→Meshy-3D art pivot.
+- Wrote `docs/plan-10x.md`: a ten-persona roundtable (Creative Director, Lead
+  Designer, Narrative, Art Director, Tech Artist, Tech Director, UX, Audio,
+  Producer, Growth), a current-state scorecard, a 4-horizon roadmap, quick wins,
+  risks, decisions needed, and a north-star metric. Added an index.md routing row.
+- The 10× thesis: not more features — turn the sandbox into a *place worth being*,
+  fix the foundations that block everyone (compress assets, add audio, add CI),
+  ship one island done right, and lean all the way into Nusantara folklore.
+- No code/gameplay changes this session — analysis + planning only. Top decision
+  flagged for Mahdy: resolve the art direction (recommend reviving HD-2D).
+
 ## 2026-06-14 — Fixed Cloudflare deploy (msg #252)
 - Cloudflare Workers Build failed at install: `pnpm install --frozen-lockfile`
   → "packages field missing or empty". The settings-only `pnpm-workspace.yaml`
