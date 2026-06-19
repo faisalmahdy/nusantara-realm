@@ -249,9 +249,11 @@ first devlog.
 - [x] **Encounter/respawn (2026-06-19)** — `game/spawns.ts` + GameScene timer:
       tamed slots respawn a fresh random wild after 3.5s so the world stays
       huntable. (Biome-tagged encounter tables still to come.)
-- [~] **Treat economy (2026-06-19)** — treats currency: spent to tame & feed,
-      earned by battle wins (+3), start 5, persisted, soft-lock-proof (rest is
-      free). Still to do: **party switching in battle**.
+- [x] **Treat economy (2026-06-19)** — treats currency: spent to tame & feed,
+      earned by battle wins (+3), start 5, persisted, soft-lock-proof (rest free).
+- [x] **Party switching in battle (2026-06-19)** — field your whole team; switch
+      the active fighter (voluntary switch costs a turn; a faint forces a switch;
+      loss only when all faint). The roster finally matters.
 - [ ] One **Guardian boss** as the region's goal + an evolution-as-event moment.
 - [x] **Field Guide / Almanac + folklore lore (2026-06-19)** — `Almanac.tsx`:
       all 12 species with lore that unlocks on taming, "N/12 discovered". Still

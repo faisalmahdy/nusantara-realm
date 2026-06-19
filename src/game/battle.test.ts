@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   effectiveness, movesFor, makeCombatant, maxHpFor, bondAtkMult, computeDamage,
   pickEnemyMove, effectivenessNote, xpForDefeating, xpToNext, applyXp,
-  evolutionStage, nextEvolutionLevel, EVOLUTION_LEVELS, tameChance,
+  evolutionStage, nextEvolutionLevel, EVOLUTION_LEVELS, tameChance, enemyCounter,
   type Combatant, type Move,
 } from './battle';
 
@@ -159,6 +159,44 @@ describe('evolution stages', () => {
     expect(nextEvolutionLevel(1)).toBe(8);
     expect(nextEvolutionLevel(8)).toBe(16);
     expect(nextEvolutionLevel(16)).toBeNull();
+  });
+});
+
+describe('enemyCounter (party-switch resolution)', () => {
+  const enemy = fighter({ name: 'Wild', element: 'Forest', atk: 100, def: 5, moves: movesFor('Forest') });
+
+  it('returns the turn to the player when the active member survives', () => {
+    const party = [fighter({ name: 'A', hp: 500, maxHp: 500, def: 50 })];
+    const r = enemyCounter(party, 0, enemy, []);
+    expect(r.turn).toBe('player');
+    expect(r.outcome).toBeNull();
+    expect(r.mustSwitch).toBe(false);
+    expect(r.party[0].hp).toBeGreaterThan(0);
+    expect(r.party[0].hp).toBeLessThan(500);
+  });
+
+  it('forces a switch when the active faints but a teammate stands', () => {
+    const party = [fighter({ name: 'A', hp: 1, maxHp: 100 }), fighter({ name: 'B', hp: 50, maxHp: 100 })];
+    const r = enemyCounter(party, 0, enemy, []);
+    expect(r.party[0].hp).toBe(0);
+    expect(r.mustSwitch).toBe(true);
+    expect(r.turn).toBe('player');
+    expect(r.outcome).toBeNull();
+  });
+
+  it('is a loss when the active faints and no one is left', () => {
+    const party = [fighter({ name: 'A', hp: 1, maxHp: 100 })];
+    const r = enemyCounter(party, 0, enemy, []);
+    expect(r.party[0].hp).toBe(0);
+    expect(r.outcome).toBe('lost');
+    expect(r.turn).toBe('over');
+    expect(r.mustSwitch).toBe(false);
+  });
+
+  it('does not mutate the input party', () => {
+    const party = [fighter({ name: 'A', hp: 100, maxHp: 100 })];
+    enemyCounter(party, 0, enemy, []);
+    expect(party[0].hp).toBe(100);
   });
 });
 

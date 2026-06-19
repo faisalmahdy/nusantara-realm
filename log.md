@@ -1,5 +1,21 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Party switching in battle: the whole team matters (plan-10x Horizon 1)
+- Previously only `party[0]` ever fought, so a diverse roster was decorative.
+  Now a battle fields your **whole team** and you can switch the active fighter.
+- Rules (Pokémon-style): a **voluntary switch costs your turn** (the enemy hits
+  the incoming monster); when the active **faints**, you're **forced to switch**
+  to a healthy teammate (no extra hit), and it's a loss only when all faint. The
+  active fighter earns the XP/treats; every member's HP carries out of battle.
+- The faint/switch resolution lives in a pure, unit-tested `enemyCounter` helper
+  in `battle.ts`. `store.ts` battle state grew `party`/`active`/`mustSwitch`;
+  added a `battleSwitch(idx)` action; `BattleScreen` shows a switch bar (active
+  marked ▶) and a forced "send out…" prompt.
+- QA: `tsc` clean; 37/37 tests (4 new for `enemyCounter`); `vite build` clean;
+  headless drove the full state machine — voluntary switch took a turn, faint
+  forced a switch, moves blocked mid-switch, forced switch dealt no damage,
+  all-faint = loss, both members' HP written back on endBattle; console clean.
+
 ## 2026-06-19 — Treat economy: Feed & taming now cost something (plan-10x Horizon 1)
 - Feed and taming were free buttons. Added **treats**, a currency: spent to tame
   (the "treat" you offer) and to feed, earned by winning battles (+3). New game

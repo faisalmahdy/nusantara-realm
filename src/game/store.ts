@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { speciesById } from './monsters';
 import {
   Combatant, makeCombatant, computeDamage, effectivenessNote, tameChance,
-  xpForDefeating, applyXp, pickEnemyMove, bondAtkMult, maxHpFor, evolutionStage,
+  xpForDefeating, applyXp, enemyCounter, bondAtkMult, maxHpFor, evolutionStage,
 } from './battle';
 import { sfx } from './audio';
 
@@ -35,11 +35,14 @@ export type GameMode = 'explore' | 'taming' | 'party' | 'battle';
 
 export interface BattleState {
   wildId: string;
-  player: Combatant;
+  party: Combatant[]; // your whole team, as combatants (snapshot for this fight)
+  active: number; // index of the fighter currently out
+  player: Combatant; // === party[active]; kept in sync for convenient reads
   enemy: Combatant;
   log: string[];
   turn: 'player' | 'over';
   outcome: 'won' | 'lost' | 'tamed' | 'fled' | null;
+  mustSwitch: boolean; // active fainted but others remain — must pick a replacement
 }
 
 interface GameState {
@@ -64,6 +67,7 @@ interface GameState {
   tame: (speciesId: string, wildId: string) => boolean;
   beginBattle: (wildId: string) => void;
   battleMove: (moveIndex: number) => void;
+  battleSwitch: (idx: number) => void;
   battleTame: () => boolean;
   battleFlee: () => void;
   endBattle: () => void;
@@ -139,86 +143,95 @@ export const useGame = create<GameState>()(
 
   // --- Battle (roadmap #1): weaken a wild monster, then tame it. ---------
   beginBattle: (wildId) => {
-    const lead = get().party[0];
-    if (!lead) {
+    const team = get().party;
+    if (team.length === 0) {
       // No party monster to fight with — fall back to direct taming.
       get().beginTaming(wildId);
       return;
     }
-    if (lead.hp <= 0) {
-      set({ message: `${lead.nickname} is in no shape to fight — rest it first.` });
+    const firstAlive = team.findIndex((m) => m.hp > 0);
+    if (firstAlive === -1) {
+      set({ message: 'Your whole party is worn out — rest someone first.' });
       return;
     }
+    // Snapshot the whole team as combatants, carrying forward battle wear + bond.
+    const combatants = team.map((m) => {
+      const c = makeCombatant(m.uid, m.speciesId, m.level);
+      c.bond = m.bond;
+      c.hp = Math.min(c.maxHp, m.hp);
+      return c;
+    });
+    const active = firstAlive;
+    const player = combatants[active];
     const enemySpeciesId = wildId.split('-')[1];
-    const enemyLevel = Math.max(2, lead.level + 1);
-    const player = makeCombatant(lead.uid, lead.speciesId, lead.level);
-    player.bond = lead.bond;
-    player.hp = Math.min(player.maxHp, lead.hp); // carry forward wear from past battles
+    const enemyLevel = Math.max(2, player.level + 1);
     const enemy = makeCombatant(wildId, enemySpeciesId, enemyLevel);
     const log = [`A wild ${enemy.name} (Lv ${enemy.level}) blocks your path!`];
-    if (lead.bond >= 50) log.push(`${player.name}'s bond spurs it on. (+${Math.round((bondAtkMult(lead.bond) - 1) * 100)}% damage)`);
+    if (player.bond >= 50) log.push(`${player.name}'s bond spurs it on. (+${Math.round((bondAtkMult(player.bond) - 1) * 100)}% damage)`);
     sfx.battleStart();
     set({
       mode: 'battle',
       tamingTargetId: null,
-      battle: {
-        wildId,
-        player,
-        enemy,
-        turn: 'player',
-        outcome: null,
-        log,
-      },
+      battle: { wildId, party: combatants, active, player, enemy, turn: 'player', outcome: null, log, mustSwitch: false },
     });
   },
 
   battleMove: (moveIndex) => {
     const b = get().battle;
-    if (!b || b.turn !== 'player') return;
-    const player = { ...b.player };
+    if (!b || b.turn !== 'player' || b.mustSwitch) return;
+    const active = b.party[b.active];
     const enemy = { ...b.enemy };
     const log = [...b.log];
 
-    const move = player.moves[moveIndex] ?? player.moves[0];
-    const hit = computeDamage(player, enemy, move);
+    const move = active.moves[moveIndex] ?? active.moves[0];
+    const hit = computeDamage(active, enemy, move);
     enemy.hp = Math.max(0, enemy.hp - hit.damage);
-    log.push(`${player.name} used ${move.name} for ${hit.damage}.${effectivenessNote(hit.eff)}`);
+    log.push(`${active.name} used ${move.name} for ${hit.damage}.${effectivenessNote(hit.eff)}`);
 
     if (enemy.hp <= 0) {
+      // Win — the active fighter earns the XP + treats.
       log.push(`The wild ${enemy.name} fainted and fled.`);
-      const lead = get().party[0];
+      const real = get().party.find((m) => m.uid === active.uid)!;
       const gain = xpForDefeating(enemy.level);
-      const res = applyXp(lead.level, lead.xp, gain);
-      log.push(`${lead.nickname} gained ${gain} XP.`);
-      if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
-      const evo = evolutionNote(lead.nickname, lead.level, res.level);
+      const res = applyXp(real.level, real.xp, gain);
+      log.push(`${real.nickname} gained ${gain} XP.`);
+      if (res.levelsGained > 0) log.push(`${real.nickname} grew to Lv ${res.level}!`);
+      const evo = evolutionNote(real.nickname, real.level, res.level);
       if (evo) log.push(evo);
       log.push(`You gathered ${TREAT_WIN_REWARD} treats.`);
       progressSfx(res.levelsGained > 0, !!evo);
       set((st) => ({
-        party: st.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)),
+        party: st.party.map((m) => (m.uid === active.uid ? { ...m, level: res.level, xp: res.xp } : m)),
         treats: st.treats + TREAT_WIN_REWARD,
-        battle: { ...b, player, enemy, log, turn: 'over', outcome: 'won' },
+        battle: { ...b, player: active, enemy, log, turn: 'over', outcome: 'won' },
       }));
       return;
     }
 
-    const eMove = pickEnemyMove(enemy, player);
-    const back = computeDamage(enemy, player, eMove);
-    player.hp = Math.max(0, player.hp - back.damage);
-    log.push(`Wild ${enemy.name} used ${eMove.name} for ${back.damage}.${effectivenessNote(back.eff)}`);
+    // Enemy counters the active fighter; may force a switch or end the fight.
+    const r = enemyCounter(b.party, b.active, enemy, log);
+    set({ battle: { ...b, party: r.party, player: r.party[b.active], enemy, log, turn: r.turn, outcome: r.outcome, mustSwitch: r.mustSwitch } });
+  },
 
-    if (player.hp <= 0) {
-      log.push(`${player.name} fainted!`);
-      set({ battle: { ...b, player, enemy, log, turn: 'over', outcome: 'lost' } });
+  // Switch the active fighter. A voluntary switch costs your turn (the enemy hits
+  // the incoming monster); a forced switch after a faint does not.
+  battleSwitch: (idx) => {
+    const b = get().battle;
+    if (!b || b.turn !== 'player') return;
+    if (idx === b.active || idx < 0 || idx >= b.party.length || b.party[idx].hp <= 0) return;
+    sfx.uiClick();
+    const log = [...b.log, `Go, ${b.party[idx].name}!`];
+    if (b.mustSwitch) {
+      set({ battle: { ...b, active: idx, player: b.party[idx], log, mustSwitch: false, turn: 'player' } });
       return;
     }
-    set({ battle: { ...b, player, enemy, log, turn: 'player' } });
+    const r = enemyCounter(b.party, idx, { ...b.enemy }, log);
+    set({ battle: { ...b, active: idx, party: r.party, player: r.party[idx], log, turn: r.turn, outcome: r.outcome, mustSwitch: r.mustSwitch } });
   },
 
   battleTame: () => {
     const b = get().battle;
-    if (!b || b.turn !== 'player') return false;
+    if (!b || b.turn !== 'player' || b.mustSwitch) return false;
     if (get().treats < 1) {
       set({ battle: { ...b, log: [...b.log, 'You have no treats left to offer.'] } });
       return false;
@@ -226,6 +239,7 @@ export const useGame = create<GameState>()(
     const species = speciesById(b.enemy.speciesId);
     const chance = tameChance(b.enemy, species.rarity, get().party.length);
     const success = Math.random() < chance;
+    const active = b.party[b.active];
     const log = [...b.log, `You offer a treat to the weakened ${b.enemy.name}…`];
 
     if (success) {
@@ -238,18 +252,18 @@ export const useGame = create<GameState>()(
         bond: 15,
         hp: maxHpFor(b.enemy.speciesId, b.enemy.level),
       };
-      const lead = get().party[0];
+      const real = get().party.find((m) => m.uid === active.uid)!;
       const gain = xpForDefeating(b.enemy.level);
-      const res = applyXp(lead.level, lead.xp, gain);
+      const res = applyXp(real.level, real.xp, gain);
       log.push(`${species.name} was tamed!`);
-      log.push(`${lead.nickname} gained ${gain} XP.`);
-      if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
-      const evo = evolutionNote(lead.nickname, lead.level, res.level);
+      log.push(`${real.nickname} gained ${gain} XP.`);
+      if (res.levelsGained > 0) log.push(`${real.nickname} grew to Lv ${res.level}!`);
+      const evo = evolutionNote(real.nickname, real.level, res.level);
       if (evo) log.push(evo);
       sfx.tameSuccess();
       if (evo) sfx.evolve();
       set((s) => ({
-        party: [...s.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)), mon],
+        party: [...s.party.map((m) => (m.uid === active.uid ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
         treats: s.treats - 1,
         nearbyWildId: null,
@@ -258,21 +272,11 @@ export const useGame = create<GameState>()(
       return true;
     }
 
-    // Failed — the enemy gets a free counter.
-    const enemy = { ...b.enemy };
-    const player = { ...b.player };
+    // Failed — the enemy gets a free counter against the active fighter.
     log.push(`${species.name} broke free!`);
     sfx.tameFail();
-    const eMove = pickEnemyMove(enemy, player);
-    const back = computeDamage(enemy, player, eMove);
-    player.hp = Math.max(0, player.hp - back.damage);
-    log.push(`Wild ${enemy.name} used ${eMove.name} for ${back.damage}.${effectivenessNote(back.eff)}`);
-    if (player.hp <= 0) {
-      log.push(`${player.name} fainted!`);
-      set({ battle: { ...b, player, enemy, log, turn: 'over', outcome: 'lost' } });
-    } else {
-      set({ battle: { ...b, player, enemy, log, turn: 'player' } });
-    }
+    const r = enemyCounter(b.party, b.active, { ...b.enemy }, log);
+    set({ battle: { ...b, party: r.party, player: r.party[b.active], log, turn: r.turn, outcome: r.outcome, mustSwitch: r.mustSwitch } });
     return false;
   },
 
@@ -287,11 +291,14 @@ export const useGame = create<GameState>()(
     const msg =
       b?.outcome === 'tamed' ? `${b.enemy.name} joined your party!`
       : b?.outcome === 'won' ? `The wild ${b.enemy.name} fled.`
-      : b?.outcome === 'lost' ? `${b.player.name} was defeated…`
+      : b?.outcome === 'lost' ? 'Your party was defeated…'
       : null;
-    // Carry the lead's remaining HP out of battle so wear persists until it rests.
+    // Carry every fighter's remaining HP out of battle so wear persists until rest.
     const party = b
-      ? get().party.map((m) => (m.uid === b.player.uid ? { ...m, hp: b.player.hp } : m))
+      ? get().party.map((m) => {
+          const c = b.party.find((x) => x.uid === m.uid);
+          return c ? { ...m, hp: c.hp } : m;
+        })
       : get().party;
     set({ mode: 'explore', battle: null, tamingTargetId: null, message: msg, party });
   },
