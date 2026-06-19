@@ -261,6 +261,8 @@ first devlog.
       all 12 species with lore that unlocks on taming, "N/12 discovered".
 - [x] **Camp + NPCs (2026-06-19)** — `Npc.tsx` + `game/npcs.ts`: three villagers
       with E-to-talk dialogue (guidance + Nusantara worldbuilding).
+- [x] **Settings & accessibility (2026-06-19)** — colorblind-safe element icons,
+      a reduced-motion toggle, and a reset/new-game option (Settings panel).
 - [ ] A **gamelan** explore theme + battle theme; mobile UI + settings pass.
 - [ ] **Analytics funnel** live; **Playwright** smoke test in CI.
 

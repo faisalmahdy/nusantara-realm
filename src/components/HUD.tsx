@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
-import { speciesById, ELEMENT_COLOR } from '../game/monsters';
+import { speciesById, ELEMENT_COLOR, ELEMENT_ICON } from '../game/monsters';
 import { npcById } from '../game/npcs';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
@@ -11,9 +11,11 @@ import { Almanac } from './Almanac';
 import { sfx } from '../game/audio';
 
 export function HUD() {
-  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId } = useGame();
+  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId, reducedMotion } = useGame();
   const [showParty, setShowParty] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
   const [npcLine, setNpcLine] = useState(0);
   useEffect(() => { setNpcLine(0); }, [dialogueNpcId]); // restart dialogue when the speaker changes
@@ -61,6 +63,7 @@ export function HUD() {
 
       {/* Top-right buttons + party panel */}
       <div style={styles.topRight}>
+        <button style={styles.cornerBtn} onClick={() => { sfx.uiClick(); setShowSettings(true); }} title="Settings" aria-label="Settings">⚙</button>
         <button style={styles.cornerBtn} onClick={() => { sfx.uiClick(); setShowGuide(true); }}>Field Guide</button>
         <button style={styles.cornerBtn} onClick={() => { sfx.uiClick(); setShowParty((v) => !v); }}>Party · {party.length}</button>
       </div>
@@ -99,7 +102,7 @@ export function HUD() {
               >
                 <img src={`/sprites/${sp.id}/portrait.png`} style={styles.portrait} alt={sp.name} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{sp.element}</span></div>
+                  <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{ELEMENT_ICON[sp.element]} {sp.element}</span></div>
                   <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · XP {m.xp}/{xpToNext(m.level)}</div>
                   <div style={styles.statTrack} title={`HP ${Math.max(0, m.hp)}/${maxHp}`}>
                     <div style={{ ...styles.statFill, width: `${hpFrac * 100}%`, background: hpColor }} />
@@ -126,6 +129,7 @@ export function HUD() {
             <div style={styles.modalName} >{tamingSpecies.name}</div>
             <div style={styles.modalBlurb}>{tamingSpecies.blurb}</div>
             <div style={styles.modalStats}>
+              <span style={{ color: ELEMENT_COLOR[tamingSpecies.element] }}>{ELEMENT_ICON[tamingSpecies.element]} {tamingSpecies.element}</span>
               <span>HP {tamingSpecies.baseHp}</span>
               <span>ATK {tamingSpecies.baseAtk}</span>
               <span>DEF {tamingSpecies.baseDef}</span>
@@ -167,6 +171,25 @@ export function HUD() {
           </div>
         );
       })()}
+
+      {showSettings && (
+        <div style={styles.modalWrap} onClick={() => { setShowSettings(false); setConfirmReset(false); }}>
+          <div style={styles.settings} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.panelHead}>Settings</div>
+            <label style={styles.settingRow}>
+              <span>Reduced motion</span>
+              <input type="checkbox" checked={reducedMotion} onChange={(e) => { sfx.uiClick(); useGame.getState().setReducedMotion(e.target.checked); }} />
+            </label>
+            <div style={styles.settingRow}>
+              <span>New game</span>
+              <button style={styles.resetBtn} onClick={() => { sfx.uiClick(); if (confirmReset) useGame.getState().resetGame(); else setConfirmReset(true); }}>
+                {confirmReset ? 'Tap again to confirm' : 'Reset progress'}
+              </button>
+            </div>
+            <button style={{ ...styles.cancelBtn, marginTop: 10 }} onClick={() => { setShowSettings(false); setConfirmReset(false); }}>Close</button>
+          </div>
+        </div>
+      )}
 
       {showGuide && <Almanac onClose={() => setShowGuide(false)} />}
       {mode === 'explore' && <TouchControls />}
@@ -215,6 +238,9 @@ const styles: Record<string, React.CSSProperties> = {
   modalName: { fontSize: 20, fontWeight: 800, color: '#d4b06a', marginTop: 4 },
   modalBlurb: { fontSize: 12, opacity: 0.85, margin: '6px 10px 10px' },
   modalStats: { display: 'flex', justifyContent: 'center', gap: 12, fontSize: 12, opacity: 0.9, marginBottom: 14 },
+  settings: { width: 300, background: 'linear-gradient(180deg,#1d2a1d,#10160f)', border: '1px solid rgba(212,176,106,0.55)', borderRadius: 14, padding: 16, boxShadow: '0 12px 40px rgba(0,0,0,0.6)' },
+  settingRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 4px', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: 14 },
+  resetBtn: { background: '#b3503f', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   modalBtns: { display: 'flex', flexDirection: 'column', gap: 8 },
   battleBtn: { background: '#6ab04c', color: '#0d1a08', border: 'none', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   tameBtn: { background: '#d4b06a', color: '#1a1208', border: 'none', borderRadius: 8, padding: '10px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: font },

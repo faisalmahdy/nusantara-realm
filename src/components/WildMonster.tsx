@@ -36,8 +36,8 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
     const dz = spawn.z - playerPos.z;
     const dist = Math.hypot(dx, dz);
 
-    // Idle bob — a touch livelier when the player is close.
-    g.position.y = Math.abs(Math.sin(t * 2 + spawn.phase)) * (dist < TAME_RANGE ? 0.16 : 0.09);
+    // Idle bob — a touch livelier when the player is close (off in reduced-motion).
+    g.position.y = store.reducedMotion ? 0 : Math.abs(Math.sin(t * 2 + spawn.phase)) * (dist < TAME_RANGE ? 0.16 : 0.09);
 
     // Turn to face the player when they come within noticing range. Harmless
     // for billboards (Sprites always face the camera); the flat element ring is

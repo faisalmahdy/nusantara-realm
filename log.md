@@ -1,5 +1,21 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Settings & accessibility (plan-10x — Indah's UX items)
+- **Colorblind-safe element icons**: `ELEMENT_ICON` (🌿 Forest, 🌊 Sea, ⚡ Sky,
+  ⛰️ Earth, ✨ Spirit) shown beside the element name in the Field Guide, party
+  panel, taming modal, and battle — elements are now told apart by shape, not
+  color alone.
+- **Settings panel** (⚙ in the top-right cluster): a **Reduced motion** toggle
+  and a two-tap **Reset progress** (new game). Both persisted via the store.
+- **Reduced motion** dampens the repetitive ambient motion — ocean swells and
+  wild/NPC idle bobs freeze — read per-frame from the store (cheap getState).
+- Store gained `reducedMotion` + `setReducedMotion` + `resetGame` (clears the
+  save + tutorial keys and reloads); both persisted in partialize.
+- QA: `tsc` clean; 40/40 tests; `vite build` clean; headless — toggled reduced
+  motion (store flips true), reset shows the two-tap confirm, element icons
+  render in the Field Guide (🌿/🌊/⚡ in the DOM); console clean. Screenshots
+  show the Settings panel and the icon'd guide.
+
 ## 2026-06-19 — Camp + NPCs: narrative texture (plan-10x Horizon 1)
 - Added the starting **camp** with three villagers (Elder Sari, Fisher Bayu,
   Warden Intan) — `game/npcs.ts` data + `Npc.tsx` (a tinted player-sprite
