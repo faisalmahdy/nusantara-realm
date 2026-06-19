@@ -10,7 +10,7 @@ import { Almanac } from './Almanac';
 import { sfx } from '../game/audio';
 
 export function HUD() {
-  const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
+  const { mode, party, nearbyWildId, tamingTargetId, message, treats } = useGame();
   const [showParty, setShowParty] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
@@ -35,6 +35,7 @@ export function HUD() {
       </div>
       <div style={styles.controls}>WASD / arrows walk · drag to orbit · <b>E</b> to tame</div>
       <AudioControls />
+      <div style={styles.treats} title="Treats — spent to tame & feed, earned by winning battles">🍬 {treats} treats</div>
 
       {nearbySpecies && mode === 'explore' && (
         <div style={styles.prompt}>
@@ -94,7 +95,7 @@ export function HUD() {
                   </div>
                 </div>
                 <div style={styles.rowBtns}>
-                  <button style={{ ...styles.rowBtn, ...styles.feedBtn, opacity: m.bond >= 100 ? 0.5 : 1 }} onClick={() => useGame.getState().feed(m.uid)}>Feed</button>
+                  <button style={{ ...styles.rowBtn, ...styles.feedBtn, opacity: (m.bond >= 100 || treats < 1) ? 0.5 : 1 }} disabled={m.bond >= 100 || treats < 1} onClick={() => useGame.getState().feed(m.uid)}>Feed</button>
                   <button style={{ ...styles.rowBtn, ...styles.restBtn, opacity: m.hp >= maxHp ? 0.5 : 1 }} onClick={() => useGame.getState().rest(m.uid)}>Rest</button>
                 </div>
               </div>
@@ -122,8 +123,9 @@ export function HUD() {
                   Battle to weaken
                 </button>
               )}
-              <button style={styles.tameBtn} onClick={() => useGame.getState().tame(tamingSpecies.id, tamingTargetId)}>
-                Offer Treat & Tame
+              <button style={{ ...styles.tameBtn, opacity: treats < 1 ? 0.5 : 1 }} disabled={treats < 1}
+                onClick={() => useGame.getState().tame(tamingSpecies.id, tamingTargetId)}>
+                {treats < 1 ? 'No treats left' : 'Offer Treat & Tame'}
               </button>
               <button style={styles.cancelBtn} onClick={() => { sfx.uiClick(); useGame.getState().cancelTaming(); }}>
                 Back away
@@ -150,6 +152,7 @@ const styles: Record<string, React.CSSProperties> = {
   flash: { position: 'fixed', left: '50%', top: 70, transform: 'translateX(-50%)', background: 'rgba(212,176,106,0.95)', color: '#1a1208', padding: '8px 18px', borderRadius: 8, fontSize: 15, fontWeight: 700 },
   topRight: { position: 'fixed', right: 12, top: 12, display: 'flex', gap: 8, pointerEvents: 'auto' },
   cornerBtn: { background: 'rgba(20,28,20,0.85)', color: '#e8e6d8', border: '1px solid rgba(212,176,106,0.6)', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontFamily: font, cursor: 'pointer' },
+  treats: { position: 'fixed', left: 12, top: 88, background: 'rgba(20,28,20,0.8)', color: '#f0d9a0', border: '1px solid rgba(212,176,106,0.5)', borderRadius: 8, padding: '4px 10px', fontSize: 13, fontWeight: 700, pointerEvents: 'none' },
   partyPanel: { position: 'fixed', right: 12, top: 52, width: 230, background: 'rgba(16,22,16,0.94)', border: '1px solid rgba(212,176,106,0.4)', borderRadius: 10, padding: 10, pointerEvents: 'auto' },
   panelHead: { fontSize: 13, fontWeight: 700, color: '#d4b06a', marginBottom: 8 },
   empty: { fontSize: 12, opacity: 0.7 },

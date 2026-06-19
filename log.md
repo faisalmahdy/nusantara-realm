@@ -1,5 +1,20 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Treat economy: Feed & taming now cost something (plan-10x Horizon 1)
+- Feed and taming were free buttons. Added **treats**, a currency: spent to tame
+  (the "treat" you offer) and to feed, earned by winning battles (+3). New game
+  starts with 5; persisted in the save.
+- Soft-lock-proof by design: **resting is always free**, so a worn party can
+  always recover and battle to earn treats; taming-failures don't consume a
+  treat (only a successful tame does); the starting 5 guarantee a first monster
+  before you can battle.
+- Store: `treats` state + spend/earn in tame/battleTame/feed/battleMove(win);
+  `battleTame` and `tame` refuse at 0 with a hint. HUD: a "🍬 N treats" pill,
+  and Feed / "Offer Treat & Tame" / battle Tame buttons disable at 0.
+- QA: `tsc` clean; 33/33 tests; `vite build` clean; headless end-to-end verified
+  the numbers — start 5 → tame 4 → feed 3 → battle-win 6 (+3); at 0 treats taming
+  is blocked (party unchanged) and feed warns; console clean.
+
 ## 2026-06-19 — Wild respawn: the island stays huntable (plan-10x Horizon 1)
 - Tamed wilds used to vanish forever, so after a few tames the world emptied out.
   Now each tamed slot **respawns a fresh wild** (random species + level) after a
