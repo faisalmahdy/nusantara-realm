@@ -1,5 +1,19 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Ocean + beach: the island reads as Nusantara (plan-10x Horizon 1)
+- The world was a flat green square. Added `Ocean.tsx`: a sandy shore ring just
+  beyond the grass and a gently swelling sea around the whole island. Now it
+  reads as a tropical Nusantara *island* — the archipelago fantasy made literal.
+- Plays with the day/night cycle: the sea is a `meshStandard` surface so the
+  orbiting sun glints across it, and the distant water fades into the horizon via
+  the existing scene fog (near 42 / far 92) — no skybox needed.
+- Sea is a 400u plane with gentle per-frame vertex swells (amplitude kept well
+  below the shore drop so waves never clip the island); mounted in GameScene
+  under the grass. Purely additive — no change to movement, collision, or the
+  core loop (player is still clamped to the grass).
+- QA: `tsc` clean; 29/29 tests; `vite build` clean; headless shot from the
+  island edge shows grass → beach → sea → horizon; console clean (favicon only).
+
 ## 2026-06-19 — Field Guide / Almanac + folklore lore (plan-10x Horizon 1)
 - Leaned into the Nusantara identity (the plan's core differentiator). Added a
   `lore` field to every species — folklore-flavored entries (Kancil the trickster
