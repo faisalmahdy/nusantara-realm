@@ -1,5 +1,14 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Error boundary (robustness — Tio's item)
+- A render-time crash used to mean a blank white page. Added `ErrorBoundary.tsx`
+  (React class boundary) wrapping `<App/>` in `main.tsx`; on a caught error it
+  logs to console and shows a recovery screen with **Reload** and **Reset save &
+  reload** (in case a corrupt save is the cause).
+- QA: `tsc` clean; 40/40 tests; `vite build` clean; headless boot confirms the
+  boundary is transparent in the happy path (app boots, tame loop intact, 0
+  `.glb`, console clean).
+
 ## 2026-06-19 — Settings & accessibility (plan-10x — Indah's UX items)
 - **Colorblind-safe element icons**: `ELEMENT_ICON` (🌿 Forest, 🌊 Sea, ⚡ Sky,
   ⛰️ Earth, ✨ Spirit) shown beside the element name in the Field Guide, party

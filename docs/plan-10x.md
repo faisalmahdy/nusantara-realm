@@ -235,8 +235,12 @@ first devlog.
 - [x] **Audio (2026-06-19)** — procedural Web Audio engine (`game/audio.ts`):
       gamelan-flavored explore + battle loops, SFX (step/tame/hit/level/evolve/
       battle-start/UI), mute+volume control. Zero asset files (~2 KB gzip).
-- [ ] **Restore CI**: lint + typecheck + build + **asset-size gate**.
-- [ ] **First tests**: Vitest over `battle.ts` (effectiveness, damage, XP, evo).
+- [x] **CI (2026-06-19)** — GitHub Actions: install → rebuild esbuild → vitest →
+      typecheck + build, on pushes to main/claude/** and all PRs.
+- [x] **Tests (2026-06-19)** — Vitest: 40 tests across battle/monsters/spawns/npcs
+      (engine math, switch resolution, discovery, respawn, NPC data).
+- [x] **Error boundary (2026-06-19)** — render crashes show a recovery screen
+      (reload / reset save) instead of a blank page.
 - [x] **60-second tutorial (2026-06-19)** — `Tutorial.tsx`: a 5-step contextual
       onboarding chain (walk → approach → E → tame → open Party) that advances as
       the player acts; skippable, shown once (localStorage).
