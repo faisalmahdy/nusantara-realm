@@ -1,9 +1,10 @@
 import { SPECIES } from './monsters';
 import { WildSpawn } from './shared';
 
-// The starting ring of wild monsters — one per species, spread around the island.
+// The starting ring of wild monsters — one per species, spread around the island
+// — plus the island's Guardian (Naris the storm-naga) standing watch to the north.
 export function makeInitialSpawns(): WildSpawn[] {
-  return SPECIES.map((sp, i) => {
+  const ring: WildSpawn[] = SPECIES.map((sp, i) => {
     const angle = (i / SPECIES.length) * Math.PI * 2;
     const r = 13 + (i % 4) * 4;
     return {
@@ -15,6 +16,8 @@ export function makeInitialSpawns(): WildSpawn[] {
       level: 1 + i * 2,
     };
   });
+  ring.push({ wildId: 'guardian-naris-0', speciesId: 'naris', x: 0, z: -34, phase: 99, level: 18, guardian: true });
+  return ring;
 }
 
 // Replace any spawn whose wild has been tamed with a fresh wild in the same spot
@@ -31,6 +34,7 @@ export function respawnTamed(
   let c = counter;
   let changed = false;
   const next = spawns.map((s) => {
+    if (s.guardian) return s; // Guardians are a one-time milestone — never respawn
     if (!tamed.has(s.wildId)) return s;
     changed = true;
     const sp = SPECIES[Math.floor(rng() * SPECIES.length)];

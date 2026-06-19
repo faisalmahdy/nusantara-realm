@@ -254,7 +254,9 @@ first devlog.
 - [x] **Party switching in battle (2026-06-19)** — field your whole team; switch
       the active fighter (voluntary switch costs a turn; a faint forces a switch;
       loss only when all faint). The roster finally matters.
-- [ ] One **Guardian boss** as the region's goal + an evolution-as-event moment.
+- [~] **Guardian boss (2026-06-19)** — Naris the storm-naga stands watch to the
+      north: boss-level (max lead+4, 16), distinct visuals/prompt, one-time +15
+      treat bounty, never respawns. Still to do: an evolution-as-event moment.
 - [x] **Field Guide / Almanac + folklore lore (2026-06-19)** — `Almanac.tsx`:
       all 12 species with lore that unlocks on taming, "N/12 discovered". Still
       to do: a first **village + NPCs**.

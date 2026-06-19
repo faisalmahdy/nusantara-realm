@@ -25,6 +25,7 @@ export function HUD() {
   }, [message]);
 
   const nearbySpecies = nearbyWildId ? speciesById(nearbyWildId.split('-')[1]) : null;
+  const nearbyGuardian = !!nearbyWildId?.startsWith('guardian');
   const tamingSpecies = tamingTargetId ? speciesById(tamingTargetId.split('-')[1]) : null;
 
   return (
@@ -38,8 +39,12 @@ export function HUD() {
       <div style={styles.treats} title="Treats — spent to tame & feed, earned by winning battles">🍬 {treats} treats</div>
 
       {nearbySpecies && mode === 'explore' && (
-        <div style={styles.prompt}>
-          A wild <b style={{ color: ELEMENT_COLOR[nearbySpecies.element] }}>{nearbySpecies.name}</b> is nearby — press <b>E</b> to tame
+        <div style={{ ...styles.prompt, ...(nearbyGuardian ? styles.promptGuardian : null) }}>
+          {nearbyGuardian ? (
+            <>The Guardian <b style={{ color: '#f4d97b' }}>{nearbySpecies.name}</b> looms — press <b>E</b> to challenge it</>
+          ) : (
+            <>A wild <b style={{ color: ELEMENT_COLOR[nearbySpecies.element] }}>{nearbySpecies.name}</b> is nearby — press <b>E</b> to tame</>
+          )}
         </div>
       )}
 
@@ -149,6 +154,7 @@ const styles: Record<string, React.CSSProperties> = {
   title: { position: 'fixed', left: 12, top: 10, fontSize: 15, textShadow: '0 1px 3px #000' },
   controls: { position: 'fixed', left: 12, top: 32, fontSize: 12, opacity: 0.85, textShadow: '0 1px 2px #000' },
   prompt: { position: 'fixed', left: '50%', bottom: 90, transform: 'translateX(-50%)', background: 'rgba(20,28,20,0.82)', padding: '8px 16px', borderRadius: 999, fontSize: 14, textShadow: '0 1px 2px #000', border: '1px solid rgba(212,176,106,0.5)' },
+  promptGuardian: { background: 'rgba(44,32,10,0.9)', border: '1px solid #f4d97b' },
   flash: { position: 'fixed', left: '50%', top: 70, transform: 'translateX(-50%)', background: 'rgba(212,176,106,0.95)', color: '#1a1208', padding: '8px 18px', borderRadius: 8, fontSize: 15, fontWeight: 700 },
   topRight: { position: 'fixed', right: 12, top: 12, display: 'flex', gap: 8, pointerEvents: 'auto' },
   cornerBtn: { background: 'rgba(20,28,20,0.85)', color: '#e8e6d8', border: '1px solid rgba(212,176,106,0.6)', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontFamily: font, cursor: 'pointer' },
