@@ -1,5 +1,22 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Field Guide / Almanac + folklore lore (plan-10x Horizon 1)
+- Leaned into the Nusantara identity (the plan's core differentiator). Added a
+  `lore` field to every species — folklore-flavored entries (Kancil the trickster
+  mouse-deer, Naris the river naga, Gambang named for the gamelan keys, …),
+  inspired by but not claiming authority over Indonesian myth.
+- New `Almanac.tsx` ("Field Guide"): a Pokédex-style panel listing all 12 species
+  with portrait, element, rarity, base stats, and lore. Entries unlock as you tame
+  each species; undiscovered ones show a darkened silhouette + "???". A header
+  tracks "N/12 discovered" — a soft "collect them all" goal.
+- Discovery is a pure helper `discoveredSpeciesIds(party, tamedWildIds)`
+  (species in the party ∪ species derived from tamed wild ids), unit-tested.
+- HUD: a top-right button cluster (Field Guide + Party); opening the guide is
+  additive and risk-free (no change to the core loop).
+- QA: `tsc` clean; 29/29 tests (5 new in `monsters.test.ts`); `vite build` clean;
+  headless shows "3/12 discovered" after taming kancil/camar/dugang, lore +
+  silhouettes rendering; tame loop intact; 0 `.glb`, console clean.
+
 ## 2026-06-19 — Onboarding tutorial (plan-10x Horizon 0 — completes H0)
 - New players were dropped in cold. Added `Tutorial.tsx`: a 5-step contextual
   prompt chain (walk → approach a wild → press E → tame → open Party) that

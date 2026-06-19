@@ -6,11 +6,13 @@ import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
 import { AudioControls } from './AudioControls';
 import { Tutorial } from './Tutorial';
+import { Almanac } from './Almanac';
 import { sfx } from '../game/audio';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
   const [showParty, setShowParty] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
   const hasParty = party.length > 0;
   const selected = party.find((m) => m.uid === selectedUid) ?? party[0];
@@ -42,10 +44,11 @@ export function HUD() {
 
       {message && <div style={styles.flash}>{message}</div>}
 
-      {/* Party button + panel */}
-      <button style={{ ...styles.partyBtn, pointerEvents: 'auto' }} onClick={() => { sfx.uiClick(); setShowParty((v) => !v); }}>
-        Party · {party.length}
-      </button>
+      {/* Top-right buttons + party panel */}
+      <div style={styles.topRight}>
+        <button style={styles.cornerBtn} onClick={() => { sfx.uiClick(); setShowGuide(true); }}>Field Guide</button>
+        <button style={styles.cornerBtn} onClick={() => { sfx.uiClick(); setShowParty((v) => !v); }}>Party · {party.length}</button>
+      </div>
       {showParty && (
         <div style={styles.partyPanel}>
           <div style={styles.panelHead}>Your Tamed Monsters</div>
@@ -130,6 +133,7 @@ export function HUD() {
         </div>
       )}
 
+      {showGuide && <Almanac onClose={() => setShowGuide(false)} />}
       {mode === 'explore' && <TouchControls />}
       {mode === 'battle' && <BattleScreen />}
       <Tutorial />
@@ -144,7 +148,8 @@ const styles: Record<string, React.CSSProperties> = {
   controls: { position: 'fixed', left: 12, top: 32, fontSize: 12, opacity: 0.85, textShadow: '0 1px 2px #000' },
   prompt: { position: 'fixed', left: '50%', bottom: 90, transform: 'translateX(-50%)', background: 'rgba(20,28,20,0.82)', padding: '8px 16px', borderRadius: 999, fontSize: 14, textShadow: '0 1px 2px #000', border: '1px solid rgba(212,176,106,0.5)' },
   flash: { position: 'fixed', left: '50%', top: 70, transform: 'translateX(-50%)', background: 'rgba(212,176,106,0.95)', color: '#1a1208', padding: '8px 18px', borderRadius: 8, fontSize: 15, fontWeight: 700 },
-  partyBtn: { position: 'fixed', right: 12, top: 12, background: 'rgba(20,28,20,0.85)', color: '#e8e6d8', border: '1px solid rgba(212,176,106,0.6)', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontFamily: font, cursor: 'pointer' },
+  topRight: { position: 'fixed', right: 12, top: 12, display: 'flex', gap: 8, pointerEvents: 'auto' },
+  cornerBtn: { background: 'rgba(20,28,20,0.85)', color: '#e8e6d8', border: '1px solid rgba(212,176,106,0.6)', borderRadius: 8, padding: '8px 14px', fontSize: 13, fontFamily: font, cursor: 'pointer' },
   partyPanel: { position: 'fixed', right: 12, top: 52, width: 230, background: 'rgba(16,22,16,0.94)', border: '1px solid rgba(212,176,106,0.4)', borderRadius: 10, padding: 10, pointerEvents: 'auto' },
   panelHead: { fontSize: 13, fontWeight: 700, color: '#d4b06a', marginBottom: 8 },
   empty: { fontSize: 12, opacity: 0.7 },
