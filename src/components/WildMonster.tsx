@@ -1,14 +1,16 @@
-import { useRef } from 'react';
+import { Suspense, lazy, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Sprite3D } from './Sprite3D';
-import { MonsterModel } from './MonsterModel';
 import { hasModel } from '../models/registry';
 import { playerPos, WildSpawn } from '../game/shared';
 import { useGame } from '../game/store';
-import { evolutionStage } from '../game/battle';
 import { speciesById, ELEMENT_COLOR } from '../game/monsters';
 import { ART_MODE } from '../game/config';
+
+// The from-scratch 3D monster meshes (ART_MODE === '3d') are code-split into
+// their own chunk via this lazy import — never fetched in the default HD-2D build.
+const MonsterModel = lazy(() => import('./MonsterModel').then((m) => ({ default: m.MonsterModel })));
 
 const TAME_RANGE = 4.5;
 
@@ -68,7 +70,9 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
         // per-stage sprites exist, so evolved forms reuse the base idle art.)
         <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
       ) : hasModel(spawn.speciesId) ? (
-        <MonsterModel speciesId={spawn.speciesId} height={2.4} stage={evolutionStage(spawn.level)} />
+        <Suspense fallback={null}>
+          <MonsterModel speciesId={spawn.speciesId} height={2.4} />
+        </Suspense>
       ) : (
         <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={2.7} />
       )}

@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 import * as THREE from 'three';
 import { useLoader } from '@react-three/fiber';
 import { Sprite3D } from './Sprite3D';
-import { WorldProp, propGlbId, hasPropGlb } from './WorldProp';
 import { SCENERY, WORLD } from '../game/scenery';
-import { ART_MODE } from '../game/config';
 
 export function World() {
   const grass = useLoader(THREE.TextureLoader, '/world/grass-base.png');
@@ -30,16 +28,9 @@ export function World() {
         <planeGeometry args={[4.5, WORLD]} />
         <meshLambertMaterial map={path} transparent />
       </mesh>
-      {SCENERY.map((s, i) => {
-        const id = propGlbId(s.url);
-        if (ART_MODE !== 'hd2d' && hasPropGlb(id)) {
-          const rotationY = ((s.x * 12.9898 + s.z * 78.233) % (Math.PI * 2));
-          return (
-            <WorldProp key={i} id={id} height={s.height} position={[s.x, 0, s.z]} rotationY={rotationY} />
-          );
-        }
-        return <Sprite3D key={i} url={s.url} height={s.height} position={[s.x, 0, s.z]} />;
-      })}
+      {SCENERY.map((s, i) => (
+        <Sprite3D key={i} url={s.url} height={s.height} position={[s.x, 0, s.z]} />
+      ))}
     </group>
   );
 }

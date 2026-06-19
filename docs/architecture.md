@@ -1,13 +1,19 @@
 # Architecture
 
-Last touched: 2026-06-19 (ART_MODE: HD-2D vs 3D renderers)
+Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
 
 ## Art mode (`src/game/config.ts`)
-- `ART_MODE` ('hd2d' | '3d') is the one switch for the visual pipeline.
-  **'hd2d'** (default, shipped): Player/WildMonster/World/HUD-viewer render the
-  2D sprites as billboards; no GLB is fetched. **'3d'**: the same renderers use
-  the Meshy GLB / procedural-builder path (MonsterModel, WorldProp, player.glb,
-  PartyViewer3D). BattleScreen is 2D in both modes.
+- `ART_MODE` ('hd2d' | '3d') switches the visual pipeline. **'hd2d'** (default,
+  shipped): everything is 2D sprites as billboards (player, wild monsters,
+  scenery, party viewer). **'3d'** (opt-in legacy): only wild monsters render as
+  the from-scratch procedural meshes — `MonsterModel` + the `models/*.ts`
+  builders are **code-split into a lazy chunk** (`WildMonster` lazy-imports it),
+  so they never load in HD-2D. Player/scenery/party-viewer stay 2D in both modes.
+- **No `.glb` is ever fetched.** The Meshy GLB pipeline (assets in
+  `public/models/`, the `drei useGLTF` loaders, and `WorldProp`/`PartyViewer3D`/
+  the player GLB) was removed once HD-2D was chosen — first load is sprites only.
+- Build (`vite.config.ts`): three + react are split into their own cacheable
+  vendor chunks; only the small app chunk (~57 KB gzip) changes per deploy.
 
 ## Entry
 - `index.html` → `src/main.tsx` (mounts `<App/>`, exposes `window.__realm`).

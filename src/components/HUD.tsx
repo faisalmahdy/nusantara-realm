@@ -4,8 +4,6 @@ import { speciesById, ELEMENT_COLOR } from '../game/monsters';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
-import { PartyViewer3D } from './PartyViewer3D';
-import { ART_MODE } from '../game/config';
 
 export function HUD() {
   const { mode, party, nearbyWildId, tamingTargetId, message } = useGame();
@@ -54,11 +52,7 @@ export function HUD() {
             const nextLv = nextEvolutionLevel(selected.level);
             return (
               <div style={styles.viewer}>
-                {ART_MODE === 'hd2d' ? (
-                  <img src={`/sprites/${selected.speciesId}/idle.png`} style={styles.viewerImg} alt={selected.nickname} />
-                ) : (
-                  <PartyViewer3D speciesId={selected.speciesId} level={selected.level} />
-                )}
+                <img src={`/sprites/${selected.speciesId}/idle.png`} style={styles.viewerImg} alt={selected.nickname} />
                 <div style={styles.viewerOverlay}>
                   <span style={{ color: ELEMENT_COLOR[sp.element], fontWeight: 700 }}>{selected.nickname}</span>
                   <span style={styles.stageBadge}>Stage {stage}</span>

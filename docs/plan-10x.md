@@ -226,9 +226,12 @@ first devlog.
 
 ### Horizon 0 — Foundations / "Stop the bleeding" (Week 1)
 *High-ROI, low-controversy, unblocks everyone.*
-- [ ] **Compress all GLBs** (gltf-transform: Draco/meshopt + KTX2 + prune) →
-      target initial load < 15 MB. **(Bayu — do this first.)**
-- [ ] **Instance** scenery (trees/ferns).
+- [x] **Asset weight fixed (2026-06-19)** — superseded by the HD-2D switch +
+      removing all 40 GLBs: deploy 385 MB → 13 MB, first load ~11 MB of sprites,
+      0 `.glb` fetched. (Made the gltf-transform/compress task moot.)
+- [x] **Bundle chunked (2026-06-19)** — 3D path lazy-split; three/react in their
+      own cacheable vendor chunks; first-load ~271 KB gzip (three.js floor).
+- [n/a] **Instance** scenery — moot in HD-2D (scenery is cheap 2D billboards).
 - [ ] **Audio basics**: lib + SFX (walk/tame/hit/win/evolve) + one explore loop.
 - [ ] **Restore CI**: lint + typecheck + build + **asset-size gate**.
 - [ ] **First tests**: Vitest over `battle.ts` (effectiveness, damage, XP, evo).

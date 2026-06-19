@@ -1,14 +1,16 @@
 # 3D models
 
-Last touched: 2026-06-19 (art direction reverted to HD-2D — 3D now opt-in)
+Last touched: 2026-06-19 (Meshy GLB pipeline removed; HD-2D shipped)
 
-## SUPERSEDED — HD-2D is the shipped look again (2026-06-19, plan-10x #1)
-The signature look is back to **HD-2D**: the 2D Nusantara sprites as billboards
-in the 3D world. The 3D pipeline below (Meshy GLBs + hand-built builders) is kept
-**opt-in** behind `src/game/config.ts` `ART_MODE` — set it to `'3d'` to render
-the GLB/procedural models again. In the default `'hd2d'` mode no GLB is fetched
-(first load ~11 MB of sprites vs ~372 MB of models). Everything from here down
-documents that opt-in 3D pipeline.
+## SUPERSEDED — HD-2D is the shipped look; GLB pipeline removed (2026-06-19)
+The signature look is **HD-2D**: the 2D Nusantara sprites as billboards in the 3D
+world. The **Meshy GLB pipeline was removed** — all 40 GLBs deleted from
+`public/models/` (deploy 385 MB → 13 MB), along with the `drei useGLTF` loaders
+and the `WorldProp`/`PartyViewer3D`/player-GLB components. No `.glb` is fetched
+in either mode now. The only surviving 3D path is the **hand-built procedural
+builders** (`src/models/*.ts`), opt-in via `ART_MODE='3d'` for wild monsters and
+lazy-loaded so they stay out of the default bundle. Everything below documents
+that procedural builder path (kept) and the now-removed Meshy pipeline (history).
 
 ## PIVOT — Meshy.ai is now the asset pipeline (msg #212/#226)
 Mahdy got a Meshy subscription; we now **generate models with Meshy.ai** instead

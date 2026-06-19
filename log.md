@@ -1,5 +1,25 @@
 # Log — Nusantara Realm
 
+## 2026-06-19 — Retire the Meshy GLB pipeline + chunk the bundle (HD-2D follow-ups)
+- Two follow-ups to the HD-2D switch. (1) **Deploy slimmed 385 MB → 13 MB:**
+  `git rm`'d all 40 GLBs from `public/models/` (they were dead weight in hd2d).
+  Removed the now-dead GLB code with them — `WorldProp.tsx`, `PartyViewer3D.tsx`,
+  the GLB path in `MonsterModel`, the player GLB in `Player`, the GLB sets in
+  `registry.ts`, and the defunct `glb-viewer` QA page. That removes every
+  `drei useGLTF` call, so the drei GLTF loaders drop from the build too.
+- (2) **Bundle chunked for caching:** `WildMonster` now `lazy()`-imports
+  `MonsterModel`, so the 12 procedural builders are a separate ~40 KB chunk
+  (11 KB gzip) that HD-2D never fetches. `vite.config.ts` splits three (176 KB
+  gzip) and react (45 KB gzip) into their own cacheable vendor chunks; only the
+  ~57 KB-gzip app chunk changes per deploy. First-load JS ≈ 271 KB gzip — honest
+  floor is three.js itself, which HD-2D needs (sprites in a real 3D scene).
+- '3d' is now an opt-in legacy mode: only wild monsters render (procedural
+  meshes); player/scenery/party-viewer stay 2D (their 3D form was GLB-only).
+- QA: `tsc` clean; `vite build` clean (no size warning); headless render of all
+  four states unchanged from the HD-2D commit; network trace: 0 `.glb`, the
+  MonsterModel lazy chunk NOT fetched in hd2d, only index/three/react chunks +
+  23 sprites, console clean (favicon 404 only); tame loop intact (party 0→1).
+
 ## 2026-06-19 — Art-direction decision: revive HD-2D (plan-10x Decision #1)
 - Mahdy chose to act on the plan's #1 decision and revert the look to **HD-2D**
   (2D Nusantara sprites as billboards in the 3D world) over the auto-generated

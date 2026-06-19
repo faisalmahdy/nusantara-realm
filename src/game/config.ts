@@ -3,15 +3,15 @@
 //
 //   'hd2d' — the 2D Nusantara pixel-art sprites planted as camera-facing
 //            billboards in the real 3D world (Octopath-style). Distinctive,
-//            cohesive, and very light: ~11 MB of sprites instead of ~372 MB of
-//            Meshy GLBs, so it loads on a phone. This is now the shipped look.
+//            cohesive, and very light (~11 MB of sprites). This is the shipped
+//            look.
 //
-//   '3d'   — the Meshy-generated GLB models (player/monsters/props). Kept as an
-//            opt-in fallback so the work isn't lost and the two can be compared.
-//
-// Flipping this one constant swaps every renderer (player, wild monsters,
-// scenery props, party viewer) between the two pipelines. In 'hd2d' mode no
-// GLB is ever fetched.
+//   '3d'   — opt-in legacy mode: wild monsters render as the from-scratch
+//            procedural Three.js meshes (src/models/*.ts), lazy-loaded so they
+//            never touch the default bundle. The player, scenery and party
+//            viewer stay 2D in this mode too — their only 3D form was the Meshy
+//            GLB pipeline, which was retired (assets + loaders removed) once
+//            HD-2D was chosen, so no `.glb` is fetched in either mode.
 // ---------------------------------------------------------------------------
 export type ArtMode = 'hd2d' | '3d';
 
