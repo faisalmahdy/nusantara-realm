@@ -11,6 +11,7 @@ type Pop = { amount: number; key: number };
 // reads as two distinct hits (your strike, then their counter). Roadmap #1.
 export function BattleScreen() {
   const battle = useGame((s) => s.battle);
+  const treats = useGame((s) => s.treats);
   const [acting, setActing] = useState(false);
   const [playerDmg, setPlayerDmg] = useState<Pop | null>(null);
   const [enemyDmg, setEnemyDmg] = useState<Pop | null>(null);
@@ -83,7 +84,7 @@ export function BattleScreen() {
                 <span style={s.moveType}>{m.element ?? 'Typeless'}</span>
               </button>
             ))}
-            <button style={{ ...s.btn, ...s.tame }} disabled={acting} onClick={() => withFx(() => useGame.getState().battleTame())}>Tame</button>
+            <button style={{ ...s.btn, ...s.tame, opacity: treats < 1 ? 0.5 : 1 }} disabled={acting || treats < 1} onClick={() => withFx(() => useGame.getState().battleTame())} title={treats < 1 ? 'No treats left' : 'Offer a treat'}>{treats < 1 ? 'No treats' : 'Tame'}</button>
             <button style={{ ...s.btn, ...s.flee }} disabled={acting} onClick={() => useGame.getState().battleFlee()}>Flee</button>
           </div>
         ) : (

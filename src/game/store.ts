@@ -54,6 +54,8 @@ interface GameState {
   // active turn-based battle, if any
   battle: BattleState | null;
   message: string | null;
+  // treats: the currency. Spent to tame and to feed; earned by winning battles.
+  treats: number;
 
   setMode: (m: GameMode) => void;
   setNearby: (id: string | null) => void;
@@ -70,6 +72,12 @@ interface GameState {
   flash: (msg: string) => void;
 }
 
+// Economy tuning. You start with enough treats to tame your first few monsters
+// even before you can battle; wins replenish the supply, so you can never get
+// soft-locked (resting is always free).
+const START_TREATS = 5;
+const TREAT_WIN_REWARD = 3;
+
 let uidCounter = 1;
 
 export const useGame = create<GameState>()(
@@ -82,6 +90,7 @@ export const useGame = create<GameState>()(
   tamingTargetId: null,
   battle: null,
   message: null,
+  treats: START_TREATS,
 
   setMode: (m) => set({ mode: m }),
   setNearby: (id) => set({ nearbyWildId: id }),
@@ -90,6 +99,11 @@ export const useGame = create<GameState>()(
   cancelTaming: () => set({ mode: 'explore', tamingTargetId: null }),
 
   tame: (speciesId, wildId) => {
+    if (get().treats < 1) {
+      set({ mode: 'explore', tamingTargetId: null, message: 'Out of treats — win a battle to earn more.' });
+      sfx.tameFail();
+      return false;
+    }
     const species = speciesById(speciesId);
     // Rarer monsters resist taming; party size lowers the odds slightly.
     const base = 0.85 - (species.rarity - 1) * 0.22;
@@ -109,6 +123,7 @@ export const useGame = create<GameState>()(
       set((s) => ({
         party: [...s.party, mon],
         tamedWildIds: [...s.tamedWildIds, wildId],
+        treats: s.treats - 1,
         mode: 'explore',
         tamingTargetId: null,
         nearbyWildId: null,
@@ -178,9 +193,11 @@ export const useGame = create<GameState>()(
       if (res.levelsGained > 0) log.push(`${lead.nickname} grew to Lv ${res.level}!`);
       const evo = evolutionNote(lead.nickname, lead.level, res.level);
       if (evo) log.push(evo);
+      log.push(`You gathered ${TREAT_WIN_REWARD} treats.`);
       progressSfx(res.levelsGained > 0, !!evo);
       set((st) => ({
         party: st.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)),
+        treats: st.treats + TREAT_WIN_REWARD,
         battle: { ...b, player, enemy, log, turn: 'over', outcome: 'won' },
       }));
       return;
@@ -202,6 +219,10 @@ export const useGame = create<GameState>()(
   battleTame: () => {
     const b = get().battle;
     if (!b || b.turn !== 'player') return false;
+    if (get().treats < 1) {
+      set({ battle: { ...b, log: [...b.log, 'You have no treats left to offer.'] } });
+      return false;
+    }
     const species = speciesById(b.enemy.speciesId);
     const chance = tameChance(b.enemy, species.rarity, get().party.length);
     const success = Math.random() < chance;
@@ -230,6 +251,7 @@ export const useGame = create<GameState>()(
       set((s) => ({
         party: [...s.party.map((m, i) => (i === 0 ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
+        treats: s.treats - 1,
         nearbyWildId: null,
         battle: { ...b, log, turn: 'over', outcome: 'tamed' },
       }));
@@ -284,11 +306,16 @@ export const useGame = create<GameState>()(
       set({ message: `${m.nickname} is already content.` });
       return;
     }
+    if (get().treats < 1) {
+      set({ message: 'No treats to feed with — win a battle.' });
+      return;
+    }
     const bond = Math.min(100, m.bond + 8);
     const res = applyXp(m.level, m.xp, 5);
     const evo = evolutionNote(m.nickname, m.level, res.level);
     set((s) => ({
       party: s.party.map((x) => (x.uid === uid ? { ...x, bond, level: res.level, xp: res.xp } : x)),
+      treats: s.treats - 1,
       message: evo
         ? evo
         : res.levelsGained > 0
@@ -323,7 +350,7 @@ export const useGame = create<GameState>()(
       name: 'nusantara-realm-save',
       // Only the durable progression survives a reload; transient UI/battle
       // state always starts fresh in 'explore'.
-      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds }),
+      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         // Resume uid issuance past any restored monster so new tames don't collide.
