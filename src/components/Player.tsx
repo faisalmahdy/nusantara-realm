@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboard } from '../game/useKeyboard';
-import { playerPos, cameraState, touchInput } from '../game/shared';
+import { playerPos, cameraState, touchInput, applyDaylight } from '../game/shared';
 import { WORLD, COLLIDERS } from '../game/scenery';
 import { useGame } from '../game/store';
 import { loadPixelTexture } from './Sprite3D';
@@ -61,8 +61,10 @@ export function Player() {
     if (moving) {
       move.normalize();
       playerPos.addScaledVector(move, dt * SPEED);
-      playerPos.x = THREE.MathUtils.clamp(playerPos.x, -WORLD / 2 + 2, WORLD / 2 - 2);
-      playerPos.z = THREE.MathUtils.clamp(playerPos.z, -WORLD / 2 + 2, WORLD / 2 - 2);
+      // Keep the player on the round island.
+      const maxR = WORLD / 2 - 2;
+      const pr = Math.hypot(playerPos.x, playerPos.z);
+      if (pr > maxR) { playerPos.x *= maxR / pr; playerPos.z *= maxR / pr; }
       // Push out of tree trunks so you can't walk through them.
       for (const c of COLLIDERS) {
         const dx = playerPos.x - c.x;
@@ -105,6 +107,8 @@ export function Player() {
         }
       }
     }
+
+    if (mat) applyDaylight(mat); // darken with the day/night cycle
 
     // Press E to start taming the nearby wild.
     const store = useGame.getState();

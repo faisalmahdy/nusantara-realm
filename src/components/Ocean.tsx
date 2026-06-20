@@ -28,9 +28,9 @@ export function Ocean() {
 
   return (
     <group>
-      {/* sandy shore ring, just beneath the grass */}
+      {/* sandy shore ring, just beneath the grass (round, to match the island) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]} receiveShadow>
-        <planeGeometry args={[WORLD + 16, WORLD + 16]} />
+        <circleGeometry args={[(WORLD + 16) / 2, 64]} />
         <meshLambertMaterial color="#d8c79a" />
       </mesh>
       {/* sea */}

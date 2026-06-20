@@ -14,18 +14,19 @@ export function World() {
     grass.magFilter = THREE.NearestFilter;
     grass.colorSpace = THREE.SRGBColorSpace;
     path.wrapS = path.wrapT = THREE.RepeatWrapping;
-    path.repeat.set(1, 22);
+    path.repeat.set(1, 19);
     path.colorSpace = THREE.SRGBColorSpace;
   }, [grass, path]);
 
   return (
     <group>
+      {/* Round island silhouette (no hard square corners at the shore). */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[WORLD, WORLD]} />
+        <circleGeometry args={[WORLD / 2, 64]} />
         <meshLambertMaterial map={grass} />
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <planeGeometry args={[4.5, WORLD]} />
+        <planeGeometry args={[4.5, WORLD - 12]} />
         <meshLambertMaterial map={path} transparent />
       </mesh>
       {SCENERY.map((s, i) => (

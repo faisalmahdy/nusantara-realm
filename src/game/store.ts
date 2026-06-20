@@ -254,7 +254,9 @@ export const useGame = create<GameState>()(
       set({ battle: { ...b, active: idx, player: b.party[idx], log, mustSwitch: false, turn: 'player' } });
       return;
     }
-    const r = enemyCounter(b.party, idx, { ...b.enemy }, log);
+    // A voluntary switch costs your turn, but the incoming monster braces — it
+    // takes a softened hit, so switching is a real tactic rather than a sacrifice.
+    const r = enemyCounter(b.party, idx, { ...b.enemy }, log, 0.5);
     set({ battle: { ...b, active: idx, party: r.party, player: r.party[idx], log, turn: r.turn, outcome: r.outcome, mustSwitch: r.mustSwitch } });
   },
 

@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { env } from '../game/shared';
 
 // One full day/night cycle, in seconds. Starts at midday (see the +0.25 offset).
 const DAY_LENGTH = 120;
@@ -42,6 +43,7 @@ export function DayNight() {
     const ang = t * Math.PI * 2;
     const elev = Math.sin(ang); // -1..1, peaks at noon (t=0.25)
     const daylight = THREE.MathUtils.clamp(elev * 1.4 + 0.35, 0, 1);
+    env.daylight = daylight; // share with the unlit billboards (Sprite3D / Player)
     // Warm horizon band, only while the sun is at/above the horizon (dawn & dusk).
     const glow = THREE.MathUtils.clamp(1 - Math.abs(elev) * 2.5, 0, 1) * THREE.MathUtils.clamp(elev + 0.5, 0, 1);
 

@@ -29,7 +29,7 @@ export const NPCS: Npc[] = [
     id: 'warden', name: 'Warden Intan', x: 0, z: 2, tint: '#e6cda6',
     lines: [
       'To the north the Guardian, Naris of the storm, keeps the old balance. Do not face it unprepared.',
-      'Raise a varied team and switch monsters mid-battle — the element pentagon favors the ready.',
+      'Naris rides the Sky, and the Sky bows to Earth — lead with a stone-kin beast. Switch when one tires; whoever steps in braces for the blow.',
     ],
   },
 ];
