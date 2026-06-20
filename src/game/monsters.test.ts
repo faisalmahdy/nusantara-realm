@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { SPECIES, speciesById, discoveredSpeciesIds, ELEMENT_COLOR } from './monsters';
 
 describe('SPECIES roster', () => {
-  it('has 12 species, each with unique id and lore', () => {
-    expect(SPECIES).toHaveLength(12);
-    expect(new Set(SPECIES.map((s) => s.id)).size).toBe(12);
+  it('has 17 species across both regions, each with unique id and lore', () => {
+    expect(SPECIES).toHaveLength(17);
+    expect(new Set(SPECIES.map((s) => s.id)).size).toBe(17);
     for (const s of SPECIES) {
       expect(s.lore.length).toBeGreaterThan(20);
       expect(ELEMENT_COLOR[s.element]).toBeTruthy();
