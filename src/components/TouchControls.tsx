@@ -1,12 +1,41 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../game/store';
 import { touchInput } from '../game/shared';
 
 const BASE_R = 56; // px, max thumb travel from center
 
+// True on touch-first devices (phones/tablets), so the on-screen controls only
+// appear where they're needed — not as dead circles over a mouse-driven desktop.
+function detectTouch(): boolean {
+  if (typeof window === 'undefined') return false;
+  const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+  const points = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0;
+  return coarse || points;
+}
+
+// Detects a touch device, then keeps watching: a real touch flips it on (covers
+// hybrid touch-laptops) and an input-capability change is tracked live.
+function useIsTouchDevice(): boolean {
+  const [isTouch, setIsTouch] = useState(detectTouch);
+  useEffect(() => {
+    if (isTouch) return;
+    const enable = () => setIsTouch(true);
+    window.addEventListener('touchstart', enable, { once: true, passive: true });
+    const mq = window.matchMedia?.('(pointer: coarse)');
+    const onChange = () => setIsTouch(detectTouch());
+    mq?.addEventListener?.('change', onChange);
+    return () => {
+      window.removeEventListener('touchstart', enable);
+      mq?.removeEventListener?.('change', onChange);
+    };
+  }, [isTouch]);
+  return isTouch;
+}
+
 // On-screen joystick (move) + tame button, for playing on a phone where there's
 // no keyboard. Writes the joystick vector into shared.touchInput each pointer move.
 export function TouchControls() {
+  const isTouch = useIsTouchDevice();
   const baseRef = useRef<HTMLDivElement>(null);
   const active = useRef(false);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
@@ -39,6 +68,9 @@ export function TouchControls() {
     if (s.nearbyWildId) s.beginTaming(s.nearbyWildId);
     else if (s.nearbyNpcId) s.talkToNpc(s.nearbyNpcId);
   };
+
+  // Desktop (mouse + keyboard) needs no on-screen controls.
+  if (!isTouch) return null;
 
   return (
     <>
