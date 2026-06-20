@@ -28,6 +28,7 @@ export const SCENERY: Scenery[] = (() => {
     const x = (rng() - 0.5) * (WORLD - 8);
     const z = (rng() - 0.5) * (WORLD - 8);
     if (Math.abs(x) < 3.5) continue; // keep the path clear
+    if (Math.hypot(x, z) > WORLD / 2 - 3) continue; // keep trees on the round island
     const k = rng();
     if (k < 0.42) out.push({ url: '/world/tree-banyan.png', height: 7, x, z, r: 1.4 });
     else if (k < 0.72) out.push({ url: '/world/tree-palm.png', height: 6.5, x, z, r: 1.0 });

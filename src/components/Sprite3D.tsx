@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useLoader } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { applyDaylight } from '../game/shared';
 
 const cache = new Map<string, THREE.Texture>();
 
@@ -50,9 +51,15 @@ export function Sprite3D({ url, height, position = [0, 0, 0], groundAnchored = t
 
   const center = useMemo<[number, number]>(() => (groundAnchored ? [0.5, 0] : [0.5, 0.5]), [groundAnchored]);
 
+  // Modulate the (optional) base tint by the day/night level each frame so the
+  // unlit billboards darken at night with the lit 3D scene.
+  const matRef = useRef<THREE.SpriteMaterial>(null);
+  const base = useMemo(() => new THREE.Color(color ?? '#ffffff'), [color]);
+  useFrame(() => { if (matRef.current) applyDaylight(matRef.current, base); });
+
   return (
     <sprite position={position} scale={[height * aspect, height, 1]} center={center as any} renderOrder={renderOrder}>
-      <spriteMaterial map={tex} color={color as any} transparent alphaTest={0.5} opacity={opacity} depthWrite />
+      <spriteMaterial ref={matRef} map={tex} transparent alphaTest={0.5} opacity={opacity} depthWrite />
     </sprite>
   );
 }
