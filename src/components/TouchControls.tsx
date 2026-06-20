@@ -39,8 +39,8 @@ export function TouchControls() {
   const baseRef = useRef<HTMLDivElement>(null);
   const active = useRef(false);
   const [knob, setKnob] = useState({ x: 0, y: 0 });
-  const { mode, nearbyWildId, nearbyNpcId } = useGame();
-  const canTame = mode === 'explore' && (!!nearbyWildId || !!nearbyNpcId);
+  const { mode, nearbyWildId, nearbyNpcId, nearDock } = useGame();
+  const canTame = mode === 'explore' && (!!nearbyWildId || !!nearbyNpcId || !!nearDock);
 
   const update = (clientX: number, clientY: number) => {
     const el = baseRef.current;
@@ -62,12 +62,7 @@ export function TouchControls() {
     touchInput.y = 0;
   };
 
-  const tame = () => {
-    const s = useGame.getState();
-    if (s.mode !== 'explore') return;
-    if (s.nearbyWildId) s.beginTaming(s.nearbyWildId);
-    else if (s.nearbyNpcId) s.talkToNpc(s.nearbyNpcId);
-  };
+  const tame = () => useGame.getState().interact();
 
   // Desktop (mouse + keyboard) needs no on-screen controls.
   if (!isTouch) return null;

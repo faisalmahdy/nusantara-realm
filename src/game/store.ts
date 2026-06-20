@@ -6,6 +6,8 @@ import {
   xpForDefeating, applyXp, enemyCounter, bondAtkMult, maxHpFor, evolutionStage,
 } from './battle';
 import { sfx } from './audio';
+import { playerPos } from './shared';
+import { regionById, HOME_REGION } from './regions';
 
 // A stage-up line if the level gain crossed an evolution boundary, else null.
 function evolutionNote(name: string, oldLevel: number, newLevel: number): string | null {
@@ -62,16 +64,23 @@ interface GameState {
   message: string | null;
   // treats: the currency. Spent to tame and to feed; earned by winning battles.
   treats: number;
-  // whether the island Guardian has been bested (one-time reward milestone)
-  guardianDefeated: boolean;
+  // which island you're on, and which regions' Guardians have fallen (one-time
+  // reward milestones — and the gate that opens sailing to the next region)
+  currentRegion: string;
+  guardiansDefeated: string[];
+  // destination region of a shore dock the player is standing on, if any
+  nearDock: string | null;
   // accessibility: damp repetitive idle/ambient motion
   reducedMotion: boolean;
 
   setMode: (m: GameMode) => void;
   setNearby: (id: string | null) => void;
   setNearbyNpc: (id: string | null) => void;
+  setNearDock: (id: string | null) => void;
   talkToNpc: (id: string) => void;
   closeDialogue: () => void;
+  sailTo: (regionId: string) => void;
+  interact: () => void;
   beginTaming: (wildId: string) => void;
   cancelTaming: () => void;
   tame: (speciesId: string, wildId: string) => boolean;
@@ -110,14 +119,45 @@ export const useGame = create<GameState>()(
   battle: null,
   message: null,
   treats: START_TREATS,
-  guardianDefeated: false,
+  currentRegion: HOME_REGION,
+  guardiansDefeated: [],
+  nearDock: null,
   reducedMotion: false,
 
   setMode: (m) => set({ mode: m }),
   setNearby: (id) => set({ nearbyWildId: id }),
   setNearbyNpc: (id) => set({ nearbyNpcId: id }),
+  setNearDock: (id) => set({ nearDock: id }),
   talkToNpc: (id) => { sfx.uiClick(); set({ dialogueNpcId: id }); },
   closeDialogue: () => set({ dialogueNpcId: null }),
+
+  // Sail to another region from a shore dock. Gated: a region opens only once
+  // the Guardian of its prerequisite region has fallen. Sailing home is free.
+  sailTo: (regionId) => {
+    const dest = regionById(regionId);
+    if (dest.unlockedBy && !get().guardiansDefeated.includes(dest.unlockedBy)) {
+      sfx.tameFail();
+      set({ message: `The strait churns — best ${regionById(dest.unlockedBy).name}'s Guardian before you can cross.` });
+      return;
+    }
+    playerPos.set(dest.arrival.x, 0, dest.arrival.z);
+    sfx.uiClick();
+    set({
+      currentRegion: regionId, mode: 'explore', nearDock: null,
+      nearbyWildId: null, nearbyNpcId: null, tamingTargetId: null, dialogueNpcId: null, battle: null,
+      message: `Arrived at ${dest.name}.`,
+    });
+  },
+
+  // The single E / ⓔ action: tame a nearby wild, else talk to a nearby NPC,
+  // else board a nearby dock. (Wilds take priority so taming is never blocked.)
+  interact: () => {
+    const s = get();
+    if (s.mode !== 'explore') return;
+    if (s.nearbyWildId) s.beginTaming(s.nearbyWildId);
+    else if (s.nearbyNpcId) s.talkToNpc(s.nearbyNpcId);
+    else if (s.nearDock) s.sailTo(s.nearDock);
+  },
 
   beginTaming: (wildId) => set({ mode: 'taming', tamingTargetId: wildId }),
   cancelTaming: () => set({ mode: 'explore', tamingTargetId: null }),
@@ -186,8 +226,9 @@ export const useGame = create<GameState>()(
     const isGuardian = wildId.startsWith('guardian');
     const enemySpeciesId = wildId.split('-')[1];
     // A Guardian is a real boss — well above your lead — so it takes a built-up,
-    // type-savvy team (and switching) to win.
-    const enemyLevel = isGuardian ? Math.max(player.level + 4, 16) : Math.max(2, player.level + 1);
+    // type-savvy team (and switching) to win. Each region sets its own floor.
+    const guardianFloor = regionById(get().currentRegion).guardian.level;
+    const enemyLevel = isGuardian ? Math.max(player.level + 4, guardianFloor) : Math.max(2, player.level + 1);
     const enemy = makeCombatant(wildId, enemySpeciesId, enemyLevel);
     const log = [isGuardian
       ? `The Guardian ${enemy.name} (Lv ${enemy.level}) rises to test you!`
@@ -224,14 +265,15 @@ export const useGame = create<GameState>()(
       const evo = evolutionNote(real.nickname, real.level, res.level);
       if (evo) log.push(evo);
       log.push(`You gathered ${TREAT_WIN_REWARD} treats.`);
-      const firstGuardian = b.wildId.startsWith('guardian') && !get().guardianDefeated;
+      const region = get().currentRegion;
+      const firstGuardian = b.wildId.startsWith('guardian') && !get().guardiansDefeated.includes(region);
       if (firstGuardian) log.push(`You bested the Guardian! +${GUARDIAN_REWARD} treats.`);
       progressSfx(res.levelsGained > 0, !!evo);
       if (firstGuardian) sfx.evolve();
       set((st) => ({
         party: st.party.map((m) => (m.uid === active.uid ? { ...m, level: res.level, xp: res.xp } : m)),
         treats: st.treats + TREAT_WIN_REWARD + (firstGuardian ? GUARDIAN_REWARD : 0),
-        guardianDefeated: st.guardianDefeated || b.wildId.startsWith('guardian'),
+        guardiansDefeated: firstGuardian ? [...st.guardiansDefeated, region] : st.guardiansDefeated,
         battle: { ...b, player: active, enemy, log, turn: 'over', outcome: 'won' },
       }));
       return;
@@ -291,7 +333,8 @@ export const useGame = create<GameState>()(
       if (res.levelsGained > 0) log.push(`${real.nickname} grew to Lv ${res.level}!`);
       const evo = evolutionNote(real.nickname, real.level, res.level);
       if (evo) log.push(evo);
-      const firstGuardian = b.wildId.startsWith('guardian') && !get().guardianDefeated;
+      const region = get().currentRegion;
+      const firstGuardian = b.wildId.startsWith('guardian') && !get().guardiansDefeated.includes(region);
       if (firstGuardian) log.push(`You won over the Guardian! +${GUARDIAN_REWARD} treats.`);
       sfx.tameSuccess();
       if (evo || firstGuardian) sfx.evolve();
@@ -299,7 +342,7 @@ export const useGame = create<GameState>()(
         party: [...s.party.map((m) => (m.uid === active.uid ? { ...m, level: res.level, xp: res.xp } : m)), mon],
         tamedWildIds: [...s.tamedWildIds, b.wildId],
         treats: s.treats - 1 + (firstGuardian ? GUARDIAN_REWARD : 0),
-        guardianDefeated: s.guardianDefeated || b.wildId.startsWith('guardian'),
+        guardiansDefeated: firstGuardian ? [...s.guardiansDefeated, region] : s.guardiansDefeated,
         nearbyWildId: null,
         battle: { ...b, log, turn: 'over', outcome: 'tamed' },
       }));
@@ -400,9 +443,18 @@ export const useGame = create<GameState>()(
     }),
     {
       name: 'nusantara-realm-save',
+      version: 1,
+      // v0 → v1: the single `guardianDefeated` boolean became a per-region list.
+      migrate: (persisted: any) => {
+        if (persisted && typeof persisted === 'object' && 'guardianDefeated' in persisted) {
+          persisted.guardiansDefeated = persisted.guardianDefeated ? [HOME_REGION] : [];
+          delete persisted.guardianDefeated;
+        }
+        return persisted;
+      },
       // Only the durable progression survives a reload; transient UI/battle
       // state always starts fresh in 'explore'.
-      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats, guardianDefeated: s.guardianDefeated, reducedMotion: s.reducedMotion }),
+      partialize: (s) => ({ party: s.party, tamedWildIds: s.tamedWildIds, treats: s.treats, guardiansDefeated: s.guardiansDefeated, currentRegion: s.currentRegion, reducedMotion: s.reducedMotion }),
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         // Resume uid issuance past any restored monster so new tames don't collide.

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
 import { speciesById, ELEMENT_COLOR, ELEMENT_ICON } from '../game/monsters';
 import { npcById } from '../game/npcs';
+import { regionById } from '../game/regions';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
@@ -11,7 +12,7 @@ import { Almanac } from './Almanac';
 import { sfx } from '../game/audio';
 
 export function HUD() {
-  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId, reducedMotion } = useGame();
+  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId, reducedMotion, currentRegion, nearDock, guardiansDefeated } = useGame();
   const [showParty, setShowParty] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -37,7 +38,7 @@ export function HUD() {
     <div style={styles.root}>
       <div style={styles.title}>
         <span style={{ color: '#d4b06a', fontWeight: 700 }}>Nusantara Realm</span>
-        <span style={{ opacity: 0.7 }}> · HD-2D taming RPG</span>
+        <span style={{ opacity: 0.7 }}> · {regionById(currentRegion).name}</span>
       </div>
       <div style={styles.controls}>WASD / arrows walk · drag to orbit · <b>E</b> to tame</div>
       <AudioControls />
@@ -58,6 +59,18 @@ export function HUD() {
           Talk to <b style={{ color: '#7ad7ff' }}>{npcById(nearbyNpcId)?.name}</b> — press <b>E</b>
         </div>
       )}
+
+      {nearDock && mode === 'explore' && !nearbyWildId && !nearbyNpcId && !dialogueNpcId && (() => {
+        const dest = regionById(nearDock);
+        const locked = !!dest.unlockedBy && !guardiansDefeated.includes(dest.unlockedBy);
+        return (
+          <div style={styles.prompt}>
+            {locked
+              ? <>The strait to <b style={{ color: '#f4d97b' }}>{dest.name}</b> is too wild — best the Guardian first</>
+              : <>Sail to <b style={{ color: '#7ad7ff' }}>{dest.name}</b> — press <b>E</b></>}
+          </div>
+        );
+      })()}
 
       {message && <div style={styles.flash}>{message}</div>}
 

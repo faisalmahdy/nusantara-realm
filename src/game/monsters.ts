@@ -27,6 +27,14 @@ export const SPECIES: MonsterSpecies[] = [
   { id: 'naris', name: 'Naris', element: 'Sky', baseHp: 27, baseAtk: 16, baseDef: 6, rarity: 3, blurb: 'A storm-touched flyer few have tamed.', lore: 'A storm-touched naga coiled in the river-mist. The elders pour the first of the rice harvest at the water’s edge so its coils stay calm.' },
   { id: 'watua', name: 'Watua', element: 'Earth', baseHp: 36, baseAtk: 10, baseDef: 12, rarity: 1, blurb: 'A patient stone-spirit of the highlands.', lore: 'A root-and-bark spirit of the high stones, older than the village paths. It stirs perhaps once a generation, and remembers everyone who ever passed.' },
   { id: 'rabuas', name: 'Rabuas', element: 'Forest', baseHp: 33, baseAtk: 13, baseDef: 9, rarity: 2, blurb: 'Brambled and fierce in the deep wood.', lore: 'A corpse-flower beast of the deep wood, crowned with a great red bloom. You smell it long before you see it — and by then it has already seen you.' },
+
+  // --- Beringin Reach roster (region 2): a reef-and-grove frontier across the
+  // strait, warded by the Banyan-titan. ---------------------------------------
+  { id: 'karang', name: 'Karang', element: 'Earth', baseHp: 42, baseAtk: 10, baseDef: 15, rarity: 2, blurb: 'A coral-crusted golem, slow but near-unbreakable.', lore: 'A reef-golem grown over a thousand tides of coral and stone. It wakes only when the reef that wears it is threatened, and moves with the patience of the seabed itself.' },
+  { id: 'penyu', name: 'Penyu', element: 'Sea', baseHp: 46, baseAtk: 9, baseDef: 13, rarity: 2, blurb: 'A gilded sea-turtle — patient, armored, immovable.', lore: 'An ancient sea-turtle whose gilded shell charts every current it has ever swum. Sailors who spare one are said to be guided home through any storm.' },
+  { id: 'ubur', name: 'Ubur', element: 'Spirit', baseHp: 28, baseAtk: 14, baseDef: 6, rarity: 2, blurb: 'A drifting lantern-spirit of the night tide.', lore: 'A lantern-jellyfish that rises from the deep on festival nights, its batik glow lighting the way for lost spirits back out to sea.' },
+  { id: 'warking', name: 'Warking', element: 'Sky', baseHp: 30, baseAtk: 15, baseDef: 7, rarity: 2, blurb: 'A bat-scorpion that strikes from the dusk sky.', lore: 'A dusk-winged cub with a scorpion’s tail, born where the bat-caves meet the mangrove. All mischief by moonlight — its sting is bright, but brief.' },
+  { id: 'banyan', name: 'Banyan', element: 'Forest', baseHp: 40, baseAtk: 13, baseDef: 11, rarity: 3, blurb: 'The sacred banyan-titan that wardens the Reach.', lore: 'The Beringin, eldest of the sacred grove — a banyan given will and a slow, green wrath. Villages leave offerings in its roots so it keeps the old boundary between the tame wood and the wild.' },
 ];
 
 export const ELEMENT_COLOR: Record<MonsterSpecies['element'], string> = {

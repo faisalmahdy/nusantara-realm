@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { useKeyboard } from '../game/useKeyboard';
 import { playerPos, cameraState, touchInput, applyDaylight } from '../game/shared';
-import { WORLD, COLLIDERS } from '../game/scenery';
+import { WORLD, collidersFor } from '../game/scenery';
 import { useGame } from '../game/store';
 import { loadPixelTexture } from './Sprite3D';
 import { sfx } from '../game/audio';
@@ -65,8 +65,8 @@ export function Player() {
       const maxR = WORLD / 2 - 2;
       const pr = Math.hypot(playerPos.x, playerPos.z);
       if (pr > maxR) { playerPos.x *= maxR / pr; playerPos.z *= maxR / pr; }
-      // Push out of tree trunks so you can't walk through them.
-      for (const c of COLLIDERS) {
+      // Push out of tree trunks so you can't walk through them (per region).
+      for (const c of collidersFor(useGame.getState().currentRegion)) {
         const dx = playerPos.x - c.x;
         const dz = playerPos.z - c.z;
         const minD = c.r + PLAYER_R;
@@ -110,14 +110,10 @@ export function Player() {
 
     if (mat) applyDaylight(mat); // darken with the day/night cycle
 
-    // Press E to start taming the nearby wild.
-    const store = useGame.getState();
+    // Press E to interact: tame a nearby wild, talk to an NPC, or board a dock.
     if (k.tame && !tamePressed.current) {
       tamePressed.current = true;
-      if (store.mode === 'explore') {
-        if (store.nearbyWildId) store.beginTaming(store.nearbyWildId);
-        else if (store.nearbyNpcId) store.talkToNpc(store.nearbyNpcId);
-      }
+      useGame.getState().interact();
     } else if (!k.tame) {
       tamePressed.current = false;
     }

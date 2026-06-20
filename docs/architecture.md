@@ -27,17 +27,20 @@ Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
   lerps sky/fog + sun + hemisphere colors and intensities through
   noon→dusk→night→dawn. Mutates the scene's own background/fog objects in place.
   Starts at midday (+0.25 phase offset).
-- `World.tsx` — grass ground plane + path strip (RepeatWrapping) + scattered
-  scenery billboards from `game/scenery.ts`.
-- `game/scenery.ts` — deterministic scenery layout (mulberry32, seed 1337),
-  shared by World (render) and Player (collision). Exports `WORLD=90`, `SCENERY`
-  (each with a trunk radius `r`; ferns r=0), and `COLLIDERS` (trees only).
+- `World.tsx` — round grass ground (the current region's texture) + optional
+  path strip + scattered scenery billboards, all keyed to the current region.
+- `Dock.tsx` — a shore jetty (primitive meshes + cyan beacon); proximity sets
+  `nearDock` and `E` sails to the linked region (gated in `regions.ts`).
+- `game/scenery.ts` — deterministic per-region scenery (mulberry32). `WORLD=90`;
+  `makeScenery({seed,…})` scatters trees/ferns on the round island (trunk radius
+  `r`; ferns r=0); `sceneryFor(region)` / `collidersFor(region)` give one layout
+  per region (built from `regions.ts`).
 - `Sprite3D.tsx` — the HD-2D primitive: a camera-facing `<sprite>` with a
   NearestFilter pixel texture, aspect-from-image scaling, base-anchored.
   Also `loadPixelTexture(url)` (cached) for non-suspense texture loads.
 - `Player.tsx` — keyboard movement (camera-relative), directional walk-frame
-  swap, writes `playerPos`, reads/begins taming on `E`. Resolves circular
-  push-out against `COLLIDERS` each move (slides around tree trunks).
+  swap, writes `playerPos`, runs `store.interact()` on `E` (tame / talk / sail).
+  Resolves circular push-out against the region's `collidersFor(...)` each move.
 - `WildMonster.tsx` — bobbing idle billboard + element ring; proximity sets
   `nearbyWildId`; removed once tamed.
 - `CameraRig.tsx` — third-person follow (lerp) + pointer-drag orbit.
@@ -51,7 +54,12 @@ Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
   endBattle, feed (ranch: +bond/+XP, capped), rest (heal to full), flash.
   TamedMonster carries `hp` (persists battle wear; endBattle writes it back,
   beginBattle reads it and blocks a fainted lead).
-- `monsters.ts` — `SPECIES` roster + stats, element colors, `speciesById`.
+- `monsters.ts` — `SPECIES` roster (17 across both regions) + stats, element
+  colors/icons, `speciesById`.
+- `regions.ts` — the two islands (Saujana Isle, Beringin Reach): each region's
+  ground, scenery, wild roster, Guardian, and dock + the Guardian gate that
+  opens sailing. `store.sailTo`/`interact` move between them; progress
+  (`currentRegion` + `guardiansDefeated[]`) persists (save schema v1).
 - `battle.ts` — pure battle engine: element pentagon + `effectiveness`,
   `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`
   (scales the attacker by `bondAtkMult` — bonded lead hits up to +20% harder),
