@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { SPECIES, speciesById, discoveredSpeciesIds, ELEMENT_COLOR } from './monsters';
 
 describe('SPECIES roster', () => {
-  it('has 17 species across both regions, each with unique id and lore', () => {
-    expect(SPECIES).toHaveLength(17);
-    expect(new Set(SPECIES.map((s) => s.id)).size).toBe(17);
+  it('has 22 species across all regions, each with unique id and lore', () => {
+    expect(SPECIES).toHaveLength(22);
+    expect(new Set(SPECIES.map((s) => s.id)).size).toBe(22);
     for (const s of SPECIES) {
       expect(s.lore.length).toBeGreaterThan(20);
       expect(ELEMENT_COLOR[s.element]).toBeTruthy();
@@ -31,5 +31,10 @@ describe('discoveredSpeciesIds', () => {
     expect(d.has('kancil')).toBe(true); // from both sources, counted once
     expect(d.has('dugang')).toBe(true);
     expect(d.size).toBe(2);
+  });
+  it('parses hyphen-free variant ids from wild ids (e.g. Bara forms)', () => {
+    const d = discoveredSpeciesIds([], ['wild-barabamut-0', 'guardian-barawatua-0']);
+    expect(d.has('barabamut')).toBe(true);
+    expect(d.has('barawatua')).toBe(true);
   });
 });

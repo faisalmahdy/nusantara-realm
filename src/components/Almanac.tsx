@@ -1,5 +1,5 @@
 import { useGame } from '../game/store';
-import { SPECIES, ELEMENT_COLOR, ELEMENT_ICON, discoveredSpeciesIds } from '../game/monsters';
+import { SPECIES, ELEMENT_COLOR, ELEMENT_ICON, discoveredSpeciesIds, spriteUrl } from '../game/monsters';
 
 // A Pokédex-style "Field Guide": all species, with folklore lore unlocked once
 // you've tamed each. Undiscovered entries show a darkened silhouette + "???".
@@ -22,9 +22,9 @@ export function Almanac({ onClose }: { onClose: () => void }) {
             return (
               <div key={sp.id} style={styles.card}>
                 <img
-                  src={`/sprites/${sp.id}/portrait.png`}
+                  src={spriteUrl(sp, 'portrait')}
                   alt={known ? sp.name : 'Undiscovered'}
-                  style={{ ...styles.portrait, ...(known ? null : styles.locked) }}
+                  style={{ ...styles.portrait, ...(known ? (sp.tintCss ? { filter: sp.tintCss } : null) : styles.locked) }}
                 />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={styles.cardHead}>

@@ -2,6 +2,8 @@ import { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { env } from '../game/shared';
+import { useGame } from '../game/store';
+import { regionById } from '../game/regions';
 
 // One full day/night cycle, in seconds. Starts at midday (see the +0.25 offset).
 const DAY_LENGTH = 120;
@@ -27,6 +29,7 @@ export function DayNight() {
       tmpSun: new THREE.Color(),
       tmpHemiSky: new THREE.Color(),
       tmpHemiGround: new THREE.Color(),
+      tmpHaze: new THREE.Color(),
       bg: new THREE.Color('#8fb6d6'),
     }),
     [],
@@ -49,6 +52,10 @@ export function DayNight() {
 
     c.tmpSky.lerpColors(c.skyNight, c.skyDay, daylight);
     c.tmpSky.lerp(c.skyDusk, glow * 0.7);
+    // Region mood: blend the sky/fog toward a haze colour (e.g. volcanic ember),
+    // eased down at night so it never washes out the dark.
+    const haze = regionById(useGame.getState().currentRegion).skyHaze;
+    if (haze) { c.tmpHaze.set(haze.color); c.tmpSky.lerp(c.tmpHaze, haze.amount * (0.4 + daylight * 0.6)); }
     c.bg.copy(c.tmpSky);
     if (scene.fog) (scene.fog as THREE.Fog).color.copy(c.tmpSky);
 
@@ -57,6 +64,7 @@ export function DayNight() {
       sun.current.intensity = THREE.MathUtils.clamp(elev, 0, 1) * 1.1 + 0.08;
       c.tmpSun.lerpColors(c.sunNight, c.sunDay, daylight);
       c.tmpSun.lerp(c.sunDusk, glow);
+      if (haze) c.tmpSun.lerp(c.tmpHaze, haze.amount * 0.5);
       sun.current.color.copy(c.tmpSun);
     }
     if (hemi.current) {

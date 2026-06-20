@@ -20,8 +20,11 @@ export interface Region {
   speciesIds: string[]; // wild roster (the Guardian is separate)
   guardian: { speciesId: string; level: number }; // level = battle difficulty floor + model stage
   unlockedBy: string | null; // region whose Guardian must fall before you can sail here
-  dock: { x: number; z: number; to: string }; // shore jetty + destination region id
+  dock: { x: number; z: number }; // shore jetty; the harbor menu lists every other region
   arrival: { x: number; z: number }; // where you land when sailing in (just clear of the dock)
+  groundTint?: string; // multiplied over the ground texture for biome mood
+  sceneryTint?: string; // multiplied over scenery billboards (e.g. charred trees)
+  skyHaze?: { color: string; amount: number }; // blends the sky/fog toward a mood color
 }
 
 export const REGIONS: Region[] = [
@@ -35,7 +38,7 @@ export const REGIONS: Region[] = [
     speciesIds: ['matong', 'kancil', 'dugang', 'camar', 'gambang', 'bamut', 'ayaka', 'babur', 'kepiting', 'naris', 'watua', 'rabuas'],
     guardian: { speciesId: 'naris', level: 16 },
     unlockedBy: null,
-    dock: { x: 0, z: 40, to: 'beringin' },
+    dock: { x: 0, z: 40 },
     arrival: { x: 0, z: 34 },
   },
   {
@@ -48,8 +51,24 @@ export const REGIONS: Region[] = [
     speciesIds: ['karang', 'penyu', 'ubur', 'warking'],
     guardian: { speciesId: 'banyan', level: 22 }, // tougher floor than the home isle
     unlockedBy: 'saujana',
-    dock: { x: 0, z: 40, to: 'saujana' },
+    dock: { x: 0, z: 40 },
     arrival: { x: 0, z: 34 },
+  },
+  {
+    id: 'cinder',
+    name: 'Cinder Peak',
+    blurb: 'A smouldering volcano isle where the old creatures range remade in ember and ash.',
+    ground: '/world/grass-base.png',
+    hasPath: false,
+    scenery: { seed: 9001, count: 42, banyanWeight: 0.5, palmWeight: 0.22 }, // sparse, charred stands
+    speciesIds: ['barabamut', 'baraayaka', 'baracamar', 'bararabuas'],
+    guardian: { speciesId: 'barawatua', level: 28 }, // the toughest floor — endgame
+    unlockedBy: 'beringin',
+    dock: { x: 0, z: 40 },
+    arrival: { x: 0, z: 34 },
+    groundTint: '#b5764a', // ashen, warm volcanic ground (legible, not black)
+    sceneryTint: '#8a5e42', // charred trees
+    skyHaze: { color: '#c4663a', amount: 0.42 }, // volcanic haze over the sky
   },
 ];
 

@@ -21,16 +21,19 @@ Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
   the DOM `<HUD/>` overlay sibling.
 
 ## 3D scene (`src/components/`)
-- `GameScene.tsx` — mounts DayNight/World/Player/WildMonsters/Camera.
-  Builds the wild spawn ring from `SPECIES`.
+- `GameScene.tsx` — mounts DayNight/World/Player/Dock/WildMonsters/NPCs/Camera.
+  Builds the current region's wild ring + Guardian (rebuilt on travel) and shows
+  only that region's NPCs.
 - `DayNight.tsx` — animates a 120s day/night cycle (useFrame): orbits the sun,
   lerps sky/fog + sun + hemisphere colors and intensities through
   noon→dusk→night→dawn. Mutates the scene's own background/fog objects in place.
-  Starts at midday (+0.25 phase offset).
-- `World.tsx` — round grass ground (the current region's texture) + optional
-  path strip + scattered scenery billboards, all keyed to the current region.
+  Starts at midday (+0.25 phase offset). Blends in the region's optional
+  `skyHaze` (e.g. Cinder Peak's volcanic glow), eased down at night.
+- `World.tsx` — round grass ground (the region's texture, `groundTint`-graded) +
+  optional path strip + scattered scenery billboards (`sceneryTint`), keyed to
+  the current region.
 - `Dock.tsx` — a shore jetty (primitive meshes + cyan beacon); proximity sets
-  `nearDock` and `E` sails to the linked region (gated in `regions.ts`).
+  `nearDock`, and `E` opens the harbor menu (set sail to any unlocked region).
 - `game/scenery.ts` — deterministic per-region scenery (mulberry32). `WORLD=90`;
   `makeScenery({seed,…})` scatters trees/ferns on the round island (trunk radius
   `r`; ferns r=0); `sceneryFor(region)` / `collidersFor(region)` give one layout
@@ -54,12 +57,13 @@ Last touched: 2026-06-19 (Meshy GLB pipeline retired; bundle chunked)
   endBattle, feed (ranch: +bond/+XP, capped), rest (heal to full), flash.
   TamedMonster carries `hp` (persists battle wear; endBattle writes it back,
   beginBattle reads it and blocks a fainted lead).
-- `monsters.ts` — `SPECIES` roster (17 across both regions) + stats, element
-  colors/icons, `speciesById`.
-- `regions.ts` — the two islands (Saujana Isle, Beringin Reach): each region's
-  ground, scenery, wild roster, Guardian, and dock + the Guardian gate that
-  opens sailing. `store.sailTo`/`interact` move between them; progress
-  (`currentRegion` + `guardiansDefeated[]`) persists (save schema v1).
+- `monsters.ts` — `SPECIES` roster (22 across three regions, incl. ember "Bara"
+  variant forms that reuse base art via `sprite`+`tint`/`tintCss`) + stats,
+  element colors/icons, `speciesById`, `spriteUrl`.
+- `regions.ts` — the three islands (Saujana Isle, Beringin Reach, Cinder Peak):
+  each region's ground/tints, scenery, wild roster, Guardian, dock, and the
+  Guardian gate that opens sailing. `store.sailTo`/`interact`/harbor menu move
+  between them; progress (`currentRegion` + `guardiansDefeated[]`) persists (v1).
 - `battle.ts` — pure battle engine: element pentagon + `effectiveness`,
   `makeCombatant` (level-scaled stats + `movesFor`), `computeDamage(…, move)`
   (scales the attacker by `bondAtkMult` — bonded lead hits up to +20% harder),

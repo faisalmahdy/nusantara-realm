@@ -20,11 +20,8 @@ export function Dock() {
     if (beacon.current) beacon.current.position.y = 3.4 + Math.sin(state.clock.elapsedTime * 2.4) * 0.16;
     const dist = Math.hypot(dock.x - playerPos.x, dock.z - playerPos.z);
     const s = useGame.getState();
-    if (dist < DOCK_RANGE && s.mode === 'explore' && !s.nearbyWildId && !s.nearbyNpcId) {
-      if (s.nearDock !== dock.to) s.setNearDock(dock.to);
-    } else if (s.nearDock === dock.to) {
-      s.setNearDock(null);
-    }
+    const onDock = dist < DOCK_RANGE && s.mode === 'explore' && !s.nearbyWildId && !s.nearbyNpcId;
+    if (onDock !== s.nearDock) s.setNearDock(onDock);
   });
 
   return (

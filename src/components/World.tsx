@@ -30,10 +30,11 @@ export function World() {
 
   return (
     <group>
-      {/* Round island silhouette (no hard square corners at the shore). */}
+      {/* Round island silhouette (no hard square corners at the shore). The
+          region's groundTint colour-grades the whole biome (e.g. ashen volcano). */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[WORLD / 2, 64]} />
-        <meshLambertMaterial map={grass} />
+        <meshLambertMaterial map={grass} color={region.groundTint ?? '#ffffff'} />
       </mesh>
       {region.hasPath && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
@@ -42,7 +43,7 @@ export function World() {
         </mesh>
       )}
       {scenery.map((s, i) => (
-        <Sprite3D key={`${regionId}-${i}`} url={s.url} height={s.height} position={[s.x, 0, s.z]} />
+        <Sprite3D key={`${regionId}-${i}`} url={s.url} height={s.height} position={[s.x, 0, s.z]} color={region.sceneryTint} />
       ))}
     </group>
   );
