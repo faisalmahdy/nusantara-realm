@@ -111,7 +111,7 @@ export function BattleScreen() {
                   <button key={c.uid} style={{ ...s.swap, opacity: i === active || c.hp <= 0 || acting ? 0.4 : 1 }}
                     disabled={i === active || c.hp <= 0 || acting}
                     onClick={() => useGame.getState().battleSwitch(i)}
-                    title={i === active ? 'Active' : c.hp <= 0 ? 'Fainted' : `Switch to ${c.name} (costs a turn)`}>
+                    title={i === active ? 'Active' : c.hp <= 0 ? 'Fainted' : `Switch to ${c.name} — costs a turn, but it braces (takes a softened hit)`}>
                     {i === active ? '▶ ' : ''}{c.name}<span style={s.swapHp}>{c.hp}/{c.maxHp}</span>
                   </button>
                 ))}
@@ -201,8 +201,8 @@ const s: Record<string, React.CSSProperties> = {
   sprite: { width: 150, height: 150, imageRendering: 'pixelated', objectFit: 'contain', display: 'block', filter: 'drop-shadow(0 6px 8px rgba(0,0,0,0.5))' },
   panel: { background: 'rgba(12,16,12,0.95)', borderTop: '1px solid rgba(212,176,106,0.5)', padding: 14, display: 'flex', flexDirection: 'column', gap: 12 },
   log: { minHeight: 54, fontSize: 14, lineHeight: 1.4 },
-  actions: { display: 'flex', gap: 10, justifyContent: 'center' },
-  btn: { border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: font, minWidth: 110, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, lineHeight: 1.1 },
+  actions: { display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' },
+  btn: { border: 'none', borderRadius: 8, padding: '11px 14px', fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: font, flex: '0 1 132px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, lineHeight: 1.1 },
   moveType: { fontSize: 10, fontWeight: 600, opacity: 0.7 },
   attack: { background: '#d4b06a', color: '#1a1208' },
   tame: { background: '#6ab04c', color: '#0d1a08' },
