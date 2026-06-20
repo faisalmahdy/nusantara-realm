@@ -112,13 +112,15 @@ export interface CounterResult {
  * appends to `log`. Used for the counter after your move, a failed tame, and the
  * free hit you take when you voluntarily switch.
  */
-export function enemyCounter(party: Combatant[], active: number, enemy: Combatant, log: string[]): CounterResult {
+export function enemyCounter(party: Combatant[], active: number, enemy: Combatant, log: string[], mult = 1): CounterResult {
   const target = party[active];
   const move = pickEnemyMove(enemy, target);
   const { damage, eff } = computeDamage(enemy, target, move);
-  const hit = { ...target, hp: Math.max(0, target.hp - damage) };
+  // `mult` < 1 softens the blow — used when a monster is switched in and braces.
+  const dealt = Math.max(1, Math.round(damage * mult));
+  const hit = { ...target, hp: Math.max(0, target.hp - dealt) };
   const next = party.map((c, i) => (i === active ? hit : c));
-  log.push(`Wild ${enemy.name} used ${move.name} for ${damage}.${effectivenessNote(eff)}`);
+  log.push(`Wild ${enemy.name} used ${move.name} for ${dealt}.${effectivenessNote(eff)}${mult < 1 ? ' (braced)' : ''}`);
   if (hit.hp > 0) return { party: next, turn: 'player', outcome: null, mustSwitch: false };
   log.push(`${hit.name} fainted!`);
   if (next.some((c) => c.hp > 0)) {
