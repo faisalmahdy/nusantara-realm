@@ -91,9 +91,11 @@ async function main() {
   }, { a: { level: 8, xp: 40, bond: 40, hp: 62 }, b: { level: 8, xp: 0, bond: 40, hp: 54 } });
   await api(() => window.__realm.store.getState().beginBattle('wild-bamut-5')); // Forest lead vs Earth wild → super effective
   await shot('wild-battle-start', 700); // arena, both fighters, moves + switch bar
-  await api(() => window.__realm.store.getState().battleMove(0)); // Strike (Forest×1.5)
+  await api(() => window.__realm.store.getState().battleMove(0)); // Matong Strike (Forest×1.5)
   await shot('wild-battle-supereffective', 700); // "It's super effective!" + damage pop
-  await api(() => window.__realm.store.getState().battleMove(0)); // Strike → win
+  await api(() => window.__realm.store.getState().battleSwitch(1)); // voluntary switch → Kancil braces (softened hit)
+  await shot('wild-battle-braced-switch', 700); // log shows the counter "(braced)"
+  await api(() => window.__realm.store.getState().battleMove(0)); // Kancil Strike → win
   await shot('wild-battle-win', 800); // XP, level-up, treats reward
   await api(() => window.__realm.store.getState().endBattle());
 
