@@ -5,7 +5,7 @@ import { Sprite3D } from './Sprite3D';
 import { hasModel } from '../models/registry';
 import { playerPos, WildSpawn } from '../game/shared';
 import { useGame } from '../game/store';
-import { speciesById, ELEMENT_COLOR } from '../game/monsters';
+import { speciesById, spriteUrl, ELEMENT_COLOR } from '../game/monsters';
 import { ART_MODE } from '../game/config';
 
 // The from-scratch 3D monster meshes (ART_MODE === '3d') are code-split into
@@ -71,14 +71,15 @@ export function WildMonster({ spawn }: { spawn: WildSpawn }) {
     <group ref={group} position={[spawn.x, 0, spawn.z]}>
       {ART_MODE === 'hd2d' ? (
         // HD-2D: the 2D pixel-art sprite as a camera-facing billboard. (No
-        // per-stage sprites exist, so evolved forms reuse the base idle art.)
-        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={spriteH} />
+        // per-stage sprites exist, so evolved forms reuse the base idle art.
+        // `species.tint` recolours regional variant forms.)
+        <Sprite3D url={spriteUrl(species, 'idle')} height={spriteH} color={species.tint} />
       ) : hasModel(spawn.speciesId) ? (
         <Suspense fallback={null}>
           <MonsterModel speciesId={spawn.speciesId} height={guardian ? 3.6 : 2.4} />
         </Suspense>
       ) : (
-        <Sprite3D url={`/sprites/${spawn.speciesId}/idle.png`} height={spriteH} />
+        <Sprite3D url={spriteUrl(species, 'idle')} height={spriteH} color={species.tint} />
       )}
       {/* element ring on the ground (gold + larger for Guardians) */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>

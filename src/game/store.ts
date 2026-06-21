@@ -68,17 +68,20 @@ interface GameState {
   // reward milestones — and the gate that opens sailing to the next region)
   currentRegion: string;
   guardiansDefeated: string[];
-  // destination region of a shore dock the player is standing on, if any
-  nearDock: string | null;
+  // whether the player is standing on a shore dock, and whether the harbor
+  // (set-sail) menu is open
+  nearDock: boolean;
+  harborOpen: boolean;
   // accessibility: damp repetitive idle/ambient motion
   reducedMotion: boolean;
 
   setMode: (m: GameMode) => void;
   setNearby: (id: string | null) => void;
   setNearbyNpc: (id: string | null) => void;
-  setNearDock: (id: string | null) => void;
+  setNearDock: (v: boolean) => void;
   talkToNpc: (id: string) => void;
   closeDialogue: () => void;
+  closeHarbor: () => void;
   sailTo: (regionId: string) => void;
   interact: () => void;
   beginTaming: (wildId: string) => void;
@@ -121,15 +124,17 @@ export const useGame = create<GameState>()(
   treats: START_TREATS,
   currentRegion: HOME_REGION,
   guardiansDefeated: [],
-  nearDock: null,
+  nearDock: false,
+  harborOpen: false,
   reducedMotion: false,
 
   setMode: (m) => set({ mode: m }),
   setNearby: (id) => set({ nearbyWildId: id }),
   setNearbyNpc: (id) => set({ nearbyNpcId: id }),
-  setNearDock: (id) => set({ nearDock: id }),
+  setNearDock: (v) => set({ nearDock: v }),
   talkToNpc: (id) => { sfx.uiClick(); set({ dialogueNpcId: id }); },
   closeDialogue: () => set({ dialogueNpcId: null }),
+  closeHarbor: () => set({ harborOpen: false }),
 
   // Sail to another region from a shore dock. Gated: a region opens only once
   // the Guardian of its prerequisite region has fallen. Sailing home is free.
@@ -143,20 +148,20 @@ export const useGame = create<GameState>()(
     playerPos.set(dest.arrival.x, 0, dest.arrival.z);
     sfx.uiClick();
     set({
-      currentRegion: regionId, mode: 'explore', nearDock: null,
+      currentRegion: regionId, mode: 'explore', nearDock: false, harborOpen: false,
       nearbyWildId: null, nearbyNpcId: null, tamingTargetId: null, dialogueNpcId: null, battle: null,
       message: `Arrived at ${dest.name}.`,
     });
   },
 
   // The single E / ⓔ action: tame a nearby wild, else talk to a nearby NPC,
-  // else board a nearby dock. (Wilds take priority so taming is never blocked.)
+  // else open the harbor menu. (Wilds take priority so taming is never blocked.)
   interact: () => {
     const s = get();
     if (s.mode !== 'explore') return;
     if (s.nearbyWildId) s.beginTaming(s.nearbyWildId);
     else if (s.nearbyNpcId) s.talkToNpc(s.nearbyNpcId);
-    else if (s.nearDock) s.sailTo(s.nearDock);
+    else if (s.nearDock) set({ harborOpen: true });
   },
 
   beginTaming: (wildId) => set({ mode: 'taming', tamingTargetId: wildId }),

@@ -39,6 +39,14 @@ export const NPCS: Npc[] = [
     lines: [
       'You crossed the strait — brave. Beringin is older than Saujana, and far less forgiving.',
       'The Beringin-titan wardens the grove to the north. It is of the deep wood, and the deep wood bows only to spirits — bring a spirit-touched companion.',
+      'Past the Beringin lies Cinder Peak — a burning isle. Best the grove’s Guardian and the harbor will open the route.',
+    ],
+  },
+  {
+    id: 'emberwarden', name: 'Emberwarden Garang', x: -4, z: 6, region: 'cinder', tint: '#ffb088',
+    lines: [
+      'Few sail this far. The mountain remade everything that lives here — even the gentle creatures came back hard.',
+      'Bara Watua wardens the peak: old high-stone filled with fire. But stone bows to the living wood — bring something green that the fire cannot cow.',
     ],
   },
 ];

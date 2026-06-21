@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '../game/store';
-import { ELEMENT_COLOR, ELEMENT_ICON, speciesById } from '../game/monsters';
+import { ELEMENT_COLOR, ELEMENT_ICON, speciesById, spriteUrl } from '../game/monsters';
 import { sfx } from '../game/audio';
 import type { Combatant } from '../game/battle';
 
@@ -142,7 +142,7 @@ function Fighter({ c, side, acting, dmg }: { c: Combatant; side: 'player' | 'ene
   }, [dmg?.key]);
 
   const transform = [lunge, hurt ? 'translateX(-5px)' : ''].filter(Boolean).join(' ') || 'none';
-  const filter = `drop-shadow(0 6px 8px rgba(0,0,0,0.5))${hurt ? ' brightness(1.7) saturate(2)' : ''}`;
+  const filter = `${sp.tintCss ? sp.tintCss + ' ' : ''}drop-shadow(0 6px 8px rgba(0,0,0,0.5))${hurt ? ' brightness(1.7) saturate(2)' : ''}`;
 
   return (
     <div style={{ ...s.fighter, ...(side === 'enemy' ? s.enemyPos : s.playerPos) }}>
@@ -157,7 +157,7 @@ function Fighter({ c, side, acting, dmg }: { c: Combatant; side: 'player' | 'ene
       <div style={s.spriteWrap}>
         <FloatingDamage key={dmg?.key} pop={dmg} />
         <img
-          src={`/sprites/${sp.id}/${frame}.png`}
+          src={spriteUrl(sp, frame)}
           style={{ ...s.sprite, transform, transition: 'transform 0.12s', opacity: c.hp <= 0 ? 0.3 : 1, filter }}
           alt={c.name}
         />

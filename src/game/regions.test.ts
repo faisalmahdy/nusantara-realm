@@ -4,10 +4,12 @@ import { makeInitialSpawns } from './spawns';
 import { speciesById } from './monsters';
 
 describe('regions', () => {
-  it('has a free home region and a Guardian-gated second region', () => {
+  it('has a free home region and a Guardian-gated chain', () => {
     expect(HOME_REGION).toBe('saujana');
+    expect(REGIONS.map((r) => r.id)).toEqual(['saujana', 'beringin', 'cinder']);
     expect(regionById('saujana').unlockedBy).toBeNull();
     expect(regionById('beringin').unlockedBy).toBe('saujana');
+    expect(regionById('cinder').unlockedBy).toBe('beringin');
   });
 
   it('falls back to the home region for an unknown id', () => {
@@ -21,17 +23,15 @@ describe('regions', () => {
     }
   });
 
-  it('docks point at a real, distinct destination region', () => {
-    for (const r of REGIONS) {
-      expect(regionById(r.dock.to).id).toBe(r.dock.to);
-      expect(r.dock.to).not.toBe(r.id);
-    }
-  });
-
   it('builds region-specific spawns with that region’s Guardian', () => {
     const b = makeInitialSpawns(regionById('beringin'));
     expect(b.find((s) => s.guardian)?.wildId).toBe('guardian-banyan-0');
     expect(b.filter((s) => !s.guardian)).toHaveLength(4);
     expect(b[0].wildId).toBe('wild-karang-0');
+
+    const c = makeInitialSpawns(regionById('cinder'));
+    expect(c.find((s) => s.guardian)?.wildId).toBe('guardian-barawatua-0');
+    expect(c.filter((s) => !s.guardian)).toHaveLength(4);
+    expect(c[0].wildId).toBe('wild-barabamut-0');
   });
 });

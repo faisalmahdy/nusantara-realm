@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useGame } from '../game/store';
-import { speciesById, ELEMENT_COLOR, ELEMENT_ICON } from '../game/monsters';
+import { speciesById, spriteUrl, ELEMENT_COLOR, ELEMENT_ICON } from '../game/monsters';
 import { npcById } from '../game/npcs';
-import { regionById } from '../game/regions';
+import { regionById, REGIONS } from '../game/regions';
 import { xpToNext, maxHpFor, evolutionStage, nextEvolutionLevel } from '../game/battle';
 import { BattleScreen } from './BattleScreen';
 import { TouchControls } from './TouchControls';
@@ -12,7 +12,7 @@ import { Almanac } from './Almanac';
 import { sfx } from '../game/audio';
 
 export function HUD() {
-  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId, reducedMotion, currentRegion, nearDock, guardiansDefeated } = useGame();
+  const { mode, party, nearbyWildId, tamingTargetId, message, treats, nearbyNpcId, dialogueNpcId, reducedMotion, currentRegion, nearDock, harborOpen, guardiansDefeated } = useGame();
   const [showParty, setShowParty] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -40,7 +40,7 @@ export function HUD() {
         <span style={{ color: '#d4b06a', fontWeight: 700 }}>Nusantara Realm</span>
         <span style={{ opacity: 0.7 }}> · {regionById(currentRegion).name}</span>
       </div>
-      <div style={styles.controls}>WASD / arrows walk · drag to orbit · <b>E</b> to tame</div>
+      <div style={styles.controls}>WASD / arrows walk · drag to orbit · <b>E</b> to interact</div>
       <AudioControls />
       <div style={styles.treats} title="Treats — spent to tame & feed, earned by winning battles">🍬 {treats} treats</div>
 
@@ -60,17 +60,9 @@ export function HUD() {
         </div>
       )}
 
-      {nearDock && mode === 'explore' && !nearbyWildId && !nearbyNpcId && !dialogueNpcId && (() => {
-        const dest = regionById(nearDock);
-        const locked = !!dest.unlockedBy && !guardiansDefeated.includes(dest.unlockedBy);
-        return (
-          <div style={styles.prompt}>
-            {locked
-              ? <>The strait to <b style={{ color: '#f4d97b' }}>{dest.name}</b> is too wild — best the Guardian first</>
-              : <>Sail to <b style={{ color: '#7ad7ff' }}>{dest.name}</b> — press <b>E</b></>}
-          </div>
-        );
-      })()}
+      {nearDock && mode === 'explore' && !nearbyWildId && !nearbyNpcId && !dialogueNpcId && !harborOpen && (
+        <div style={styles.prompt}>At the harbor — press <b>E</b> to set sail</div>
+      )}
 
       {message && <div style={styles.flash}>{message}</div>}
 
@@ -90,7 +82,7 @@ export function HUD() {
             const nextLv = nextEvolutionLevel(selected.level);
             return (
               <div style={styles.viewer}>
-                <img src={`/sprites/${selected.speciesId}/idle.png`} style={styles.viewerImg} alt={selected.nickname} />
+                <img src={spriteUrl(sp, 'idle')} style={{ ...styles.viewerImg, filter: sp.tintCss }} alt={selected.nickname} />
                 <div style={styles.viewerOverlay}>
                   <span style={{ color: ELEMENT_COLOR[sp.element], fontWeight: 700 }}>{selected.nickname}</span>
                   <span style={styles.stageBadge}>Stage {stage}</span>
@@ -113,7 +105,7 @@ export function HUD() {
                 style={{ ...styles.partyRow, ...(isSelected ? styles.partyRowActive : null) }}
                 onClick={() => setSelectedUid(m.uid)}
               >
-                <img src={`/sprites/${sp.id}/portrait.png`} style={styles.portrait} alt={sp.name} />
+                <img src={spriteUrl(sp, 'portrait')} style={{ ...styles.portrait, filter: sp.tintCss }} alt={sp.name} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600 }}>{m.nickname} <span style={{ color: ELEMENT_COLOR[sp.element], fontSize: 11 }}>{ELEMENT_ICON[sp.element]} {sp.element}</span></div>
                   <div style={{ fontSize: 11, opacity: 0.75 }}>Lv {m.level} · XP {m.xp}/{xpToNext(m.level)}</div>
@@ -138,7 +130,7 @@ export function HUD() {
       {mode === 'taming' && tamingSpecies && tamingTargetId && (
         <div style={styles.modalWrap}>
           <div style={styles.modal}>
-            <img src={`/sprites/${tamingSpecies.id}/idle.png`} style={styles.modalImg} alt={tamingSpecies.name} />
+            <img src={spriteUrl(tamingSpecies, 'idle')} style={{ ...styles.modalImg, filter: tamingSpecies.tintCss }} alt={tamingSpecies.name} />
             <div style={styles.modalName} >{tamingSpecies.name}</div>
             <div style={styles.modalBlurb}>{tamingSpecies.blurb}</div>
             <div style={styles.modalStats}>
@@ -184,6 +176,30 @@ export function HUD() {
           </div>
         );
       })()}
+
+      {harborOpen && (
+        <div style={styles.modalWrap} onClick={() => useGame.getState().closeHarbor()}>
+          <div style={styles.harbor} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.panelHead}>⚓ Set sail from {regionById(currentRegion).name}</div>
+            {REGIONS.filter((r) => r.id !== currentRegion).map((r) => {
+              const locked = !!r.unlockedBy && !guardiansDefeated.includes(r.unlockedBy);
+              return (
+                <div key={r.id} style={styles.harborRow}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 700, color: locked ? '#9a937f' : '#7ad7ff' }}>{r.name}</div>
+                    <div style={{ fontSize: 11.5, opacity: 0.82, fontStyle: 'italic', lineHeight: 1.35 }}>
+                      {locked ? `Best ${regionById(r.unlockedBy!).name}'s Guardian to open this route.` : r.blurb}
+                    </div>
+                  </div>
+                  <button style={{ ...styles.dialogueBtn, opacity: locked ? 0.4 : 1, cursor: locked ? 'not-allowed' : 'pointer' }}
+                    disabled={locked} onClick={() => useGame.getState().sailTo(r.id)}>{locked ? '🔒' : 'Sail ▸'}</button>
+                </div>
+              );
+            })}
+            <button style={{ ...styles.cancelBtn, marginTop: 10 }} onClick={() => useGame.getState().closeHarbor()}>Close</button>
+          </div>
+        </div>
+      )}
 
       {showSettings && (
         <div style={styles.modalWrap} onClick={() => { setShowSettings(false); setConfirmReset(false); }}>
@@ -252,6 +268,8 @@ const styles: Record<string, React.CSSProperties> = {
   modalBlurb: { fontSize: 12, opacity: 0.85, margin: '6px 10px 10px' },
   modalStats: { display: 'flex', justifyContent: 'center', gap: 12, fontSize: 12, opacity: 0.9, marginBottom: 14 },
   settings: { width: 300, background: 'linear-gradient(180deg,#1d2a1d,#10160f)', border: '1px solid rgba(212,176,106,0.55)', borderRadius: 14, padding: 16, boxShadow: '0 12px 40px rgba(0,0,0,0.6)' },
+  harbor: { width: 'min(380px, 92vw)', background: 'linear-gradient(180deg,#162026,#0d1216)', border: '1px solid rgba(122,215,255,0.45)', borderRadius: 14, padding: 16, boxShadow: '0 12px 40px rgba(0,0,0,0.6)' },
+  harborRow: { display: 'flex', gap: 10, alignItems: 'center', padding: '10px 2px', borderTop: '1px solid rgba(255,255,255,0.08)' },
   settingRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 4px', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: 14 },
   resetBtn: { background: '#b3503f', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 12px', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: font },
   modalBtns: { display: 'flex', flexDirection: 'column', gap: 8 },

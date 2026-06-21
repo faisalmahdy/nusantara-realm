@@ -10,7 +10,16 @@ export interface MonsterSpecies {
   // Folklore-flavored entry shown in the Field Guide once a species is tamed.
   // Inspired by (not authoritative on) Nusantara myth and the creatures' motifs.
   lore: string;
+  // Regional variant forms reuse a base creature's sprite folder + a tint, so we
+  // get "new" monsters without new art. `sprite` defaults to `id`.
+  sprite?: string;
+  tint?: string; // 3D billboard tint (multiplied over the sprite)
+  tintCss?: string; // DOM <img> equivalent (party/battle/Field Guide)
 }
+
+// Cinder Peak (region 3) "Bara" (ember) forms share one warm tint.
+const EMBER = '#ffb088';
+const EMBER_CSS = 'sepia(0.5) saturate(1.7) hue-rotate(-18deg) brightness(1.04)';
 
 // Roster drawn from the Nusantara Monster project. Stats are tuned here for the
 // 3D game's taming + battle loop rather than copied from the 2D game.
@@ -35,6 +44,15 @@ export const SPECIES: MonsterSpecies[] = [
   { id: 'ubur', name: 'Ubur', element: 'Spirit', baseHp: 28, baseAtk: 14, baseDef: 6, rarity: 2, blurb: 'A drifting lantern-spirit of the night tide.', lore: 'A lantern-jellyfish that rises from the deep on festival nights, its batik glow lighting the way for lost spirits back out to sea.' },
   { id: 'warking', name: 'Warking', element: 'Sky', baseHp: 30, baseAtk: 15, baseDef: 7, rarity: 2, blurb: 'A bat-scorpion that strikes from the dusk sky.', lore: 'A dusk-winged cub with a scorpion’s tail, born where the bat-caves meet the mangrove. All mischief by moonlight — its sting is bright, but brief.' },
   { id: 'banyan', name: 'Banyan', element: 'Forest', baseHp: 40, baseAtk: 13, baseDef: 11, rarity: 3, blurb: 'The sacred banyan-titan that wardens the Reach.', lore: 'The Beringin, eldest of the sacred grove — a banyan given will and a slow, green wrath. Villages leave offerings in its roots so it keeps the old boundary between the tame wood and the wild.' },
+
+  // --- Cinder Peak roster (region 3): regional "Bara" (ember) forms of earlier
+  // creatures, remade by the volcano. They reuse base art with an ember tint and
+  // hit harder than the home isles. The Earth-titan Guardian bows to Forest. ----
+  { id: 'barabamut', name: 'Bara Bamut', sprite: 'bamut', tint: EMBER, tintCss: EMBER_CSS, element: 'Earth', baseHp: 50, baseAtk: 14, baseDef: 16, rarity: 3, blurb: 'A magma-boar with an ember-cracked hide.', lore: 'A boulder-boar that bedded down in a lava-tube and never cooled. Embers glow in the seams of its hide, and where it roots for the night, sulfur-flowers push up through the ash by morning.' },
+  { id: 'baraayaka', name: 'Bara Ayaka', sprite: 'ayaka', tint: EMBER, tintCss: EMBER_CSS, element: 'Spirit', baseHp: 34, baseAtk: 19, baseDef: 9, rarity: 3, blurb: 'A feral cinder-dancer of the Cinder Peak.', lore: 'The harvest-fire dancer, gone feral on the mountain. It no longer coaxes the rains — it dances only for the volcano now, and the volcano answers in kind.' },
+  { id: 'baracamar', name: 'Bara Camar', sprite: 'camar', tint: EMBER, tintCss: EMBER_CSS, element: 'Sky', baseHp: 30, baseAtk: 18, baseDef: 8, rarity: 2, blurb: 'An ash-gull that wheels above the caldera.', lore: 'An ash-gull that rides the thermals over the caldera, wingtips streaked with cinder. Its cry warns the village far below when the mountain is about to wake.' },
+  { id: 'bararabuas', name: 'Bara Rabuas', sprite: 'rabuas', tint: EMBER, tintCss: EMBER_CSS, element: 'Forest', baseHp: 40, baseAtk: 16, baseDef: 11, rarity: 3, blurb: 'A coal-banked bloom — the peak’s lone green.', lore: 'A corpse-flower that learned to thrive in scorched earth, its bloom banked like a living coal. It is the only green thing on the peak — and the only thing the magma-titan will not crush.' },
+  { id: 'barawatua', name: 'Bara Watua', sprite: 'watua', tint: EMBER, tintCss: EMBER_CSS, element: 'Earth', baseHp: 48, baseAtk: 16, baseDef: 14, rarity: 3, blurb: 'The magma-titan that wardens the Cinder Peak.', lore: 'Bara Watua, the Cinder Warden — the old high-stone spirit woken and remade in magma. It keeps the mountain’s bargain: the fire stays its hand, so long as none take more than the mountain freely gives.' },
 ];
 
 export const ELEMENT_COLOR: Record<MonsterSpecies['element'], string> = {
@@ -59,6 +77,11 @@ export function speciesById(id: string): MonsterSpecies {
   const s = SPECIES.find((x) => x.id === id);
   if (!s) throw new Error(`unknown species ${id}`);
   return s;
+}
+
+// Sprite asset url for a species. Variant forms reuse a base folder via `sprite`.
+export function spriteUrl(sp: MonsterSpecies, frame: string): string {
+  return `/sprites/${sp.sprite ?? sp.id}/${frame}.png`;
 }
 
 // Which species the player has discovered (tamed at least once): any species in
